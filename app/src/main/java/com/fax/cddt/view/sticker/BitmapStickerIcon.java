@@ -9,6 +9,7 @@ import com.fax.cddt.utils.ViewUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 

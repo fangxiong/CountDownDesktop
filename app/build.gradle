@@ -1,14 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.fax.cddt"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -19,21 +22,30 @@ android {
 }
 
 dependencies {
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'com.google.code.gson:gson:2.3.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support:appcompat-v7:28.1.1'
+    implementation 'com.android.support:support-v4:28.1.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     implementation 'android.arch.persistence.room:testing:1.1.1'
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
     implementation 'android.arch.persistence.room:compiler:1.1.1'
-    implementation 'com.squareup.okhttp3:okhttp:3.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.zhy:okhttputils:2.6.2'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.2-beta01'
+    implementation "com.google.android.material:material:1.0.0"
     implementation files('libs/AMap_Location_V4.7.2_20190927.jar')
-    implementation files('libs/commons-io-2.4.jar')
+    implementation 'com.android.support:multidex:1.0.3'
+
 }

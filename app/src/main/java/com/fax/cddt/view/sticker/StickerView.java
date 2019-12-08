@@ -17,7 +17,9 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
+import com.fax.cddt.AppContext;
 import com.fax.cddt.R;
+import com.fax.cddt.manager.widget.WidgetConfig;
 import com.fax.cddt.utils.ViewUtils;
 
 import java.io.File;
@@ -29,6 +31,10 @@ import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
 
 public class StickerView extends FrameLayout {
 
@@ -307,7 +313,6 @@ public class StickerView extends FrameLayout {
             PointF pointF = new PointF();
             icon.getCenterPoint(pointF);
             icon.getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
-            DebugLog.i("test_drawable_sticker:", "ratio:" + ratio);
         }
         icon.getMatrix().postRotate(rotation, icon.getWidth() / 2, icon.getHeight() / 2);
         icon.getMatrix().postTranslate(x - icon.getWidth() / 2, y - icon.getHeight() / 2);
@@ -393,7 +398,6 @@ public class StickerView extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                DebugLog.i("test_lock", "ACTION_POINTER_UP");
                 if (!mLockScreenMode) {
                     if (currentMode == ActionMode.ZOOM_WITH_TWO_FINGER && handlingSticker != null) {
                         if (onStickerOperationListener != null) {
@@ -426,13 +430,11 @@ public class StickerView extends FrameLayout {
 
         currentIcon = findCurrentIconTouched();
         if (currentIcon != null) {
-            DebugLog.i("test_click_icon:", "down了bitmapIcon");
             currentMode = ActionMode.ICON;
             currentIcon.onActionDown(this, event);
         }
         //当点击非空白区域(icon或sticker)只有在点击sticker时才重新赋值handlingSticker
         if (!blankMoveMode) {
-            DebugLog.i("test_click_icon:", "没有点击空白区域");
             if (findCurrentIconTouched() == null) {
                 handlingSticker = findHandlingSticker();
             }
@@ -458,12 +460,10 @@ public class StickerView extends FrameLayout {
 
     protected void onTouchUp(@NonNull MotionEvent event) {
         long currentTime = SystemClock.uptimeMillis();
-        DebugLog.i("test_click_icon:", handlingSticker == null ? "handlingSticker == null" : "handlingSticker != null");
         if(handlingSticker != null && handlingSticker instanceof TextSticker) {
             ((TextSticker) handlingSticker).setSliding(false);
         }
         if (currentMode == ActionMode.ICON && currentIcon != null && handlingSticker != null) {
-            DebugLog.i("test_click_icon:", "up了bitmapIcon");
             currentIcon.onActionUp(this, event);
 
         }
@@ -472,7 +472,6 @@ public class StickerView extends FrameLayout {
                 && event.getX() == downX
                 && event.getY() == downY
                 && findHandlingSticker() == null && currentIcon == null) {
-            DebugLog.i("test_click_blank:", "点击了空白区域");
             handlingSticker = null;
             if(onStickerOperationListener != null) {
                 onStickerOperationListener.onStickerNoTouched();
@@ -515,15 +514,12 @@ public class StickerView extends FrameLayout {
             case ActionMode.CLICK:
                 break;
             case ActionMode.DRAG:
-                DebugLog.i("test_click", "handleCurrentMode ActionMode.DRAG  handlingSticker:" + handlingSticker + "  " +
-                        "downMatrix:" + downMatrix);
                 if (handlingSticker != null) {
                     if(handlingSticker instanceof TextSticker) {
                         ((TextSticker) handlingSticker).setSliding(true);
                     }
                     moveMatrix.set(downMatrix);
                     moveMatrix.postTranslate(event.getX() - downX, event.getY() - downY);
-                    DebugLog.i("test_center_point_zoom", "x拖动:" + (event.getX() - downX) + "y拖动:" + (event.getY() - downY));
                     handlingSticker.setMatrix(moveMatrix);
                     if (constrained) {
                         constrainSticker(handlingSticker);
@@ -542,8 +538,6 @@ public class StickerView extends FrameLayout {
                     float scale = newDistance / oldDistance;
 
 //                    moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y);
-                    DebugLog.i("test_center_point_zoom:", "centerX:" + midPoint.x + " centerY:" + midPoint.y);
-                    DebugLog.i("test_center_point_zoom:", "newDistance:" + newDistance + " oldDistance" + oldDistance + "ratio:" + newDistance / oldDistance);
                     if (handlingSticker instanceof DrawableSticker) {
                         moveMatrix.postScale(scale, scale, midPoint.x,
                                 midPoint.y);
@@ -554,8 +548,6 @@ public class StickerView extends FrameLayout {
                             return;
                         }
                         handlingSticker.setMatrix(moveMatrix);
-                        DebugLog.i("test_drawable_move:", handlingSticker.getCurrentScale());
-
                     } else if (handlingSticker instanceof LineSticker) {
                         if (supportLineZoom) {
                             if (initalLineLength == 0) {
@@ -566,7 +558,6 @@ public class StickerView extends FrameLayout {
                             int screenHeight = dm.heightPixels;
                             if (currentLength > MIN_LINE_WIDTH_OR_HEIGHT && currentLength < screenHeight) {
                                 ((LineSticker) handlingSticker).setLineLength(scale * initalLineLength);
-                                DebugLog.i("test_line_move:", "length:" + scale * initalLineLength + "ratio:" + scale);
                             }
 
                         }
@@ -672,8 +663,6 @@ public class StickerView extends FrameLayout {
     protected boolean isInStickerArea(@NonNull Sticker sticker, float downX, float downY) {
         tmp[0] = downX;
         tmp[1] = downY;
-        DebugLog.i("test_downY:", downY);
-        DebugLog.i("test_downX:", downX);
         return sticker.contains(tmp);
     }
 
@@ -736,7 +725,6 @@ public class StickerView extends FrameLayout {
     @Override
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
         super.onSizeChanged(w, h, oldW, oldH);
-        DebugLog.i("test_canvas", "onSizeChanged  size:" + stickers.size());
         for (int i = 0; i < stickers.size(); i++) {
             Sticker sticker = stickers.get(i);
             if (sticker != null) {
@@ -776,8 +764,6 @@ public class StickerView extends FrameLayout {
         } else {
             scaleFactor = height / stickerHeight;
         }
-
-        DebugLog.i("test_canvas", "scale:" + scaleFactor);
         sizeMatrix.postScale(scaleFactor / 2f, scaleFactor / 2f, width / 2f, height / 2f);
 
         sticker.getMatrix().reset();
@@ -926,8 +912,6 @@ public class StickerView extends FrameLayout {
         float height = getHeight();
         float offsetX = width - sticker.getWidth();
         float offsetY = height - sticker.getHeight();
-        DebugLog.i("test_offsetX:", offsetX);
-        DebugLog.i("test_offsetY:", offsetY);
         if ((position & Sticker.Position.TOP) > 0) {
             offsetY /= 4f;
         } else if ((position & Sticker.Position.BOTTOM) > 0) {
@@ -943,7 +927,6 @@ public class StickerView extends FrameLayout {
             offsetX /= 2f;
         }
         if (position != Sticker.Position.INITIAL) {
-            DebugLog.i("test_draw_plug:", " offestX:", offsetX + " offestY:" + offsetY);
             sticker.getMatrix().postTranslate(offsetX, offsetY);
         }
     }

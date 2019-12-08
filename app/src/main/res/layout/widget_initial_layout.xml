@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_body"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#67000000">
+
+        <TextView
+            android:id="@+id/tv_edit"
+            android:layout_width="@dimen/margin_177"
+            android:layout_height="@dimen/margin_32"
+            android:background="@drawable/widget_initial_layout_text_bg"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:text="开始自定义插件"
+            android:textSize="@dimen/margin_16"/>
+
+        <TextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5"
+            android:layout_below="@id/tv_edit"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/margin_14"
+            android:text="长按可调节插件位置大小"/>
+
+
+
+
+</RelativeLayout>

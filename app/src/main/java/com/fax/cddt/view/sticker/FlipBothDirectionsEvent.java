@@ -1,6 +1,5 @@
 package com.fax.cddt.view.sticker;
 
-
 public class FlipBothDirectionsEvent extends AbstractFlipEvent {
 
   @Override

@@ -94,9 +94,9 @@ public class CountdownService extends Service {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.logo_small_icon)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.umeng_push_notification_default_large_icon))
-                .setContentTitle("小妖精美化正在运行")
+//                .setSmallIcon(R.drawable.logo_small_icon)
+//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.umeng_push_notification_default_large_icon))
+                .setContentTitle("桌面美化大师正在运行")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();

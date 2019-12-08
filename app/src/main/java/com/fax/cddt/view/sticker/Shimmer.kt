@@ -1,4 +1,4 @@
-package com.xjlmh.classic.view
+package com.fax.cddt.view.sticker
 
 import android.graphics.*
 import android.util.Log
@@ -6,7 +6,7 @@ import android.util.Log
 /**
  * shimmer 实现类,使用在 CustomDynamicWallpaperView 中
  */
-class Shimmer() : ShimmerStyle {
+class Shimmer : ShimmerStyle {
 
 
     private var mLinearGradient: LinearGradient? = null

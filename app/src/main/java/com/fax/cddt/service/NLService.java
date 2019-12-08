@@ -30,6 +30,13 @@ import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager;
+
+import com.fax.cddt.manager.musicPlug.AppNewsInfo;
+import com.fax.cddt.manager.musicPlug.KLWPSongUpdateManager;
+import com.fax.cddt.manager.musicPlug.PackageHelper;
+import com.fax.cddt.utils.CommonUtils;
+import com.fax.cddt.utils.TimeUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,7 +59,6 @@ public class NLService extends NotificationListenerService implements OnPlayback
     private boolean mNotificationsCacheDirty = true;
     private static HashMap<String, Notification> mNotificationsCounter = new HashMap();
     private RemoteController mRemoteController;
-    private KLWPUpdateManager mKLWPUpdateManager;
     private KLWPSongUpdateManager mKLWPSongUpdateManager;
     private final String QQ_PKG = "com.tencent.mobileqq";
     public static final String NOTIFY_REFRESH_AUDIO_INFO = "notify_refresh_audio_info";
@@ -125,6 +131,9 @@ public class NLService extends NotificationListenerService implements OnPlayback
 
         public void onPlaybackStateChanged(@NonNull PlaybackState playbackState) {
             try {
+                Log.i(TAG, "播放状态：" + playbackState.getState());
+                Log.i(TAG, "动作：" + playbackState.getActions());
+                Log.i(TAG, "进度：" + playbackState.getPosition());
                 mKLWPSongUpdateManager.refreshMusicInfoWith21();
 
             } catch (Exception e) {
@@ -139,6 +148,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
         }
 
         public void onActiveSessionsChanged(List<MediaController> list) {
+            Log.i(NLService.TAG, "refreshMusicInfoWith21");
             if (list != null && list.size() != 0) {
                 for (MediaController mediaController : list) {
                     if (mediaController != null && !TextUtils.isEmpty(PackageHelper.getBroadReceiverPackage(NLService.this, mediaController.getPackageName()))) {
@@ -148,6 +158,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
                             } catch (Exception e) {
                             }
                         }
+                        Log.i(NLService.TAG, "当前音频焦点："+mediaController.getPackageName());
                         NLService.this.mMediaController = mediaController;
                         NLService.this.mMediaCallback = new Callback(NLService.this.mMediaController);
                         NLService.this.mMediaController.registerCallback(NLService.this.mMediaCallback);
@@ -217,29 +228,21 @@ public class NLService extends NotificationListenerService implements OnPlayback
     }
 
     public void onClientChange(boolean z) {
-        DebugLog.i(TAG, "onClientChange : " + z, new Object[0]);
 
     }
 
     public int onStartCommand(Intent intent, int i, int i2) {
-        DebugLog.i(TAG, "onStartCommand", new Object[0]);
         super.onStartCommand(intent, i, i2);
         return Service.START_STICKY;
     }
 
     public void onCreate() {
-        DebugLog.i(TAG, "OnCreate", new Object[0]);
         super.onCreate();
-        if (!CommonUtils.isServiceRunning(this, "com.maibaapp.module.main.service.BackgroundAdService")) {
-            Intent intent = new Intent(this, BackgroundAdService.class);
-            startService(intent);
-        }
         mKLWPSongUpdateManager = new KLWPSongUpdateManager(this);
         start();
     }
 
     public void onDestroy() {
-        DebugLog.i(TAG, "OnDestroy", new Object[0]);
         if (VERSION.SDK_INT < 21) {
             destroyRemoteController();
         } else {
@@ -259,17 +262,16 @@ public class NLService extends NotificationListenerService implements OnPlayback
         String string3 = metadataEditor.getString(1, "");
         Long valueOf = Long.valueOf(metadataEditor.getLong(9, -1));
         Bitmap bitmap = metadataEditor.getBitmap(100, null);
-        DebugLog.i(TAG, "Artist:%s, title: %s, album: %s, len: %d", string, string2, string3, valueOf);
         try {
 
         } catch (Throwable e) {
-            DebugLog.i(TAG, "Failed to update", e);
+            Log.i(TAG, "Failed to update", e);
         }
         metadataEditor.clear();
     }
 
     public void onClientPlaybackStateUpdate(int i) {
-        DebugLog.i(TAG, "onClientPlaybackStateUpdate : " + i, new Object[0]);
+        Log.i(TAG, "onClientPlaybackStateUpdate : " + i);
         try {
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,7 +279,6 @@ public class NLService extends NotificationListenerService implements OnPlayback
     }
 
     public void onClientPlaybackStateUpdate(int i, long j, long j2, float f) {
-        DebugLog.i(TAG, "PlayBackUpdate: state %d, stateChangeTimeMs %d, currentPostMs %d, speed %f", Integer.valueOf(i), Long.valueOf(j), Long.valueOf(j2), Float.valueOf(f));
         try {
             onClientPlaybackStateUpdate(i);
             onPlaybackPositionUpdate(j2);
@@ -287,11 +288,9 @@ public class NLService extends NotificationListenerService implements OnPlayback
     }
 
     public void onClientTransportControlUpdate(int i) {
-        DebugLog.i(TAG, "onClientTransportControlUpdate: %d", Integer.valueOf(i));
     }
 
     public void onPlaybackPositionUpdate(long j) {
-        DebugLog.i(TAG, "onPlaybackPositionUpdate: %d", Long.valueOf(j));
         try {
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,14 +299,14 @@ public class NLService extends NotificationListenerService implements OnPlayback
 
     public void onNotificationPosted(StatusBarNotification statusBarNotification) {
         String packageName = statusBarNotification.getPackageName();
-        DebugLog.i(TAG, "NotificationPosted:", packageName);
+        Log.d(TAG, "NotificationPosted:"+packageName);
         synchronized (TAG) {
             this.mNotificationsCounter.put(packageName, statusBarNotification.getNotification());
         }
         try {
             if (QQ_PKG.equals(packageName)) {
                 Notification notification = mNotificationsCounter.get(QQ_PKG);
-                DebugLog.i("test_qq_news：", "notification:" + notification.toString());
+                Log.i("test_qq_news：", "notification:" + notification.toString());
                 Bundle bundle = notification.extras;
                 if (bundle != null) {
                     String title = bundle.getString(Notification.EXTRA_TITLE, "");
@@ -319,19 +318,16 @@ public class NLService extends NotificationListenerService implements OnPlayback
                     newsInfo.setSenderNews(content);
                     newsInfo.setSenderIcon(icon);
                     newsInfo.setSendTime(timeStamp);
-                    if(mKLWPUpdateManager == null){
-                        mKLWPUpdateManager = new KLWPUpdateManager(this);
-                    }
-                    mKLWPUpdateManager.sendMsgUpdate(newsInfo);
-                    DebugLog.i("test_qq_news：", "标题:" + title + "内容:" + content);
+
+                    Log.i("test_qq_news：", "标题:" + title + "内容:" + content);
                     if(icon != null) {
-                        DebugLog.i("test_qq_news：", "icon的大小:" + icon.getAllocationByteCount()/1024);
+                        Log.i("test_qq_news：", "icon的大小:" + icon.getAllocationByteCount()/1024);
                     }
                 }
 
             }
         } catch (Throwable e) {
-            DebugLog.i(TAG, "onNotificationPosted", e);
+            Log.i(TAG, "onNotificationPosted", e);
         }
 
     }
@@ -339,7 +335,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
     public void onNotificationRemoved(StatusBarNotification statusBarNotification) {
         int i = 0;
         String packageName = statusBarNotification.getPackageName();
-        DebugLog.i(TAG, "NotificationRemoved: %s", packageName);
+        Log.d(TAG, "NotificationRemoved: %s"+packageName);
         synchronized (TAG) {
             if (this.mNotificationsCounter.containsKey(packageName)) {
                 for (StatusBarNotification statusBarNotification2 : getAllActiveNotifications()) {
@@ -356,7 +352,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
     @Override
     public void onListenerConnected() {
         super.onListenerConnected();
-        DebugLog.i(TAG,"NotificationListenerService连接成功");
+        Log.i(TAG,"NotificationListenerService连接成功");
 //        ShowToast.Long("NotificationListenerService连接成功");
 
     }
@@ -364,7 +360,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
     @Override
     public void onListenerDisconnected() {
         super.onListenerDisconnected();
-        DebugLog.i(TAG,"NotificationListenerService连接断开");
+        Log.i(TAG,"NotificationListenerService连接断开");
 //        ShowToast.Long("NotificationListenerService连接断开");
 
     }
@@ -406,7 +402,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
             if (audioManager.registerRemoteController(remoteController)) {
                 this.mRemoteController = remoteController;
             } else {
-                DebugLog.i(TAG, "Failed to register");
+                Log.i(TAG, "Failed to register");
             }
         }
     }
@@ -429,7 +425,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            DebugLog.i("test_widget:","action:"+action);
+            Log.i("test_widget:","action:"+action);
             if(NOTIFY_REFRESH_AUDIO_INFO.equals(action)) {
                 KLWPSongUpdateManager.isEditWidget = intent.getBooleanExtra("switch_flag",false);
                 ComponentName componentName = new ComponentName(NLService.this, NLService.class);

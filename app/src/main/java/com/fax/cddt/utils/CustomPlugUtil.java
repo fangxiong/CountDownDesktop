@@ -16,7 +16,10 @@ import android.text.TextUtils;
 import com.fax.cddt.AppContext;
 import com.fax.cddt.R;
 import com.fax.cddt.manager.location.LocationManager;
+import com.fax.cddt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.cddt.manager.weather.WeatherManager;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -528,7 +531,6 @@ public class CustomPlugUtil {
                         cdStr = d + "天" + h + "时" + m + "分" + s + "秒";
                     }
                     try {
-                        DebugLog.i("test_time:", countdownId + "  " + targetTime + "  " + DateUtils.getCurrentTimeWithNoHour());
                         if (targetTime <= DateUtils.getCurrentTimeWithNoHour()) {
                             if (isDefaultMode) {
                                 cdStr = "0";

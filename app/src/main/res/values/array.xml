@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="custom_plug_special_sign">
+        <item>T00</item>
+        <item>T01</item>
+        <item>T02</item>
+        <item>D00</item>
+        <item>D01</item>
+        <item>D02</item>
+        <item>D03</item>
+        <item>D04</item>
+        <item>W00</item>
+        <item>W01</item>
+        <item>W02</item>
+        <item>W03</item>
+        <item>W04</item>
+        <item>B00</item>
+        <item>C00</item>
+        <item>C01</item>
+        <item>L00</item>
+        <item>S00</item>
+        <item>S01</item>
+        <item>S02</item>
+    </string-array>
+
+
+</resources>

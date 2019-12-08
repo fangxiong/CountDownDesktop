@@ -6,11 +6,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.widget.RemoteViews;
 
-import com.fax.cddt.AppContext;
-import com.fax.cddt.MainActivity;
 import com.fax.cddt.R;
+import com.fax.cddt.activity.MainActivity;
 import com.fax.cddt.provider.WidgetProvider4x1;
 import com.fax.cddt.provider.WidgetProvider4x2;
 import com.fax.cddt.provider.WidgetProvider4x3;
@@ -32,6 +32,7 @@ public class WidgetManager {
     private RemoteViews views;
     private Bitmap mBitmap;
     private boolean isPause = false;
+    private Handler mHandler;
     private static int[] widget4x1;
     private static int[] widget4x2;
     private static int[] widget4x3;
@@ -79,13 +80,16 @@ public class WidgetManager {
      *
      * @param context
      */
-    public void updateAppWidget(Context context) {
+    public void updateAppWidget(final Context context) {
         try {
             if (isPause) {
                 return;
             }
             if (mWidgetContext != null) {
-                AppContext.runOnMainThread(new Runnable() {
+                if(mHandler == null){
+                    mHandler = new Handler();
+                }
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         mBitmap = mWidgetContext.getViewBitmap();
@@ -105,8 +109,7 @@ public class WidgetManager {
                         }else {
                             views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
                             Intent configIntent = new Intent();
-                            configIntent.setClass(context,AdSplashActivity.class);
-                            configIntent.putExtra(AdSplashActivity.TYPE_JUNMP_CountDownOperateActivity, 1);
+                            configIntent.setClass(context,MainActivity.class);
                             configIntent.setAction(WIDGET_CLICK_ACTION);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
                             views.setOnClickPendingIntent(R.id.rl_body, pendingIntent);

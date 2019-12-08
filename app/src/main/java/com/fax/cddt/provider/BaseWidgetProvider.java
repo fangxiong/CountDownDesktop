@@ -6,7 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.fax.cddt.ConstantString;
 import com.fax.cddt.manager.widget.WidgetManager;
+import com.fax.cddt.service.CountdownService;
+import com.fax.cddt.service.NLService;
+import com.fax.cddt.utils.SharedPreferenceUtil;
 
 public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
@@ -14,21 +18,18 @@ public class BaseWidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         CountdownService.startSelf(context);
         NLService.startSelf(context);
-        ConfigManager.getMainConfig().putBool(MagicNumber.key.countdown_widget_is_open,true);
-        DebugLog.i("test_widget_service:","start");
+        SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,true);
     }
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        DebugLog.i("test_umeng:", "CountdownService onDeleted");
         super.onDeleted(context, appWidgetIds);
         int[] appWidgetIdArray = WidgetManager.getAllProviderWidgetId(context);
         if(appWidgetIdArray == null || appWidgetIdArray.length == 0){
             //当桌面widget全部删除后,关闭服务,避免无谓消耗资源
             CountdownService.stopSelf(context);
             NLService.stopSelf(context);
-            ConfigManager.getMainConfig().putBool(MagicNumber.key.countdown_widget_is_open,false);
-            DebugLog.i("test_widget_service:","stop");
+            SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,false);
         }
     }
 

@@ -1,15 +1,14 @@
 package com.fax.cddt.view.sticker;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.maibaapp.lib.log.DebugLog;
-
+import androidx.annotation.NonNull;
+import androidx.customview.widget.ViewDragHelper;
 
 public class VDHLayout extends RelativeLayout
 {
@@ -46,7 +45,7 @@ public class VDHLayout extends RelativeLayout
             @Override
             public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
                 super.onViewReleased(releasedChild, xvel, yvel);
-                DebugLog.i("test_drag","手指拖动结束 x:"+xvel + "  y:"+yvel);
+                Log.i("test_drag","手指拖动结束 x:"+xvel + "  y:"+yvel);
                 if (mCallback != null){
                     mCallback.release();
                 }
@@ -63,14 +62,14 @@ public class VDHLayout extends RelativeLayout
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event)
     {
-        DebugLog.i("test_touch","onInterceptTouchEvent");
+        Log.i("test_touch","onInterceptTouchEvent");
         return mDragger.shouldInterceptTouchEvent(event);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        DebugLog.i("test_touch","onTouchEvent");
+        Log.i("test_touch","onTouchEvent");
         mDragger.processTouchEvent(event);
         return true;
     }

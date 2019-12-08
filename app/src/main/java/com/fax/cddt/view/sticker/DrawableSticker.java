@@ -11,17 +11,17 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
-import com.maibaapp.lib.instrument.utils.TextUtils;
-import com.maibaapp.lib.instrument.utils.ViewUtils;
-import com.maibaapp.lib.log.DebugLog;
-import com.maibaapp.module.main.view.svg.SVG;
-import com.maibaapp.module.main.view.svg.SVGBuilder;
+import com.fax.cddt.utils.ViewUtils;
+import com.fax.cddt.view.svg.SVG;
+import com.fax.cddt.view.svg.SVGBuilder;
 
 import java.io.File;
 import java.io.IOException;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 
 public class DrawableSticker extends Sticker {
 
@@ -172,7 +172,6 @@ public class DrawableSticker extends Sticker {
             e.printStackTrace();
             svg = null;
         }
-        DebugLog.i("");
         if (svg != null){
             canvas.drawPicture(svg.getPicture(),rectF);
             mMaskBitmap = bitmap;

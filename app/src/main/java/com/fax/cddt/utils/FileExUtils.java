@@ -297,15 +297,16 @@ public class FileExUtils {
         return path == null ? null : new File(path);
     }
 
-    public static boolean copyFile(String srcPath, File dst) {
-        return copyFile(safeNewFile(srcPath), dst);
-    }
+//    public static boolean copyFile(String srcPath, File dst) {
+//        return copyFile(safeNewFile(srcPath), dst);
+//    }
 
     public static boolean deleteSingleFile(String filePath$Name) {
         File file = new File(filePath$Name);
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
+
                 return true;
             } else {
                 return false;

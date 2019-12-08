@@ -5,7 +5,7 @@ import android.view.MotionEvent;
 /**
  * Created by fax on 19-6-14.
  */
-public class RotateIconEvent implements StickerIconEvent{
+public class RotateIconEvent implements StickerIconEvent {
 
     @Override
     public void onActionDown(StickerView stickerView, MotionEvent event) {
@@ -21,7 +21,7 @@ public class RotateIconEvent implements StickerIconEvent{
     public void onActionUp(StickerView stickerView, MotionEvent event) {
         if (stickerView.getCurrentSticker() != null) {
             Sticker sticker = stickerView.getCurrentSticker();
-            if(sticker instanceof  LineSticker){
+            if(sticker instanceof LineSticker){
                 if(((LineSticker) sticker).getLineOrientation() == LineSticker.LineOrientation.HORIZATIONAL) {
                     ((LineSticker) sticker).setLineOrientation(LineSticker.LineOrientation.VERTICAL);
                 }else {

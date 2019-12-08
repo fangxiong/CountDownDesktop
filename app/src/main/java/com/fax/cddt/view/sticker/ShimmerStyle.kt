@@ -1,6 +1,9 @@
-package com.xjlmh.classic.view
+package com.fax.cddt.view.sticker
 
-import android.graphics.*
+import android.graphics.LinearGradient
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Shader
 
 /**
  * shimmer 接口

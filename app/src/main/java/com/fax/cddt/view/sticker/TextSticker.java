@@ -22,8 +22,6 @@ import com.fax.cddt.utils.CustomPlugUtil;
 import com.fax.cddt.utils.FileUtil;
 import com.fax.cddt.utils.FontCache;
 import com.fax.cddt.utils.ViewUtils;
-import com.xjlmh.classic.view.Shimmer;
-
 import java.io.File;
 
 import androidx.annotation.Dimension;
@@ -60,7 +58,7 @@ public class TextSticker extends Sticker {
     private String mFontPath = "";
     private boolean isShimmerText;
     private String shimmerColor;
-    private Shimmer mShimmer;
+//    private Shimmer mShimmer;
     private Layout.Alignment mAlignment = null;
     /**
      * Upper bounds for text size.
@@ -156,7 +154,7 @@ public class TextSticker extends Sticker {
         if (isShimmerText) {
             initShimmer(textPaint, textStr);
             startShimmer();
-            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent + internalMargin, mShimmer.getMPaint());
+//            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent + internalMargin, mShimmer.getMPaint());
         } else {
             stopShimmer();
             textPaint.setShader(null);
@@ -471,9 +469,9 @@ public class TextSticker extends Sticker {
 
     public void setShimmerText(boolean shimmerText) {
         isShimmerText = shimmerText;
-        if (!isShimmerText && mShimmer != null) {
-            mShimmer = null;
-        }
+//        if (!isShimmerText && mShimmer != null) {
+//            mShimmer = null;
+//        }
     }
 
     public void setSliding(boolean sliding) {
@@ -488,28 +486,28 @@ public class TextSticker extends Sticker {
     }
 
     private void initShimmer(Paint paint, String content) {
-        if (mShimmer == null) {
-            mShimmer = new Shimmer();
-        }
-        int[] color = {Color.parseColor(getTextColor()), Color.parseColor(getShimmerColor()), Color.parseColor(getTextColor())};
-        mShimmer.setPaint(paint);
-        mShimmer.setWidthDivideBy(30);
-        mShimmer.setTextSize(paint.getTextSize());
-        mShimmer.setContent(content);
-        mShimmer.setLinearGradientColors(color);
-        mShimmer.init();
+//        if (mShimmer == null) {
+//            mShimmer = new Shimmer();
+//        }
+//        int[] color = {Color.parseColor(getTextColor()), Color.parseColor(getShimmerColor()), Color.parseColor(getTextColor())};
+//        mShimmer.setPaint(paint);
+//        mShimmer.setWidthDivideBy(30);
+//        mShimmer.setTextSize(paint.getTextSize());
+//        mShimmer.setContent(content);
+//        mShimmer.setLinearGradientColors(color);
+//        mShimmer.init();
     }
 
     private void startShimmer() {
-        if (mShimmer != null) {
-            mShimmer.start();
-            mShimmer.run();
-        }
+//        if (mShimmer != null) {
+//            mShimmer.start();
+//            mShimmer.run();
+//        }
     }
 
     private void stopShimmer() {
-        if (mShimmer != null) {
-            mShimmer.stop();
-        }
+//        if (mShimmer != null) {
+//            mShimmer.stop();
+//        }
     }
 }
