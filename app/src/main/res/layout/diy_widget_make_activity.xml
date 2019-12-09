@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c_222222">
+
+    <com.fax.cddt.view.EventConvertView
+        android:id="@+id/fl_edit_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margin_60">
+
+        <com.fax.cddt.view.sticker.StickerView
+            android:id="@+id/sticker_view"
+            android:layout_width="330dp"
+            android:layout_height="165dp"
+            android:layout_centerHorizontal="true"
+            app:borderColor="@color/white"
+            app:showBorder="false"
+            app:showIcons="false">
+
+            <ImageView
+                android:id="@+id/iv_select_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop" />
+
+        </com.fax.cddt.view.sticker.StickerView>
+    </com.fax.cddt.view.EventConvertView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_70"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
+
+        <View
+            android:id="@+id/baseLine"
+            android:layout_centerInParent="true"
+            android:layout_width="@dimen/margin_1"
+            android:layout_height="@dimen/margin_1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_67"
+            android:layout_centerVertical="true"
+            android:drawableTop="@drawable/diy_widget_make_text_icon"
+            android:gravity="center"
+            android:text="文字"
+            android:layout_toStartOf="@id/tv_sticker"
+            android:layout_marginEnd="@dimen/margin_40"
+            android:textColor="@color/c_7C7C7C"
+            android:textSize="@dimen/textSize_14" />
+
+        <TextView
+            android:id="@+id/tv_sticker"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_67"
+            android:layout_centerVertical="true"
+            android:drawableTop="@drawable/diy_widget_make_sticker_icon"
+            android:gravity="center"
+            android:text="贴纸"
+            android:layout_toStartOf="@id/baseLine"
+            android:layout_marginEnd="@dimen/margin_20"
+            android:textColor="@color/c_7C7C7C"
+            android:textSize="@dimen/textSize_14" />
+
+
+        <TextView
+            android:id="@+id/tv_shape"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_67"
+            android:layout_centerVertical="true"
+            android:drawableTop="@drawable/diy_widget_make_shape_icon"
+            android:gravity="center"
+            android:text="形状"
+            android:layout_toEndOf="@id/baseLine"
+            android:layout_marginStart="@dimen/margin_20"
+            android:textColor="@color/c_7C7C7C"
+            android:textSize="@dimen/textSize_14" />
+
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_toEndOf="@id/tv_shape"
+            android:layout_marginStart="@dimen/margin_40"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_67"
+            android:layout_centerVertical="true"
+            android:drawableTop="@drawable/diy_widget_make_progress_bar_icon"
+            android:gravity="center"
+            android:text="进度条"
+            android:textColor="@color/c_7C7C7C"
+            android:textSize="@dimen/textSize_14" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_200"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:visibility="gone">
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

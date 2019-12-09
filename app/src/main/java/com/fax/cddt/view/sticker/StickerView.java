@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -40,7 +41,7 @@ public class StickerView extends FrameLayout {
 
     private boolean showIcons;
     private boolean showBorder;
-    private boolean showGrid;
+    private boolean showGrid =false;
     private boolean mLockScreenMode;
     private boolean supportLineZoom;
 
@@ -204,10 +205,11 @@ public class StickerView extends FrameLayout {
 
     private void drawGrid(Canvas canvas) {
 
-        linePaint.setColor(Color.parseColor("#26000000"));
-        linePaint.setStrokeWidth(ViewUtils.dp2px(0.5f));
+        linePaint.setColor(Color.parseColor("#FFFFFF"));
+        linePaint.setStrokeWidth(ViewUtils.dp2px(0.3f));
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
+        linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
         canvas.save();
         int height = WidgetConfig.getWidget4X4Height();
         canvas.drawLine(0, height / 4f, height * 1.0f, height / 4f, linePaint);
@@ -380,7 +382,7 @@ public class StickerView extends FrameLayout {
                 if (mLockScreenMode) {
                     int interval = 100;
                     if (downX != 0 && gapY > interval || gapX > interval) {
-                        if(onStickerOperationListener != null) {
+                        if (onStickerOperationListener != null) {
                             onStickerOperationListener.onUnlock();
                         }
                         mLockScreenMode = false;
@@ -419,6 +421,7 @@ public class StickerView extends FrameLayout {
      * @return true if has touch something
      */
     protected boolean onTouchDown(@NonNull MotionEvent event) {
+        showGrid = true;
         currentMode = ActionMode.DRAG;
 
         downX = event.getX();
@@ -459,8 +462,9 @@ public class StickerView extends FrameLayout {
     }
 
     protected void onTouchUp(@NonNull MotionEvent event) {
+        showGrid = false;
         long currentTime = SystemClock.uptimeMillis();
-        if(handlingSticker != null && handlingSticker instanceof TextSticker) {
+        if (handlingSticker != null && handlingSticker instanceof TextSticker) {
             ((TextSticker) handlingSticker).setSliding(false);
         }
         if (currentMode == ActionMode.ICON && currentIcon != null && handlingSticker != null) {
@@ -473,7 +477,7 @@ public class StickerView extends FrameLayout {
                 && event.getY() == downY
                 && findHandlingSticker() == null && currentIcon == null) {
             handlingSticker = null;
-            if(onStickerOperationListener != null) {
+            if (onStickerOperationListener != null) {
                 onStickerOperationListener.onStickerNoTouched();
             }
             invalidate();
@@ -515,7 +519,7 @@ public class StickerView extends FrameLayout {
                 break;
             case ActionMode.DRAG:
                 if (handlingSticker != null) {
-                    if(handlingSticker instanceof TextSticker) {
+                    if (handlingSticker instanceof TextSticker) {
                         ((TextSticker) handlingSticker).setSliding(true);
                     }
                     moveMatrix.set(downMatrix);

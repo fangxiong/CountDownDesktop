@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fax.cddt">
+
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 读取手机信息权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 使用移动网络状态权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 手机存储卡写入权限 -->
@@ -10,7 +11,8 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 获取任务信息 -->
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- 允许使用PowerManager的 WakeLocks保持进程在休眠时从屏幕消失 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 获取精确位置 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- bugly权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name=".AppContext"
         android:allowBackup="true"
@@ -27,7 +29,9 @@
             android:name=".service.CountdownService"
             android:process="com.xjlmh.classic.wallpaper" />
 
-        <activity android:name=".activity.MainActivity"
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/MainActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.DiyWidgetMakeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MainActivityTheme" />
 
         <!-- 歌词插件：通知栏监听服务 -->
         <service
@@ -45,9 +54,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
-
-
 
 
     </application>

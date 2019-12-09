@@ -1,6 +1,7 @@
 package com.fax.cddt.activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -87,6 +88,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int resId = v.getId();
         if(resId == R.id.iv_menu){
             drawerLayout.openDrawer(GravityCompat.START);
+        }else if(resId == R.id.iv_make){
+            startActivity(new Intent(this,DiyWidgetMakeActivity.class));
         }
     }
 

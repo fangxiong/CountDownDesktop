@@ -22,15 +22,18 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
 
     private boolean isViewInited = false;
-    private View.OnLayoutChangeListener mOnLayoutChangeListener;
-    private boolean isFirstLayoutComplete = false;
     protected ImmersionBar mImmersionBar;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
     //系统字体调节时，所有activity都不做更改
     @Override
     public Resources getResources() {
@@ -75,13 +78,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getWindow().getDecorView().removeOnLayoutChangeListener(mOnLayoutChangeListener);
         ScreenUtils.cancelAdaptScreen(this);
 
         if (mImmersionBar != null) {
             //必须调用该方法，防止内存泄漏，不调用该方法，如果界面bar发生改变，在不关闭app的情况下，退出此界面再进入将记忆最后一次bar改变的状态
             mImmersionBar.destroy();
         }
+
+        mCompositeDisposable.clear();
     }
 
     @Override
@@ -193,5 +197,9 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected boolean isUseDefaultAnim() {
         return true;
+    }
+
+    public void addDisponsable(Disposable disposable){
+        mCompositeDisposable.add(disposable);
     }
 }
