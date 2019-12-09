@@ -10,6 +10,17 @@
 
     <style name="MainActivityTheme" parent="AppTheme">
         <item name="android:actionMenuTextColor">@color/colorPrimaryDark</item>
+        <item name="android:windowBackground">@drawable/main_ui_splash_bg</item>
+        <item name="android:statusBarColor">@color/black</item>
+
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+<!--        <item name="android:windowFullscreen">true</item>-->
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:windowBackground">@drawable/main_ui_splash_bg</item>
     </style>
 
 </resources>

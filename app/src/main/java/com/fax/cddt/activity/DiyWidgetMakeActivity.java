@@ -4,12 +4,21 @@ import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 
 import com.fax.cddt.R;
+import com.fax.cddt.fragment.WidgetProgressEditFragment;
+import com.fax.cddt.fragment.WidgetShapeEditFragment;
+import com.fax.cddt.fragment.WidgetStickerEditFragment;
+import com.fax.cddt.fragment.WidgetTextEditFragment;
 import com.fax.cddt.manager.widget.WidgetConfig;
 import com.fax.cddt.utils.BitmapUtils;
 import com.fax.cddt.utils.ViewUtils;
@@ -19,6 +28,8 @@ import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
@@ -28,11 +39,19 @@ import io.reactivex.functions.Consumer;
  * Date: 19-12-9
  * Description:
  */
-public class DiyWidgetMakeActivity extends BaseActivity {
+public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickListener {
 
     private StickerView mStickerView;
     private EventConvertView flEditBody;
     private ImageView mStickerViewBg;
+    private RelativeLayout mRLEditBody;
+    private boolean mEditPaneShowing = false;
+    private Fragment mTextEditFragment, mStickerEditFragment, mShapeEditFragment, mProgressEditFragment;
+
+    enum EditType {
+        EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +66,27 @@ public class DiyWidgetMakeActivity extends BaseActivity {
         mStickerView = findViewById(R.id.sticker_view);
         mStickerViewBg = findViewById(R.id.iv_select_bg);
         flEditBody = findViewById(R.id.fl_edit_body);
+        mRLEditBody = findViewById(R.id.rl_edit_body);
         initStatusBar();
         initStickerView();
         initStickerViewBg();
         intervelRefreshStickerView();
+        initAllEditFragments();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int resId = v.getId();
+        if (resId == R.id.tv_text) {
+            switchToOneFragment(EditType.EDIT_TEXT);
+        } else if (resId == R.id.tv_sticker) {
+            switchToOneFragment(EditType.EDIT_STICKER);
+        } else if (resId == R.id.tv_shape) {
+            switchToOneFragment(EditType.EDIT_SHAPE);
+        } else if (resId == R.id.tv_progress) {
+            switchToOneFragment(EditType.EDIT_PROGRESS);
+        }
     }
 
     /**
@@ -69,7 +104,7 @@ public class DiyWidgetMakeActivity extends BaseActivity {
         params.width = WidgetConfig.getWidgetWidth();
         params.height = WidgetConfig.getWidget4X4Height();
         mStickerView.setLayoutParams(params);
-        params = (FrameLayout.MarginLayoutParams)flEditBody.getLayoutParams();
+        params = (FrameLayout.MarginLayoutParams) flEditBody.getLayoutParams();
         params.width = WidgetConfig.getWidgetWidth();
         flEditBody.setLayoutParams(params);
         flEditBody.setEventConvertView(mStickerView);
@@ -83,25 +118,25 @@ public class DiyWidgetMakeActivity extends BaseActivity {
 
     private Bitmap clipWidgetSizeBitmap(Bitmap bitmap) {
         float w = bitmap.getWidth(); // 得到图片的宽，高
-        int cropWidth =(int)(w*WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
-        int x = (int)((w-cropWidth)*1.0f/2);
+        int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
+        int x = (int) ((w - cropWidth) * 1.0f / 2);
         int marginTop = ViewUtils.dp2px(60);
         cropWidth /= 2;
         int cropHeight = cropWidth;
         return Bitmap.createBitmap(bitmap, x, marginTop, cropWidth, cropHeight, null, false);
     }
 
-    private void initStickerViewBg(){
+    private void initStickerViewBg() {
         Bitmap bitmap = getSystemBitmap();
-        if(bitmap != null){
+        if (bitmap != null) {
             Bitmap resultBitmap = clipWidgetSizeBitmap(bitmap);
             mStickerViewBg.setImageBitmap(resultBitmap);
-        }else {
+        } else {
 
         }
     }
 
-    private void intervelRefreshStickerView(){
+    private void intervelRefreshStickerView() {
         addDisponsable(Observable.interval(30, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Long>() {
                     @Override
@@ -111,6 +146,97 @@ public class DiyWidgetMakeActivity extends BaseActivity {
                 }));
     }
 
+    private void initAllEditFragments() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mTextEditFragment = new WidgetTextEditFragment();
+        mStickerEditFragment = new WidgetStickerEditFragment();
+        mShapeEditFragment = new WidgetShapeEditFragment();
+        mProgressEditFragment = new WidgetProgressEditFragment();
+        transaction.add(R.id.rl_edit_body, mTextEditFragment);
+        transaction.add(R.id.rl_edit_body, mStickerEditFragment);
+        transaction.add(R.id.rl_edit_body, mShapeEditFragment);
+        transaction.add(R.id.rl_edit_body, mProgressEditFragment);
+        transaction.commitAllowingStateLoss();
+    }
+
+    private void setEditBodySlideInAnimation() {
+        final TranslateAnimation ctrlAnimation = new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1, TranslateAnimation.RELATIVE_TO_SELF, 0);
+        mRLEditBody.startAnimation(ctrlAnimation);
+    }
+
+    private void setEditBodySlideOutAnimation() {
+        final TranslateAnimation ctrlAnimation = new TranslateAnimation(TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 0, TranslateAnimation.RELATIVE_TO_SELF, 1);
+        ctrlAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mRLEditBody.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mRLEditBody.startAnimation(ctrlAnimation);
+    }
+
+    private void switchToOneFragment(EditType editType) {
+        if(!mEditPaneShowing) {
+            setEditBodySlideInAnimation();
+        }
+        mEditPaneShowing = true;
+        mRLEditBody.setVisibility(View.VISIBLE);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (editType) {
+            case EDIT_TEXT: {
+                transaction.hide(mStickerEditFragment);
+                transaction.hide(mShapeEditFragment);
+                transaction.hide(mProgressEditFragment);
+                transaction.show(mTextEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+            case EDIT_STICKER: {
+                transaction.hide(mTextEditFragment);
+                transaction.hide(mShapeEditFragment);
+                transaction.hide(mProgressEditFragment);
+                transaction.show(mStickerEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+            case EDIT_SHAPE: {
+                transaction.hide(mTextEditFragment);
+                transaction.hide(mStickerEditFragment);
+                transaction.hide(mProgressEditFragment);
+                transaction.show(mShapeEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+            case EDIT_PROGRESS: {
+                transaction.hide(mTextEditFragment);
+                transaction.hide(mStickerEditFragment);
+                transaction.hide(mShapeEditFragment);
+                transaction.show(mProgressEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+        }
+
+    }
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && mEditPaneShowing){
+            mEditPaneShowing = false;
+            setEditBodySlideOutAnimation();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

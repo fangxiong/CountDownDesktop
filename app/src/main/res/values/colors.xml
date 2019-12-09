@@ -122,8 +122,9 @@
     <color name="c_FF979797">#FF979797</color>
     <color name="c_FF454545">#FF454545</color>
     <color name="c_989DB4">#989DB4</color>
-    <color name="c_CECDD1">#FFCECDD1</color>
+    <color name="c_CECDD1">#CECDD1</color>
     <color name="c_989898">#989898</color>
     <color name="c_CDCDCD">#CDCDCD</color>
     <color name="c_F7FAFA">#F7FAFA</color>
+    <color name="c_BFBFBF">#BFBFBF</color>
 </resources>

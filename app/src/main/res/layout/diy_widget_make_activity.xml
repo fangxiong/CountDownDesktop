@@ -44,27 +44,30 @@
             android:layout_height="@dimen/margin_1"/>
 
         <TextView
+            android:id="@+id/tv_text"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_67"
+            android:layout_height="@dimen/margin_60"
             android:layout_centerVertical="true"
             android:drawableTop="@drawable/diy_widget_make_text_icon"
             android:gravity="center"
             android:text="文字"
+            android:onClick="onClick"
             android:layout_toStartOf="@id/tv_sticker"
-            android:layout_marginEnd="@dimen/margin_40"
+            android:layout_marginEnd="@dimen/margin_46"
             android:textColor="@color/c_7C7C7C"
             android:textSize="@dimen/textSize_14" />
 
         <TextView
             android:id="@+id/tv_sticker"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_67"
+            android:layout_height="@dimen/margin_60"
             android:layout_centerVertical="true"
             android:drawableTop="@drawable/diy_widget_make_sticker_icon"
             android:gravity="center"
             android:text="贴纸"
+            android:onClick="onClick"
             android:layout_toStartOf="@id/baseLine"
-            android:layout_marginEnd="@dimen/margin_20"
+            android:layout_marginEnd="@dimen/margin_23"
             android:textColor="@color/c_7C7C7C"
             android:textSize="@dimen/textSize_14" />
 
@@ -72,31 +75,34 @@
         <TextView
             android:id="@+id/tv_shape"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_67"
+            android:layout_height="@dimen/margin_60"
             android:layout_centerVertical="true"
             android:drawableTop="@drawable/diy_widget_make_shape_icon"
             android:gravity="center"
             android:text="形状"
+            android:onClick="onClick"
             android:layout_toEndOf="@id/baseLine"
-            android:layout_marginStart="@dimen/margin_20"
+            android:layout_marginStart="@dimen/margin_23"
             android:textColor="@color/c_7C7C7C"
             android:textSize="@dimen/textSize_14" />
 
         <TextView
             android:id="@+id/tv_progress"
             android:layout_toEndOf="@id/tv_shape"
-            android:layout_marginStart="@dimen/margin_40"
+            android:layout_marginStart="@dimen/margin_46"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_67"
+            android:layout_height="@dimen/margin_60"
             android:layout_centerVertical="true"
             android:drawableTop="@drawable/diy_widget_make_progress_bar_icon"
             android:gravity="center"
             android:text="进度条"
+            android:onClick="onClick"
             android:textColor="@color/c_7C7C7C"
             android:textSize="@dimen/textSize_14" />
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_edit_body"
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_200"
         android:layout_alignParentBottom="true"
