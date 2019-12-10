@@ -146,7 +146,7 @@ public class StickerView extends FrameLayout {
 
             borderPaint.setAntiAlias(true);
             borderPaint.setColor(a.getColor(R.styleable.StickerView_borderColor, Color.parseColor("#56d0ff")));
-            borderPaint.setStrokeWidth(4);
+            borderPaint.setStrokeWidth(2.5f);
 //            borderPaint.setAlpha(a.getInteger(R.styleable.StickerView_borderAlpha, 128));
 
             configDefaultIcons();

@@ -17,9 +17,9 @@
             android:layout_width="330dp"
             android:layout_height="165dp"
             android:layout_centerHorizontal="true"
-            app:borderColor="@color/white"
-            app:showBorder="false"
-            app:showIcons="false">
+            app:borderColor="@color/black"
+            app:showBorder="true"
+            app:showIcons="true">
 
             <ImageView
                 android:id="@+id/iv_select_bg"

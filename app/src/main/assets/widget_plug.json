@@ -1,0 +1,141 @@
+[
+  {
+    "id": 0,
+    "tag": "[T00]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "id": 1,
+    "tag": "[T01]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "id": 2,
+    "tag": "[T02]",
+    "category": "时间日期"
+  },
+  {
+    "isHead": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 3,
+    "tag": "[W00]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 4,
+    "tag": "[W01]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 5,
+    "tag": "[W02]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 6,
+    "tag": "[W03]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "id": 7,
+    "tag": "[W04]",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "isHead": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 8,
+    "tag": "[D00]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 9,
+    "tag": "[D01]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 10,
+    "tag": "[D02]",
+    "singleLine": false,
+    "doubleLine": true,
+    "category": "时间日期"
+  },
+  {
+    "id": 11,
+    "tag": "[D03]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "id": 12,
+    "tag": "[D04]",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "时间日期"
+  },
+  {
+    "id": 13,
+    "tag": "[S00]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "天气信息"
+  },
+  {
+    "id": 14,
+    "tag": "[S01]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "天气信息"
+  },
+  {
+    "id": 15,
+    "tag": "[S02]",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "天气信息"
+  },
+  {
+    "id": 16,
+    "tag": "还有[C00-1600486050000]天",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "倒计时"
+  },
+  {
+    "id": 17,
+    "tag": "在一起[C01-1537327650000]天",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "倒计时"
+  },
+  {
+    "id": 18,
+    "tag": "⚡[B00]%",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "电量"
+  }
+]

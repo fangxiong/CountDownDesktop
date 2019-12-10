@@ -1,5 +1,7 @@
 package com.fax.cddt.bean;
 
+
+
 import com.fax.cddt.db.DIYConverters;
 import com.fax.cddt.db.FontConverters;
 
@@ -7,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;

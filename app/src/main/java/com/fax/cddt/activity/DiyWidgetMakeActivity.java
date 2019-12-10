@@ -12,9 +12,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fax.cddt.R;
+import com.fax.cddt.callback.WidgetEditTextCallback;
 import com.fax.cddt.fragment.WidgetProgressEditFragment;
 import com.fax.cddt.fragment.WidgetShapeEditFragment;
 import com.fax.cddt.fragment.WidgetStickerEditFragment;
@@ -23,13 +25,20 @@ import com.fax.cddt.manager.widget.WidgetConfig;
 import com.fax.cddt.utils.BitmapUtils;
 import com.fax.cddt.utils.ViewUtils;
 import com.fax.cddt.view.EventConvertView;
+import com.fax.cddt.view.sticker.BitmapStickerIcon;
+import com.fax.cddt.view.sticker.DeleteIconEvent;
+import com.fax.cddt.view.sticker.Sticker;
 import com.fax.cddt.view.sticker.StickerView;
+import com.fax.cddt.view.sticker.TextSticker;
+import com.fax.cddt.view.sticker.ZoomIconEvent;
 import com.gyf.barlibrary.ImmersionBar;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
@@ -46,7 +55,11 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private ImageView mStickerViewBg;
     private RelativeLayout mRLEditBody;
     private boolean mEditPaneShowing = false;
-    private Fragment mTextEditFragment, mStickerEditFragment, mShapeEditFragment, mProgressEditFragment;
+    private WidgetTextEditFragment mTextEditFragment;
+    private WidgetStickerEditFragment mStickerEditFragment;
+    private WidgetShapeEditFragment mShapeEditFragment;
+    private WidgetProgressEditFragment mProgressEditFragment;
+    private Sticker mHandlingSticker;
 
     enum EditType {
         EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
@@ -79,6 +92,11 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         int resId = v.getId();
         if (resId == R.id.tv_text) {
+            TextSticker textSticker = new TextSticker(System.currentTimeMillis());
+            textSticker.setTextColor("#FFFFFF");
+            textSticker.setFontPath("fonts/ButterTangXin-Italic.ttf");
+            mTextEditFragment.setWidgetEditTextSticker(textSticker);
+            mStickerView.addSticker(textSticker, Sticker.Position.TOP);
             switchToOneFragment(EditType.EDIT_TEXT);
         } else if (resId == R.id.tv_sticker) {
             switchToOneFragment(EditType.EDIT_STICKER);
@@ -108,6 +126,82 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         params.width = WidgetConfig.getWidgetWidth();
         flEditBody.setLayoutParams(params);
         flEditBody.setEventConvertView(mStickerView);
+        BitmapStickerIcon deleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_close_white_18dp),
+                BitmapStickerIcon.LEFT_TOP);
+        deleteIcon.setIconEvent(new DeleteIconEvent());
+
+        BitmapStickerIcon zoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_scale_white_18dp),
+                BitmapStickerIcon.RIGHT_BOTTOM);
+        zoomIcon.setIconEvent(new ZoomIconEvent());
+        mStickerView.setIcons(Arrays.asList(deleteIcon, zoomIcon));
+        mStickerView.setConstrained(true);
+        mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
+            @Override
+            public void onStickerAdded(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onStickerClicked(@NonNull Sticker sticker) {
+                if(sticker instanceof TextSticker){
+                    switchToOneFragment(EditType.EDIT_TEXT);
+                }
+            }
+
+            @Override
+            public void onStickerDeleted(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onStickerDragFinished(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onStickerTouchedDown(@NonNull Sticker sticker) {
+                mHandlingSticker = mStickerView.getCurrentSticker();
+                switchToOneFragment(EditType.EDIT_TEXT);
+            }
+
+            @Override
+            public void onStickerZoomFinished(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onStickerFlipped(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onStickerDoubleTapped(@NonNull Sticker sticker) {
+                if(sticker instanceof TextSticker){
+                     mTextEditFragment.showInputDialog(100);
+                }
+            }
+
+            @Override
+            public void onStickerNoTouched() {
+                  setEditBodySlideOutAnimation();
+                mHandlingSticker = null;
+            }
+
+            @Override
+            public void onClickedBindAppIcon(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onCopySticker(@NonNull Sticker sticker) {
+
+            }
+
+            @Override
+            public void onUnlock() {
+
+            }
+        });
     }
 
 
@@ -148,7 +242,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
     private void initAllEditFragments() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mTextEditFragment = new WidgetTextEditFragment();
+        mTextEditFragment = new WidgetTextEditFragment(this);
         mStickerEditFragment = new WidgetStickerEditFragment();
         mShapeEditFragment = new WidgetShapeEditFragment();
         mProgressEditFragment = new WidgetProgressEditFragment();
@@ -157,6 +251,16 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         transaction.add(R.id.rl_edit_body, mShapeEditFragment);
         transaction.add(R.id.rl_edit_body, mProgressEditFragment);
         transaction.commitAllowingStateLoss();
+        ((WidgetTextEditFragment)mTextEditFragment).setWidgetEditTextCallback(new WidgetEditTextCallback() {
+            @Override
+            public void onAddSticker() {
+                TextSticker textSticker = new TextSticker(System.currentTimeMillis());
+                textSticker.setTextColor("#FFFFFF");
+                textSticker.setFontPath("fonts/ButterTangXin-Italic.ttf");
+                mTextEditFragment.setWidgetEditTextSticker(textSticker);
+                mStickerView.addSticker(textSticker, Sticker.Position.TOP);
+            }
+        });
     }
 
     private void setEditBodySlideInAnimation() {

@@ -11,9 +11,9 @@
 
         <ImageView
             android:id="@+id/iv_local"
-            android:layout_marginStart="@dimen/margin_15"
-            android:layout_width="@dimen/margin_40"
-            android:layout_height="@dimen/margin_30"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_width="@dimen/margin_50"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
             android:background="@drawable/widget_text_edit_tab_selected_bg"
@@ -23,9 +23,9 @@
         <ImageView
             android:id="@+id/iv_add"
             android:layout_toEndOf="@id/iv_local"
-            android:layout_marginStart="@dimen/margin_15"
-            android:layout_width="@dimen/margin_40"
-            android:layout_height="@dimen/margin_30"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_width="@dimen/margin_50"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
             android:background="@drawable/widget_text_edit_tab_selected_bg"
@@ -33,13 +33,13 @@
 
         <ImageView
             android:id="@+id/iv_consume"
-            android:layout_width="@dimen/margin_40"
-            android:layout_height="@dimen/margin_30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/margin_15"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/widget_text_edit_consume_btn" />
+            android:src="@drawable/abc_consume" />
 
     </RelativeLayout>
 

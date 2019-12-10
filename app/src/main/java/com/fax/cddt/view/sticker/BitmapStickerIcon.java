@@ -2,6 +2,7 @@ package com.fax.cddt.view.sticker;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
@@ -92,19 +93,14 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
     @Override
     public DrawableSticker setDrawable(@NonNull Drawable drawable) {
         DrawableSticker drawableSticker = super.setDrawable(drawable);
-//        DebugLog.i("test_icon_sticker:", "width:" + getWidth() + "height:" + getHeight());
-//        if (getWidth() > 60) {
-//            float ratio = 60 * 1.0f / getWidth();
-//            PointF pointF = new PointF();
-//            getCenterPoint(pointF);
-//            getMatrix().reset();
-//            getMatrix().postTranslate(x - pointF.x , y - pointF.y);
-//            getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
-//            DebugLog.i("test_icon_sticker:", "ratio:" + ratio);
-//            DebugLog.i("test_icon_sticker:", "centerX:" + pointF.x + " centerY:" + pointF.y);
-//            DebugLog.i("test_icon_sticker:", "x:" + x + " y:" + y);
-//            DebugLog.i("test_icon_sticker:", "real x:" + getMappedCenterPoint().x + " real y:" + getMappedCenterPoint().y);
-//        }
+        if (getWidth() > 60) {
+            float ratio = 60 * 1.0f / getWidth();
+            PointF pointF = new PointF();
+            getCenterPoint(pointF);
+            getMatrix().reset();
+            getMatrix().postTranslate(x - pointF.x , y - pointF.y);
+            getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
+        }
         return drawableSticker;
     }
 

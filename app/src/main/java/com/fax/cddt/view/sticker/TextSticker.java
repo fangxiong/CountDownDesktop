@@ -14,6 +14,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fax.cddt.AppContext;
 import com.fax.cddt.R;
@@ -51,7 +52,7 @@ public class TextSticker extends Sticker {
     private String tempText;
     private int textWidth, textHeight;
     private String color = "#000000";
-    public static final int DEFAULT_TEXT_SIZE = 24;
+    public static final int DEFAULT_TEXT_SIZE = 18;
     private int scaleParam = DEFAULT_TEXT_SIZE;
     private final int internalMargin = 20;
     private int textSize = DEFAULT_TEXT_SIZE;
@@ -94,7 +95,7 @@ public class TextSticker extends Sticker {
         }
 
         textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-        text = "点击输入文字";
+        text = "双击修改文字";
         minTextSizePixels = ViewUtils.dp2px(6);
         maxTextSizePixels = ViewUtils.dp2px(50);
         textPaint.setTextSize(ViewUtils.dp2px(textSize));
@@ -103,8 +104,9 @@ public class TextSticker extends Sticker {
 
     public void resizeText() {
         if (!TextUtils.isEmpty(mFontPath)) {
-            Typeface typeface = FontCache.get(FileUtil.getFileName(mFontPath), new File(mFontPath));
+            Typeface typeface = FontCache.get(mFontPath,context);
             if (typeface != null) {
+                Log.i("test_font:",mFontPath);
                 textPaint.setTypeface(typeface);
             }
         } else {
@@ -119,9 +121,11 @@ public class TextSticker extends Sticker {
     }
 
     private void initRect() {
+        Log.i("test_font:",mFontPath);
         if (!TextUtils.isEmpty(mFontPath)) {
-            Typeface typeface = FontCache.get(FileUtil.getFileName(mFontPath), new File(mFontPath));
+            Typeface typeface = FontCache.get(mFontPath,context);
             if (typeface != null) {
+                Log.i("test_font:","设置字体");
                 textPaint.setTypeface(typeface);
             }
         } else {

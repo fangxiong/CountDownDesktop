@@ -3,6 +3,7 @@ package com.fax.cddt.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -22,6 +23,7 @@ public class FontCache {
                 }
             }
             catch (Exception e) {
+                Log.i("test_font_create:",e.getMessage());
                 return null;
             }
             fontCache.put(name, tf);
