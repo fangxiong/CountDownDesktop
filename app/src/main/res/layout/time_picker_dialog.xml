@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_44"
+            android:background="@color/c_F7F7F7">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/c_E5E5E5" />
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingStart="@dimen/margin_15"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingEnd="@dimen/margin_15"
+                android:paddingBottom="@dimen/margin_10"
+                android:src="@drawable/abc_cancel_a0a0a0" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/set_target_date"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_16" />
+
+            <ImageView
+                android:id="@+id/iv_consume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:paddingStart="@dimen/margin_15"
+                android:paddingTop="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"
+                android:src="@drawable/abc_consume_a0a0a0" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/c_E5E5E5" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/timepicker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_50"
+            android:layout_marginEnd="@dimen/margin_50"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+
+            <com.fax.cddt.view.timepickdialog.lib.WheelView
+                android:id="@+id/year"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <com.fax.cddt.view.timepickdialog.lib.WheelView
+                android:id="@+id/month"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1" />
+
+            <com.fax.cddt.view.timepickdialog.lib.WheelView
+                android:id="@+id/day"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1" />
+
+            <com.fax.cddt.view.timepickdialog.lib.WheelView
+                android:id="@+id/hour"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1" />
+
+            <com.fax.cddt.view.timepickdialog.lib.WheelView
+                android:id="@+id/min"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</RelativeLayout>

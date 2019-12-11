@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.text.TextUtils;
 
 import com.fax.cddt.utils.ViewUtils;
@@ -38,6 +39,8 @@ public class DrawableSticker extends Sticker {
 
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
+        VectorDrawable vectorDrawable = new VectorDrawable();
+        vectorDrawable.
         this.drawable = drawable;
         realBounds = new Rect(0, 0, getWidth(), getHeight());
         if (getWidth() > defaultWidth) {

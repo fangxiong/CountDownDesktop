@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:textStyle="bold"
-        android:background="@drawable/view_click_bg_selector"
         android:layout_height="@dimen/margin_40"
         android:textColor="@color/c_A0A0A0"
         android:textSize="@dimen/textSize_12" />

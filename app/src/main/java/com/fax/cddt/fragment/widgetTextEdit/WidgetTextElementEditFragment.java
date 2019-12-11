@@ -41,6 +41,7 @@ public class WidgetTextElementEditFragment extends Fragment {
     private Context mContext;
     private RecyclerView mPlugContentRv,mPlugListRv;
     private String[] titles = new String[]{"倒计时", "时间日期","天气信息","电量"};
+    private int mCurrentSelectedPos = 0;
     private WidgetEditTextElementSelectedCallback mWidgetEditTextElementSelectedCallback;
 
 
@@ -95,12 +96,21 @@ public class WidgetTextElementEditFragment extends Fragment {
             protected void convert(ViewHolder holder, String s, int position) {
                 TextView mTv = holder.getView(R.id.tv_element);
                 mTv.setText(s);
+                if(position == mCurrentSelectedPos){
+                    mTv.setBackgroundResource(R.color.c_BDBDBA);
+                }else {
+                    mTv.setBackgroundResource(R.color.transparent);
+                }
             }
         };
         mListAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                TextView mTv = view.findViewById(R.id.tv_element);
+                mTv.setBackgroundResource(R.color.c_BDBDBA);
                 dataSetChanged(position);
+                mListAdapter.notifyItemChanged(mCurrentSelectedPos);
+                mCurrentSelectedPos = position;
             }
 
             @Override
@@ -109,6 +119,7 @@ public class WidgetTextElementEditFragment extends Fragment {
             }
         });
         mPlugListRv.setAdapter(mListAdapter);
+        dataSetChanged(0);
 
     }
     private void dataSetChanged(int pos) {

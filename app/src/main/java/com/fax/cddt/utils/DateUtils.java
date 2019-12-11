@@ -1,5 +1,7 @@
 package com.fax.cddt.utils;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ public class DateUtils {
      */
     public static String getSeparatedTimeForDays(long target) throws ParseException {
         Date targetDate = new Date(target);
+        Log.i("test_diff_time:","target time:"+target+" current time:"+TimeUtils.currentTimeMillis());
         Date nowDate = new Date(TimeUtils.currentTimeMillis());
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long separatTime = df.parse(df.format(targetDate)).getTime() - df.parse(df.format(nowDate)).getTime();

@@ -119,14 +119,14 @@
   },
   {
     "id": 16,
-    "tag": "还有[C00-1600486050000]天",
+    "tag": "[C00-1600486050000]天",
     "singleLine": true,
     "doubleLine": false,
     "category": "倒计时"
   },
   {
     "id": 17,
-    "tag": "在一起[C01-1537327650000]天",
+    "tag": "[C01-1537327650000-]",
     "singleLine": false,
     "doubleLine": false,
     "category": "倒计时"

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <GridView
+            android:id="@+id/gridView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_200"
+            android:cacheColorHint="@android:color/transparent"
+            android:clickable="false"
+            android:columnWidth="@dimen/margin_58"
+            android:horizontalSpacing="4dp"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="auto_fit"
+            android:stretchMode="spacingWidthUniform"
+            android:verticalSpacing="8dp" />
+
+        <View
+            android:id="@+id/shades_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="?android:attr/dividerVertical" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/shades_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:orientation="horizontal">
+
+                <!-- views added dynamically -->
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/transparency_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:text="@string/cpv_transparency" />
+
+        <LinearLayout
+            android:id="@+id/transparency_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <com.fax.cddt.view.bubbleseekbar.BubbleSeekBar
+                android:id="@+id/transparency_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="4dp"
+                android:layout_weight="85"
+                app:bsb_hide_bubble="true"
+                app:bsb_max="255"
+                app:bsb_min="0"
+                app:bsb_second_track_color="@color/c_222222"
+                app:bsb_section_text_interval="10"
+                app:bsb_track_color="@color/c_0D000000"
+                app:bsb_track_size="@dimen/margin_3"/>
+
+            <TextView
+                android:id="@+id/transparency_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="15"
+                android:textStyle="bold"
+                android:typeface="monospace"
+                tools:text="100%" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

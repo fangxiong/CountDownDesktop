@@ -41,12 +41,13 @@ public class StickerView extends FrameLayout {
 
     private boolean showIcons;
     private boolean showBorder;
-    private boolean showGrid =false;
+    private boolean showGrid = false;
     private boolean mLockScreenMode;
     private boolean supportLineZoom;
 
     private float initalLineLength;
     private float initalProgressLength;
+    private final float CENTER_GAP = 3F;
     private final boolean bringToFrontCurrentSticker;
     private boolean showNumber = false;
     private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dp2px(10);
@@ -209,26 +210,54 @@ public class StickerView extends FrameLayout {
         linePaint.setStrokeWidth(ViewUtils.dp2px(0.3f));
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
-        linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
         canvas.save();
         int height = WidgetConfig.getWidget4X4Height();
+        //绘制虚线
         canvas.drawLine(0, height / 4f, height * 1.0f, height / 4f, linePaint);
-        canvas.drawLine(0, height * 2 / 4f, height * 1.0f, height * 2 / 4f, linePaint);
         canvas.drawLine(0, height * 3 / 4f, height * 1.0f, height * 3 / 4f, linePaint);
-
         canvas.drawLine(height / 4f, 0, height / 4f, height * 1.0f, linePaint);
-        canvas.drawLine(height * 2 / 4f, 0, height * 2 / 4f, height * 1.0f, linePaint);
         canvas.drawLine(height * 3 / 4f, 0, height * 3 / 4f, height * 1.0f, linePaint);
+        //如果sticker在中心就绘制实线
+        if (stickerCenterInViewCenter(0)) {
+            Log.i("test_draw_line:","绘制竖直实线");
+            canvas.drawLine(height * 2 / 4f, 0, height * 2 / 4f, height * 1.0f, linePaint);
+        } else {
+            linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
+            canvas.drawLine(height * 2 / 4f, 0, height * 2 / 4f, height * 1.0f, linePaint);
+        }
 
-        RectF rectF = new RectF();
-        rectF.left = 1f;
-        rectF.top = 1f;
-        rectF.right = height - 1f;
-        rectF.bottom = height - 1f;
-        float radius = ViewUtils.dp2px(10);
-        canvas.drawRoundRect(rectF, radius, radius, linePaint);
+        if (stickerCenterInViewCenter(1)) {
+            linePaint.setPathEffect(null);
+            Log.i("test_draw_line:","绘制水平实线");
+            canvas.drawLine(0, height * 2 / 4f, height * 1.0f, height * 2 / 4f, linePaint);
+        } else {
+            linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
+            canvas.drawLine(0, height * 2 / 4f, height * 1.0f, height * 2 / 4f, linePaint);
+        }
         canvas.restore();
 
+    }
+
+    /**
+     * 判断sticker的中心点是否在view的中心
+     *
+     * @param type 0表示x坐标  1表示y坐标
+     * @return
+     */
+    private boolean stickerCenterInViewCenter(int type) {
+        for (int i = 0; i < stickers.size(); i++) {
+            Sticker sticker = stickers.get(i);
+            PointF pointF = sticker.getMappedCenterPoint();
+            float y = pointF.y;
+            float x = pointF.x;
+            float target = type == 0 ? x : y;
+            Log.i("test_x:", "sticker x:" + x + " view x:" + getWidth() / 2);
+            Log.i("test_x:", "sticker y:" + y + " view y:" + getWidth() / 2);
+            if (getWidth() / 2 - CENTER_GAP < target && target < getWidth() / 2 + CENTER_GAP) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void drawStickers(Canvas canvas) {
@@ -427,8 +456,8 @@ public class StickerView extends FrameLayout {
         downX = event.getX();
         downY = event.getY();
 
-//        midPoint = calculateMidPoint();
-//        oldDistance = calculateDistance(midPoint.x, midPoint.y, downX, downY);
+        midPoint = calculateMidPoint();
+        oldDistance = calculateDistance(midPoint.x, midPoint.y, downX, downY);
         oldRotation = calculateRotation(midPoint.x, midPoint.y, downX, downY);
 
         currentIcon = findCurrentIconTouched();
@@ -601,8 +630,10 @@ public class StickerView extends FrameLayout {
 
     public void zoomAndRotateSticker(@Nullable Sticker sticker, @NonNull MotionEvent event) {
         if (sticker != null) {
+//            midPoint = calculateMidPoint();
             float newDistance = calculateDistance(midPoint.x, midPoint.y, event.getX(), event.getY());
             float newRotation = calculateRotation(midPoint.x, midPoint.y, event.getX(), event.getY());
+            Log.i("test_x:",midPoint.x+""+" event.x:"+event.getX()+" oldDistance:"+oldDistance);
 
             moveMatrix.set(downMatrix);
             moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
@@ -1043,15 +1074,18 @@ public class StickerView extends FrameLayout {
         for (int i = 0; i < icons.size(); i++) {
             BitmapStickerIcon bitmapStickerIcon = icons.get(i);
             if (bitmapStickerIcon.getPosition() == BitmapStickerIcon.LEFT_TOP) {
-                bitmapStickerIcon.setIconEvent(new BindIconEvent());
-            } else if (bitmapStickerIcon.getPosition() == BitmapStickerIcon.RIGHT_TOP) {
                 bitmapStickerIcon.setIconEvent(new DeleteIconEvent());
+            } else if (bitmapStickerIcon.getPosition() == BitmapStickerIcon.RIGHT_TOP) {
+//                bitmapStickerIcon.setIconEvent(new DeleteIconEvent());
             } else if (bitmapStickerIcon.getPosition() == BitmapStickerIcon.LEFT_BOTTOM) {
                 if ("rotateIcon".equals(bitmapStickerIcon.getTag())) {
                     bitmapStickerIcon.setIconEvent(new RotateIconEvent());
                 } else {
                     bitmapStickerIcon.setIconEvent(new CopyIconEvent());
                 }
+            } else if (bitmapStickerIcon.getPosition() == BitmapStickerIcon.RIGHT_BOTTOM) {
+                bitmapStickerIcon.setIconEvent(new ZoomIconEvent());
+
             }
         }
         invalidate();

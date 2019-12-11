@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">CountDownDesktop</string>
+
+
+    <string name="cpv_default_title">挑选颜色</string>
+    <string name="cpv_presets">内置颜色</string>
+    <string name="cpv_custom">自定义颜色</string>
+    <string name="cpv_select">选择</string>
+    <string name="cpv_transparency">透明度</string>
+
+    <string name="pickerview_cancel">取消</string>
+    <string name="pickerview_submit">确定</string>
+    <string name="pickerview_year">年</string>
+    <string name="pickerview_month">月</string>
+    <string name="pickerview_day">日</string>
+    <string name="pickerview_hours">时</string>
+    <string name="pickerview_minutes">分</string>
+
+    <string name="set_target_date">设置目标日期</string>
 </resources>

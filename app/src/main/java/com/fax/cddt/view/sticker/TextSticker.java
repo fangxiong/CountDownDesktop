@@ -153,7 +153,8 @@ public class TextSticker extends Sticker {
 //            drawable.setBounds(realBounds);
 //            drawable.draw(canvas);
 //        }
-        String textStr = CustomPlugUtil.getPlugTextFromSigns(getText());
+        String textStr = CustomPlugUtil.getPlugTextFromSigns(text);
+        Log.i("test_text_draw:","origin text:"+text+" result text:"+textStr);
         Paint.FontMetricsInt fm = textPaint.getFontMetricsInt();
         if (isShimmerText) {
             initShimmer(textPaint, textStr);
@@ -328,7 +329,7 @@ public class TextSticker extends Sticker {
     @NonNull
     public TextSticker setText(@Nullable String text) {
         if (TextUtils.isEmpty(text)) {
-            text = "点击输入文字";
+            text = "双击修改文字";
         }
         this.text = text;
         return this;
@@ -336,6 +337,9 @@ public class TextSticker extends Sticker {
 
     @Nullable
     public String getText() {
+        if("双击修改文字".equals(text)){
+            return "";
+        }
         return text;
     }
 

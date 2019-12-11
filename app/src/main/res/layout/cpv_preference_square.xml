@@ -1,0 +1,8 @@
+<com.fax.cddt.view.colorPicker.ColorPanelView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/cpv_preference_preview_color_panel"
+    android:layout_width="@dimen/margin_28"
+    android:layout_height="@dimen/margin_28"
+    app:cpv_colorShape="square"
+    />

@@ -1,10 +1,13 @@
 package com.fax.cddt.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +17,22 @@ import android.widget.ImageView;
 import com.fax.cddt.R;
 import com.fax.cddt.callback.WidgetEditTextCallback;
 import com.fax.cddt.callback.WidgetEditTextElementSelectedCallback;
+import com.fax.cddt.dialog.TimePickerDialog;
 import com.fax.cddt.dialog.WidgetTextInputDialog;
 import com.fax.cddt.fragment.widgetTextEdit.WidgetTextColorEditFragment;
 import com.fax.cddt.fragment.widgetTextEdit.WidgetTextElementEditFragment;
 import com.fax.cddt.fragment.widgetTextEdit.WidgetTextFontEditFragment;
+import com.fax.cddt.utils.CommonUtils;
 import com.fax.cddt.utils.CustomPlugUtil;
+import com.fax.cddt.utils.ViewUtils;
+import com.fax.cddt.view.colorPicker.ColorPickerDialog;
+import com.fax.cddt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.cddt.view.sticker.TextSticker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -132,20 +141,47 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         }else if(resId == R.id.iv_font){
             refreshSelectedViewStatus(mFont);
             switchToOneFragment(EditTextType.FONT);
+
         }else if(resId == R.id.iv_color){
-            refreshSelectedViewStatus(mColor);
-            switchToOneFragment(EditTextType.COLOR);
+//            refreshSelectedViewStatus(mColor);
+            showColorPickDialog(mTextSticker.getTextColor());
         }
     }
 
-    private void refreshSelectedViewStatus(View view){
-        for(View views:mViews){
-            if(view == views ){
-                view.setSelected(true);
-            }else {
-                view.setSelected(false);
+    private void showColorPickDialog(String color){
+        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
+                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+                .setAllowPresets(true)
+                .setDialogId(0)
+                .setColor(Color.parseColor(color))
+                .setShowAlphaSlider(true)
+                .setShowAlphaSlider(true)
+                .create();
+        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
+            @Override
+            public void onColorSelected(int dialogId, int color) {
+                String hexCode = "";
+                hexCode = CommonUtils.toHexEncoding(color);
+                if (mTextSticker != null) {
+                    mTextSticker.setTextColor(hexCode);
+                }
             }
+
+            @Override
+            public void onDialogDismissed(int dialogId) {
+
+            }
+        });
+        dialog.show(getChildFragmentManager(),"color_dialog");
+    }
+
+    private void refreshSelectedViewStatus(View view){
+
+        for(View views:mViews){
+            views.setSelected(false);
+                Log.i("test_select:","unselected");
         }
+        view.setSelected(true);
     }
 
 
@@ -153,10 +189,10 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         mElementEditFragment = new WidgetTextElementEditFragment(mContext);
         mFontEditFragment = new WidgetTextFontEditFragment();
-        mColorEditFragment = new WidgetTextColorEditFragment();
+//        mColorEditFragment = new WidgetTextColorEditFragment();
         transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
         transaction.add(R.id.fl_text_edit_body, mFontEditFragment);
-        transaction.add(R.id.fl_text_edit_body, mColorEditFragment);
+//        transaction.add(R.id.fl_text_edit_body, mColorEditFragment);
         mElementEditFragment.setWidgetEditTextElementSelectedCallback(new WidgetEditTextElementSelectedCallback() {
             @Override
             public void selectTextElement(String text, boolean isCountdownPlug) {
@@ -174,18 +210,25 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     private void showTimePickerDialog(final String text) {
         long time = CustomPlugUtil.getTimerTargetTime(text);
-//
-//        CountdownTimePickerPop pop = new CountdownTimePickerPop(getPanelHeight(),
-//                time,
-//                t -> {
-//                    String result = CustomPlugUtil.changeTimerConfig(text, t);
-//                    result = CustomPlugUtil.posAndNegSwitchTimer(result, t);
-//                    mEditText.setText("");
-//                    addTextToEditText(inputText + result);
-//                },
-//                () -> {
-//                }, CountdownTimePickerPop.UseLocationType.DIYCOUNTDOWN);
-//        pop.show(getChildFragmentManager(), "CountdownTimePickerPop");
+        TimePickerDialog timePickerDialog = new TimePickerDialog(ViewUtils.dp2px(156),
+                time, new TimePickerDialog.IClickConsumeCallback() {
+            @Override
+            public void clickConsume(long time) {
+                String result = CustomPlugUtil.changeTimerConfig(text, time);
+                result = CustomPlugUtil.posAndNegSwitchTimer(result, time);
+                if(mTextSticker != null){
+                    Log.i("test_time:",result+"");
+                    mTextSticker.setText(result);
+                }
+            }
+        }, new TimePickerDialog.IClickCancelCallback() {
+            @Override
+            public void onCancel() {
+
+            }
+        }
+        );
+        timePickerDialog.show(getChildFragmentManager(), "timePickerDialog");
 
     }
 
@@ -194,25 +237,25 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         switch (editTextType) {
             case ELEMENT: {
                 transaction.hide(mFontEditFragment);
-                transaction.hide(mColorEditFragment);
+//                transaction.hide(mColorEditFragment);
                 transaction.show(mElementEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
             case FONT: {
                 transaction.hide(mElementEditFragment);
-                transaction.hide(mColorEditFragment);
+//                transaction.hide(mColorEditFragment);
                 transaction.show(mFontEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
-            case COLOR: {
-                transaction.hide(mElementEditFragment);
-                transaction.hide(mFontEditFragment);
-                transaction.show(mColorEditFragment);
-                transaction.commitAllowingStateLoss();
-                break;
-            }
+//            case COLOR: {
+//                transaction.hide(mElementEditFragment);
+//                transaction.hide(mFontEditFragment);
+//                transaction.show(mColorEditFragment);
+//                transaction.commitAllowingStateLoss();
+//                break;
+//            }
 
         }
 

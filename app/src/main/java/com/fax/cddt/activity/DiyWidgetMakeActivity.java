@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LongSparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -61,6 +62,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private WidgetShapeEditFragment mShapeEditFragment;
     private WidgetProgressEditFragment mProgressEditFragment;
     private Sticker mHandlingSticker;
+    private LongSparseArray<Sticker> mStickerList;
 
     enum EditType {
         EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
@@ -86,9 +88,13 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         initStickerViewBg();
         intervelRefreshStickerView();
         initAllEditFragments();
+        initData();
 
     }
 
+    private void initData(){
+        mStickerList = new LongSparseArray<>();
+    }
     @Override
     public void onClick(View v) {
         int resId = v.getId();
@@ -139,11 +145,12 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
             @Override
             public void onStickerAdded(@NonNull Sticker sticker) {
-
+                mStickerList.put(sticker.getId(), sticker);
             }
 
             @Override
             public void onStickerClicked(@NonNull Sticker sticker) {
+                Log.i("test_click:","click");
                 if(sticker instanceof TextSticker){
                     switchToOneFragment(EditType.EDIT_TEXT);
                 }
@@ -151,16 +158,17 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onStickerDeleted(@NonNull Sticker sticker) {
-
+                mStickerList.delete(sticker.getId());
             }
 
             @Override
             public void onStickerDragFinished(@NonNull Sticker sticker) {
-
+                mHandlingSticker = sticker;
             }
 
             @Override
             public void onStickerTouchedDown(@NonNull Sticker sticker) {
+                Log.i("test_click:","touch");
                 mHandlingSticker = mStickerView.getCurrentSticker();
                 switchToOneFragment(EditType.EDIT_TEXT);
             }
@@ -184,7 +192,10 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onStickerNoTouched() {
-                  setEditBodySlideOutAnimation();
+                if(mEditPaneShowing) {
+                    setEditBodySlideOutAnimation();
+                    mEditPaneShowing = false;
+                }
                 mHandlingSticker = null;
             }
 

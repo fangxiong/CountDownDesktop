@@ -23,4 +23,17 @@
         <item name="android:windowBackground">@drawable/main_ui_splash_bg</item>
     </style>
 
+    <style name="cpv_ColorPickerViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">315dp</item>
+    </style>
+
+    <style name="ColorPickDialogTheme"
+        parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <!--修改AlertDialog按钮的颜色-->
+        <item name="colorAccent">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorPrimary">#000000</item>
+    </style>
+
 </resources>
