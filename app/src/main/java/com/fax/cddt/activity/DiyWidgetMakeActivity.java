@@ -4,6 +4,7 @@ import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -215,7 +216,6 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
         int x = (int) ((w - cropWidth) * 1.0f / 2);
         int marginTop = ViewUtils.dp2px(60);
-        cropWidth /= 2;
         int cropHeight = cropWidth;
         return Bitmap.createBitmap(bitmap, x, marginTop, cropWidth, cropHeight, null, false);
     }

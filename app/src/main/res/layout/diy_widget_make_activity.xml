@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/transparent"
-                android:scaleType="centerCrop" />
+                android:scaleType="center" />
 
         </com.fax.cddt.view.sticker.StickerView>
     </com.fax.cddt.view.EventConvertView>
