@@ -67,41 +67,13 @@ public class SelectionWidgetFragment extends Fragment {
     }
 
     private void reqHomeWidgetData(){
-        OkHttpUtils.get().url("https://www.easy-mock.com/mock/5dece714fb3611081cf944ca/fax/fax#!method=get").build().execute(new StringCallback() {
+        OkHttpUtils.get().url("http://q2cjxj02l.bkt.clouddn.com/test1.txt").build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 if(mProgressBar != null){
                     mProgressBar.setVisibility(View.GONE);
                 }
                 e.printStackTrace();
-               String  response = "{\n" +
-                        "  \"list\": [\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaoERA.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIvx1.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIbaF.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIVBT.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIP9s.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/Qa5vB8.jpg\"\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}";
-                if(response != null){
-                    TestData testData = GsonUtils.parseJsonWithGson(response,TestData.class);
-                    mData.clear();
-                    mData.addAll(testData.getList());
-                    mAdapter.notifyDataSetChanged();
-                }
             }
 
             @Override
@@ -110,31 +82,11 @@ public class SelectionWidgetFragment extends Fragment {
                     mProgressBar.setVisibility(View.GONE);
                 }
                 Log.i("test_result;",response);
-                response = "{\n" +
-                        "  \"list\": [\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaoERA.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIvx1.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIbaF.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIVBT.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/QaIP9s.jpg\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"url\": \"https://s2.ax1x.com/2019/12/08/Qa5vB8.jpg\"\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}";
+
                 if(response != null){
                     TestData testData = GsonUtils.parseJsonWithGson(response,TestData.class);
-                    mData = testData.getList();
+                    mData.clear();
+                    mData.addAll(testData.getList());
                     mAdapter.notifyDataSetChanged();
                 }
             }
