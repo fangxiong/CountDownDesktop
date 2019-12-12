@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
-import com.bumptech.glide.Glide;
 import com.fax.cddt.R;
 import com.fax.cddt.adapter.CommonAdapter;
 import com.fax.cddt.adapter.ViewHolder;
@@ -16,7 +14,6 @@ import com.fax.cddt.bean.TestBen;
 import com.fax.cddt.bean.TestData;
 import com.fax.cddt.utils.GlideUtils;
 import com.fax.cddt.utils.GsonUtils;
-import com.fax.cddt.utils.ViewUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -58,7 +55,7 @@ public class SelectionWidgetFragment extends Fragment {
             @Override
             protected void convert(ViewHolder holder, TestBen testBen, int position) {
                 ImageView ivWidget = holder.getView(R.id.iv_widget);
-                GlideUtils.loadImageRound(getActivity(),testBen.getUrl(),ivWidget, 5);
+                GlideUtils.loadRoundCircleImage(getActivity(),testBen.getUrl(),ivWidget, 10);
             }
         };
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);

@@ -3,6 +3,7 @@ package com.fax.cddt.activity;
 import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LongSparseArray;
@@ -18,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fax.cddt.R;
+import com.fax.cddt.bean.WidgetShapeBean;
+import com.fax.cddt.callback.WidgetEditShapeCallback;
 import com.fax.cddt.callback.WidgetEditTextCallback;
 import com.fax.cddt.fragment.WidgetProgressEditFragment;
 import com.fax.cddt.fragment.WidgetShapeEditFragment;
@@ -29,12 +32,16 @@ import com.fax.cddt.utils.ViewUtils;
 import com.fax.cddt.view.EventConvertView;
 import com.fax.cddt.view.sticker.BitmapStickerIcon;
 import com.fax.cddt.view.sticker.DeleteIconEvent;
+import com.fax.cddt.view.sticker.DrawableSticker;
 import com.fax.cddt.view.sticker.Sticker;
 import com.fax.cddt.view.sticker.StickerView;
 import com.fax.cddt.view.sticker.TextSticker;
 import com.fax.cddt.view.sticker.ZoomIconEvent;
+import com.fax.cddt.view.svg.SVG;
+import com.fax.cddt.view.svg.SVGBuilder;
 import com.gyf.barlibrary.ImmersionBar;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -255,14 +262,14 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mTextEditFragment = new WidgetTextEditFragment(this);
         mStickerEditFragment = new WidgetStickerEditFragment();
-        mShapeEditFragment = new WidgetShapeEditFragment();
+        mShapeEditFragment = new WidgetShapeEditFragment(this);
         mProgressEditFragment = new WidgetProgressEditFragment();
         transaction.add(R.id.rl_edit_body, mTextEditFragment);
         transaction.add(R.id.rl_edit_body, mStickerEditFragment);
         transaction.add(R.id.rl_edit_body, mShapeEditFragment);
         transaction.add(R.id.rl_edit_body, mProgressEditFragment);
         transaction.commitAllowingStateLoss();
-        ((WidgetTextEditFragment)mTextEditFragment).setWidgetEditTextCallback(new WidgetEditTextCallback() {
+       mTextEditFragment.setWidgetEditTextCallback(new WidgetEditTextCallback() {
             @Override
             public void onAddSticker() {
                 TextSticker textSticker = new TextSticker(System.currentTimeMillis());
@@ -272,6 +279,23 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
                 mStickerView.addSticker(textSticker, Sticker.Position.TOP);
             }
         });
+       mShapeEditFragment.setWidgetEditShapeCallback(new WidgetEditShapeCallback() {
+           @Override
+           public void onAddShapeSticker(WidgetShapeBean widgetShapeBean) {
+               try {
+                   SVG svg = new SVGBuilder()
+                           .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
+                   PictureDrawable drawable = svg.getDrawable();
+                   DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+                   mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+                   Log.i("test_add_sticker:","添加DrawSticker成功");
+               }catch (IOException e){
+
+               }
+
+           }
+       });
+
     }
 
     private void setEditBodySlideInAnimation() {

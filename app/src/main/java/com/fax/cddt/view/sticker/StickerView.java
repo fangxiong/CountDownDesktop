@@ -210,6 +210,7 @@ public class StickerView extends FrameLayout {
         linePaint.setStrokeWidth(ViewUtils.dp2px(0.3f));
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
+        linePaint.setPathEffect(null);
         canvas.save();
         int height = WidgetConfig.getWidget4X4Height();
         //绘制虚线
@@ -219,7 +220,7 @@ public class StickerView extends FrameLayout {
         canvas.drawLine(height * 3 / 4f, 0, height * 3 / 4f, height * 1.0f, linePaint);
         //如果sticker在中心就绘制实线
         if (stickerCenterInViewCenter(0)) {
-            Log.i("test_draw_line:","绘制竖直实线");
+            Log.i("test_draw_line:", "绘制竖直实线");
             canvas.drawLine(height * 2 / 4f, 0, height * 2 / 4f, height * 1.0f, linePaint);
         } else {
             linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
@@ -228,7 +229,7 @@ public class StickerView extends FrameLayout {
 
         if (stickerCenterInViewCenter(1)) {
             linePaint.setPathEffect(null);
-            Log.i("test_draw_line:","绘制水平实线");
+            Log.i("test_draw_line:", "绘制水平实线");
             canvas.drawLine(0, height * 2 / 4f, height * 1.0f, height * 2 / 4f, linePaint);
         } else {
             linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
@@ -632,8 +633,6 @@ public class StickerView extends FrameLayout {
         if (sticker != null) {
             float newDistance = calculateDistance(midPoint.x, midPoint.y, event.getX(), event.getY());
             float newRotation = calculateRotation(midPoint.x, midPoint.y, event.getX(), event.getY());
-            Log.i("test_x:",midPoint.x+""+" event.x:"+event.getX()+" oldDistance:"+oldDistance);
-
             moveMatrix.set(downMatrix);
             moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
                     midPoint.y);
