@@ -13,7 +13,7 @@
       android:orientation="vertical"
       >
 
-    <com.fax.cddt.view.colorPicker.ColorPickerView
+    <com.fax.showdt.view.colorPicker.ColorPickerView
         android:id="@+id/cpv_color_picker_view"
         android:padding="16dp"
         style="@style/cpv_ColorPickerViewStyle"
@@ -26,7 +26,7 @@
         android:padding="16dp"
         >
 
-      <com.fax.cddt.view.colorPicker.ColorPanelView
+      <com.fax.showdt.view.colorPicker.ColorPanelView
           android:id="@+id/cpv_color_panel_old"
           android:layout_width="@dimen/margin_66"
           android:layout_height="@dimen/margin_34"
@@ -44,7 +44,7 @@
           tools:ignore="ContentDescription"
           />
 
-      <com.fax.cddt.view.colorPicker.ColorPanelView
+      <com.fax.showdt.view.colorPicker.ColorPanelView
           android:id="@+id/cpv_color_panel_new"
           android:layout_width="@dimen/margin_66"
           android:layout_height="@dimen/margin_34"

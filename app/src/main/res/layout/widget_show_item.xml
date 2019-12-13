@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/c_222222">
 
-    <com.fax.cddt.view.ProportionLayout
+    <com.fax.showdt.view.ProportionLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_1"
@@ -16,7 +16,7 @@
             android:id="@+id/rl_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.fax.cddt.view.FadeInImageView
+            <com.fax.showdt.view.FadeInImageView
                 android:id="@+id/iv_widget"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -26,6 +26,6 @@
         </RelativeLayout>
 
 
-    </com.fax.cddt.view.ProportionLayout>
+    </com.fax.showdt.view.ProportionLayout>
 
 </RelativeLayout>

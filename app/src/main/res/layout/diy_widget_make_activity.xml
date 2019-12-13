@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:background="@color/c_222222">
 
-    <com.fax.cddt.view.EventConvertView
+    <com.fax.showdt.view.EventConvertView
         android:id="@+id/fl_edit_body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_60">
 
-        <com.fax.cddt.view.sticker.StickerView
+        <com.fax.showdt.view.sticker.StickerView
             android:id="@+id/sticker_view"
             android:layout_width="330dp"
             android:layout_height="165dp"
@@ -28,8 +28,8 @@
                 android:background="@color/transparent"
                 android:scaleType="center" />
 
-        </com.fax.cddt.view.sticker.StickerView>
-    </com.fax.cddt.view.EventConvertView>
+        </com.fax.showdt.view.sticker.StickerView>
+    </com.fax.showdt.view.EventConvertView>
 
     <RelativeLayout
         android:layout_width="match_parent"
