@@ -1,0 +1,7 @@
+packages/jiagu
+packages/channel
+packages/origin
+config.pyc
+tempAndroidManifest.xml
+*.db
+*.iml

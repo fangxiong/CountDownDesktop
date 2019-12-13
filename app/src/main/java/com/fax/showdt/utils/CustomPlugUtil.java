@@ -960,7 +960,7 @@ public class CustomPlugUtil {
         Paint paint = new Paint();
         paint.setTextSize(ViewUtils.sp2px(16));
         paint.setTextAlign(Paint.Align.LEFT);
-        paint.setColor(context.getResources().getColor(R.color.c_4A90E2));
+        paint.setColor(context.getResources().getColor(R.color.c_FCF43C));
         paint.setAntiAlias(true);
 
         Paint.FontMetricsInt fm = paint.getFontMetricsInt();

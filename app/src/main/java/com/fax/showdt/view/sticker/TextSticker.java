@@ -52,7 +52,6 @@ public class TextSticker extends Sticker {
     private String color = "#000000";
     public static final int DEFAULT_TEXT_SIZE = 18;
     private int scaleParam = DEFAULT_TEXT_SIZE;
-    private final int internalMargin = 20;
     private int textSize = DEFAULT_TEXT_SIZE;
     private String mFontPath = "";
     private boolean isShimmerText;
@@ -114,8 +113,8 @@ public class TextSticker extends Sticker {
 
         int fontWidth = (int) textPaint.measureText(tempText);
         int fontHeight = (int) (textPaint.getFontMetrics().descent - textPaint.getFontMetrics().ascent);
-        textWidth = fontWidth + 2 * internalMargin;
-        textHeight = fontHeight + 2 * internalMargin;
+        textWidth = fontWidth ;
+        textHeight = fontHeight;
     }
 
     private void initRect() {
@@ -132,10 +131,10 @@ public class TextSticker extends Sticker {
         tempText = CustomPlugUtil.getPlugTextFromSigns(text);
         int fontWidth = (int) textPaint.measureText(tempText);
         int fontHeight = (int) (textPaint.getFontMetrics().descent - textPaint.getFontMetrics().ascent);
-        textWidth = fontWidth + 2 * internalMargin;
-        textHeight = fontHeight + 2 * internalMargin;
+        textWidth = fontWidth ;
+        textHeight = fontHeight;
 
-        realBounds = new Rect((int) getTextDrawLeftX() - internalMargin, 0, textWidth / 2, textHeight);
+        realBounds = new Rect((int) getTextDrawLeftX(), 0, textWidth / 2, textHeight);
 
         drawable.setBounds(realBounds);
     }
@@ -161,7 +160,7 @@ public class TextSticker extends Sticker {
         } else {
             stopShimmer();
             textPaint.setShader(null);
-            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent + internalMargin, textPaint);
+            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent, textPaint);
         }
 
         canvas.restore();
@@ -221,14 +220,14 @@ public class TextSticker extends Sticker {
      */
     private float getTextDrawLeftX() {
         if (mAlignment == null) {
-            return internalMargin;
+            return 0;
         } else {
             if (mAlignment == Layout.Alignment.ALIGN_NORMAL) {
-                return internalMargin;
+                return 0;
             } else if (mAlignment == Layout.Alignment.ALIGN_CENTER) {
-                return -textWidth / 2.0f + internalMargin;
+                return -textWidth / 2.0f ;
             } else {
-                return -textWidth + internalMargin;
+                return -textWidth;
             }
         }
     }

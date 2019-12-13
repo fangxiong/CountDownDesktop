@@ -60,7 +60,7 @@ public class WidgetShapeElementEditFragment extends Fragment {
         mList = new ArrayList<>();
         String str = FileExUtils.getJsonFromAssest(mContext, "widget_shape.json");
         mList = GsonUtils.parseJsonArrayWithGson(str, WidgetShapeBean.class);
-        final GridLayoutManager manager = new GridLayoutManager(mContext, 3, RecyclerView.VERTICAL, false);
+        final GridLayoutManager manager = new GridLayoutManager(mContext, 4, RecyclerView.VERTICAL, false);
 
         mRv.setLayoutManager(manager);
         mListAdapter = new CommonAdapter<WidgetShapeBean>(mContext,R.layout.widget_shape_element_item, mList) {

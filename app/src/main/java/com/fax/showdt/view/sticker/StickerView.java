@@ -146,7 +146,7 @@ public class StickerView extends FrameLayout {
                     a.getBoolean(R.styleable.StickerView_bringToFrontCurrentSticker, false);
 
             borderPaint.setAntiAlias(true);
-            borderPaint.setColor(a.getColor(R.styleable.StickerView_borderColor, Color.parseColor("#56d0ff")));
+            borderPaint.setColor(a.getColor(R.styleable.StickerView_borderColor, Color.parseColor("#FCF43C")));
             borderPaint.setStrokeWidth(2.5f);
 //            borderPaint.setAlpha(a.getInteger(R.styleable.StickerView_borderAlpha, 128));
 
@@ -221,6 +221,7 @@ public class StickerView extends FrameLayout {
         //如果sticker在中心就绘制实线
         if (stickerCenterInViewCenter(0)) {
             Log.i("test_draw_line:", "绘制竖直实线");
+            linePaint.setColor(getResources().getColor(R.color.c_FCF43C));
             canvas.drawLine(height * 2 / 4f, 0, height * 2 / 4f, height * 1.0f, linePaint);
         } else {
             linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
@@ -230,6 +231,7 @@ public class StickerView extends FrameLayout {
         if (stickerCenterInViewCenter(1)) {
             linePaint.setPathEffect(null);
             Log.i("test_draw_line:", "绘制水平实线");
+            linePaint.setColor(getResources().getColor(R.color.c_FCF43C));
             canvas.drawLine(0, height * 2 / 4f, height * 1.0f, height * 2 / 4f, linePaint);
         } else {
             linePaint.setPathEffect(new DashPathEffect(new float[]{4, 4}, 0));
@@ -329,6 +331,7 @@ public class StickerView extends FrameLayout {
                             break;
                         default:
                     }
+                    borderPaint.setColor(getResources().getColor(R.color.c_CCFCF43C));
                     icon.draw(canvas, borderPaint);
                 }
             }
@@ -960,7 +963,7 @@ public class StickerView extends FrameLayout {
             offsetX /= 2f;
         }
         if (position != Sticker.Position.INITIAL) {
-            sticker.getMatrix().postTranslate(offsetX, offsetY);
+            sticker.getMatrix().postTranslate(offsetX+0.1f, offsetY+0.1f);
         }
     }
 

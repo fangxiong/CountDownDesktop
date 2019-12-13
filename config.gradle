@@ -1,0 +1,39 @@
+ext {
+    android = [
+            compileSdkVersion : 28,
+            buildToolsVersion : "28",
+            applicationId    : "com.xjlmh.classic",
+            minSdkVersion    : 21,
+            targetSdkVersion : 28,
+            versionCode      : 100,
+            versionName      : "1.0.0",
+            androidSupportSdkVersion   : "28.0.0"
+
+    ]
+
+    apkBuilder = [
+            //Apk包输出根目录
+            apkOutputRoot         : "apkBuild",
+            //打包工具根目录
+            buildRoot             : "maiba_module/module_apkbuilder/packages",
+            //原始apk输出位置
+            origin_apk_output_path: "origin",
+            //蒲公英apiKey和UserKey
+            //xyf apiKey 5a7f6d5e8de65f83dea79cbe5de3ed21   userKey 0c72a97a1e4da5345f9c6643b2a61b0e
+            //maibaapp apiKey c269b89af4acc9ba6051eaf2039de234  userKey bb049b30485ac20e7269c6f53e90639d
+
+
+//            pgyerApiKey                 : "5a7f6d5e8de65f83dea79cbe5de3ed21",
+//            pgyerUserKey                : "0c72a97a1e4da5345f9c6643b2a61b0e",
+            pgyerApiKey           : "c269b89af4acc9ba6051eaf2039de234",
+            pgyerUserKey          : "bb049b30485ac20e7269c6f53e90639d",
+            //360加固账号密码
+            jiaguUserName         : "15850451266",
+            jiaguPwd              : "fax15850451266",
+            //是否删除原始apk文件夹
+            delete_origin_apk     : true,
+            //是否删除加固apk文件
+            delete_jaigu_apk      : true
+
+    ]
+}

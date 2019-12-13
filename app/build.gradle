@@ -1,25 +1,63 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.aliyun.ams.emas-services'
+apply from: '../module_apkbuilder/buildAll.gradle'
 
+
+def cfg = rootProject.ext.android
 android {
-    compileSdkVersion 28
+    compileSdkVersion cfg.compileSdkVersion
     defaultConfig {
-        applicationId "com.fax.cddt"
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        minSdkVersion cfg.minSdkVersion
+        targetSdkVersion cfg.targetSdkVersion
+        versionCode cfg.versionCode
+        versionName cfg.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
         multiDexEnabled true
-
+        manifestPlaceholders = [APPID: cfg["applicationId"]]
+        buildConfigField 'String', 'APP_ID', '"com.fax.showdt"'
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            storeFile file('keystore/keystore.jks')
+            storePassword '15850451266'
+            keyAlias 'fax'
+            keyPassword '15850451266'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
+
+    buildTypes {
+        release {
+            buildConfigField "boolean", "ENABLE_TEST_URL", "false"
+            buildConfigField "boolean", "ENABLE_BETA_URL", "false"
+        }
+
+        debug {
+            buildConfigField "boolean", "ENABLE_TEST_URL", "false"
+            buildConfigField "boolean", "ENABLE_BETA_URL", "false"
+        }
+
+        betaRelease {
+            buildConfigField "boolean", "ENABLE_TEST_URL", "false"
+            buildConfigField "boolean", "ENABLE_BETA_URL", "true"
+        }
+
+        innerTestRelease {
+            buildConfigField "boolean", "ENABLE_TEST_URL", "true"
+            buildConfigField "boolean", "ENABLE_BETA_URL", "false"
+        }
+    }
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
+//    }
 }
 
 dependencies {

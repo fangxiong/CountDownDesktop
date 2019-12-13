@@ -2,17 +2,18 @@
 <resources>
     <color name="colorPrimary">#222222</color>
     <color name="colorPrimaryDark">#222222</color>
-    <color name="colorAccent">#FFFFFF</color>
+    <color name="colorAccent">#FCF43C</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="c_222222">#222222</color>
+    <color name="c_FCF43C">#FCF43C</color>
+    <color name="c_CCFCF43C">#CCFCF43C</color>
     <color name="c_333333">#333333</color>
     <color name="c_C2C2C2">#C2C2C2</color>
     <color name="c_F2F2F2">#f2f2f2</color>
     <color name="c_999999">#999999</color>
     <color name="c_00D3FF">#00D3FF</color>
-    <color name="c_FFFFFF">#FFFFFF</color>
     <color name="c_4CE2FF">#4CE2FF</color>
     <color name="c_4AE3FF">#4AE3FF</color>
     <color name="c_EFEFF6">#EFEFF6</color>
@@ -101,7 +102,6 @@
     <color name="c_FF56D0FF">#FF56D0FF</color>
     <color name="c_FF58D1FF">#FF58D1FF</color>
     <color name="c_B39D9D9D">#B39D9D9D</color>
-    <color name="c_000000">#000000 </color>
     <color name="c_B0000000">#B0000000</color>
     <color name="c_FFABE9FF">#FFABE9FF</color>
     <color name="c_EAEAEA">#EAEAEA</color>
@@ -128,6 +128,7 @@
     <color name="c_F7FAFA">#F7FAFA</color>
     <color name="c_BFBFBF">#BFBFBF</color>
     <color name="c_A4A4A4">#A4A4A4</color>
+    <color name="c_4D000000">#4D000000</color>
 
     <color name="pickerview_timebtn_nor">#057dff</color>
     <color name="pickerview_timebtn_pre">#c2daf5</color>
@@ -136,4 +137,36 @@
     <color name="pickerview_wheelview_textcolor_out">#a8a8a8</color>
     <color name="pickerview_wheelview_textcolor_center">#2a2a2a</color>
     <color name="pickerview_wheelview_textcolor_divider">#d5d5d5</color>
+
+    <color name="dark">#353535</color>
+    <color name="empty">#00000000</color>
+    <color name="waitDialogBackgroundDark">#f0181818</color>
+    <color name="waitDialogBackgroundLight">#E6F4F5F6</color>
+    <color name="dialogButtonBlueLight">#DCE9F7</color>
+    <color name="dialogButtonBlueLightPress">#C7DFF7</color>
+    <color name="dialogButtonGrayLight">#f2f2f2</color>
+    <color name="dialogButtonGrayLightPress">#dfdfdf</color>
+    <color name="dialogButtonIOSLightPress">#0f000000</color>
+    <color name="dialogSplitIOSLight">#2c000000</color>
+    <color name="dialogSplitIOSDark">#4e4e50</color>
+    <color name="dialogButtonIOSNormal">#007aff</color>
+
+    <color name="dialogBkgIOSLight">#e6F4F5F6</color>
+    <color name="dialogBkgDark">#f0181818</color>
+    <color name="dialogButtonBlueDark">#14dfdfdf</color>
+    <color name="dialogButtonBlueDarkPress">#1ec0d4f1</color>
+    <color name="dialogButtonGrayDark">#14dfdfdf</color>
+    <color name="dialogButtonGrayDarkPress">#1ec0d4f1</color>
+    <color name="whiteAlpha50">#80FFFFFF</color>
+    <color name="whiteAlpha30">#4DFFFFFF</color>
+    <color name="whiteAlpha10">#1AFFFFFF</color>
+    <color name="blackAlpha30">#4D000000</color>
+    <color name="blackAlpha10">#1A000000</color>
+    <color name="notificationNormal">#353535</color>
+    <color name="notificationError">#e74e63</color>
+    <color name="notificationWarning">#ef8e43</color>
+    <color name="notificationFinish">#53ae5d</color>
+    <color name="notificationTipTextColorMaterial">#757575</color>
+    <color name="tipTextColor">#8f8f8f</color>
+    <color name="menuSplitSpaceKongzue">#f1f2f4</color>
 </resources>

@@ -60,7 +60,6 @@ import io.reactivex.functions.Consumer;
 public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickListener {
 
     private StickerView mStickerView;
-    private EventConvertView flEditBody;
     private ImageView mStickerViewBg;
     private RelativeLayout mRLEditBody;
     private boolean mEditPaneShowing = false;
@@ -88,7 +87,6 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         super.initView();
         mStickerView = findViewById(R.id.sticker_view);
         mStickerViewBg = findViewById(R.id.iv_select_bg);
-        flEditBody = findViewById(R.id.fl_edit_body);
         mRLEditBody = findViewById(R.id.rl_edit_body);
         initStatusBar();
         initStickerView();
@@ -136,15 +134,11 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         params.width = WidgetConfig.getWidgetWidth();
         params.height = WidgetConfig.getWidget4X4Height();
         mStickerView.setLayoutParams(params);
-        params = (FrameLayout.MarginLayoutParams) flEditBody.getLayoutParams();
-        params.width = WidgetConfig.getWidgetWidth();
-        flEditBody.setLayoutParams(params);
-        flEditBody.setEventConvertView(mStickerView);
-        BitmapStickerIcon deleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_close_white_18dp),
+        BitmapStickerIcon deleteIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_close_icon),
                 BitmapStickerIcon.LEFT_TOP);
         deleteIcon.setIconEvent(new DeleteIconEvent());
 
-        BitmapStickerIcon zoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_scale_white_18dp),
+        BitmapStickerIcon zoomIcon = new BitmapStickerIcon(ContextCompat.getDrawable(this, R.drawable.sticker_ic_scale_icon),
                 BitmapStickerIcon.RIGHT_BOTTOM);
         zoomIcon.setIconEvent(new ZoomIconEvent());
         mStickerView.setIcons(Arrays.asList(deleteIcon, zoomIcon));
@@ -158,9 +152,11 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onStickerClicked(@NonNull Sticker sticker) {
                 Log.i("test_click:","click");
-                if(sticker instanceof TextSticker){
-                    switchToOneFragment(EditType.EDIT_TEXT);
-                }
+//                if(sticker instanceof TextSticker){
+//                    switchToOneFragment(EditType.EDIT_TEXT);
+//                }else if(sticker instanceof DrawableSticker){
+//                    switchToOneFragment(EditType.EDIT_SHAPE);
+//                }
             }
 
             @Override
@@ -177,7 +173,11 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
             public void onStickerTouchedDown(@NonNull Sticker sticker) {
                 Log.i("test_click:","touch");
                 mHandlingSticker = mStickerView.getCurrentSticker();
-                switchToOneFragment(EditType.EDIT_TEXT);
+                if(sticker instanceof TextSticker){
+                    switchToOneFragment(EditType.EDIT_TEXT);
+                }else if(sticker instanceof DrawableSticker){
+                    switchToOneFragment(EditType.EDIT_SHAPE);
+                }
             }
 
             @Override

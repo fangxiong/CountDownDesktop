@@ -17,4 +17,10 @@
     <string name="pickerview_minutes">分</string>
 
     <string name="set_target_date">设置目标日期</string>
+
+    <string name="app_permission01">● 存储权限</string>
+    <string name="app_permission02">● 定位权限</string>
+    <string name="app_permission03">● 手机信息权限</string>
+
+
 </resources>

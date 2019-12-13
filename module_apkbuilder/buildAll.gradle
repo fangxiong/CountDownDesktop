@@ -1,0 +1,371 @@
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
+def cfg = rootProject.ext.android
+def apkBuilder = rootProject.ext.apkBuilder
+
+/**
+ * 三种打包
+ * 1，全部渠道包-运营人员发布到应用市场
+ * 2，内测包-单独一个包-测试人员使用-需要上传到蒲公英
+ * 3，公测包-单独一个包-使用bugly发布测试
+ * 4, oppo渠道包-单独一个包-module_elf_main切换到feature-oppo之后选择
+ */
+ext {
+    //打包工具目录
+    TOOLSDIRPATH = "tools"
+    //360加固根目录
+    JIAGUDIRPATH = "360jiagu"
+    //360加固jar
+    JAR = "jiagu.jar"
+    BASEAPKNAME = "elf-" + cfg.versionName + "-" + cfg.versionCode
+    TYPE_ALL_TASK = 1
+    TYPE_BETA_TASK = 2
+    TYPE_TEST_TASK = 3
+    TYPE_OPPO_TASK = 4
+    //签名文件配置文件
+    KEYSOTRE_CONFIG_FILE_PATH = "app/keystore/keystore.properties"
+
+    ROOT_PATH = apkBuilder.buildRoot
+    APK_OUTPUT_ROOT_PATH = apkBuilder.apkOutputRoot
+    ORIGIN_APK_OUTPUT_DIR_PATH = apkBuilder.origin_apk_output_path
+    //加固后的包输出的位置
+    JIAGU_APK_OUTPUT_DIR_PATH = "jiagu"
+    //wall分渠道脚本所处的目录
+    WALL_SCRIPT_DIR_PATH = "walle"
+    //渠道包输出位置
+    CHANNEL_DIR_PATH = "channel"
+
+    JIAGU_USERNAME = apkBuilder.jiaguUserName
+    JIAGU_PWD = apkBuilder.jiaguPwd
+    PGYER_API_KEY = apkBuilder.pgyerApiKey
+    PGYER_USER_KEY = apkBuilder.pgyerUserKey
+
+    DELETE_ORIGIN_FILE = apkBuilder.delete_origin_apk
+    DELETE_JIAGU_FILE = apkBuilder.delete_jaigu_apk
+}
+
+task buildTestTask(dependsOn: 'assembleInnerTestRelease'){
+    doLast {
+        build(TYPE_TEST_TASK)
+    }
+}
+
+task buildBetaTask(dependsOn: 'assembleBetaRelease'){
+    doLast {
+        build(TYPE_BETA_TASK)
+    }
+}
+
+task buildAllTask(dependsOn: 'assembleRelease'){
+    doLast {
+        build(TYPE_ALL_TASK)
+    }
+}
+
+task buildOppoTask(dependsOn: 'assembleRelease'){
+    doLast {
+        build(TYPE_OPPO_TASK)
+    }
+}
+
+def build(int buildType){
+    def originApkDirPth = getOriginApkDirPath()
+
+    def baseApkName = BASEAPKNAME
+    def originApkName = baseApkName + ".apk"
+    File apkFile = new File(originApkDirPth, originApkName)
+    println("apk包位置："+apkFile + "  打包类型  "+ buildType)
+
+    if (!apkFile.exists()) {
+        println("打包失败：等待加固的apk文件不存在")
+        return
+    }
+
+    def jiaguApkOutPutPath = getJiaguApkOutputPath()
+
+    def channelOutputFilePath = getChannelOutputPath()
+
+    if (checkDirExists(jiaguApkOutPutPath) && checkDirExists(channelOutputFilePath)) {
+        reinforce(apkFile, baseApkName, buildType)
+    }
+}
+//获得apk打包后的根目录
+def getApkOutputDirPath(){
+    String path = rootDir.getPath() + File.separator + APK_OUTPUT_ROOT_PATH
+    File file = new File(path)
+    if (!file.exists()){
+        throw new RuntimeException("apkOutputDir path is null")
+    }
+    return path
+}
+
+//获得packages的位置
+def getBuildDirPath(){
+    String path = rootDir.getPath() + File.separator + ROOT_PATH
+    File file = new File(path)
+    if (!file.exists()){
+        throw new RuntimeException("apkBuild tools path is null")
+    }
+    return path
+}
+//获得原始apk的位置
+def getOriginApkDirPath(){
+    String buildDirPath = getApkOutputDirPath()
+    return buildDirPath + File.separator + ORIGIN_APK_OUTPUT_DIR_PATH +
+            File.separator + rootProject.ext.android.versionCode
+}
+//获得加固完成的apk输出的位置
+def getJiaguApkOutputPath(){
+    return getApkOutputDirPath() + File.separator + JIAGU_APK_OUTPUT_DIR_PATH
+}
+//获得渠道包输出的位置
+def getChannelOutputPath(){
+    return getApkOutputDirPath() + File.separator + CHANNEL_DIR_PATH +
+            File.separator + "elf-build-all-" + rootProject.ext.android.versionCode;
+}
+
+String getChannelConfigFileName(int buildType){
+    String channelConfigFileName
+    if (buildType == TYPE_ALL_TASK){
+        channelConfigFileName = "channel"
+    }else if (buildType == TYPE_TEST_TASK){
+        channelConfigFileName = "channel_test"
+    }else if (buildType == TYPE_BETA_TASK){
+        channelConfigFileName = "channel_beta"
+    }else if (buildType == TYPE_OPPO_TASK){
+        channelConfigFileName = "channel_oppo"
+    }
+    return channelConfigFileName
+}
+
+boolean checkDirExists(dirName) {
+    File dir = new File(dirName)
+    if (!dir.exists()) {
+        return dir.mkdirs()
+    } else {
+        return true
+    }
+}
+
+def reinforce(apkFile, baseApkName, buildType) {
+    String JiaguJarPath = getJiaguJarFilePathByOs()
+    if (JiaguJarPath == null){
+        println("无法获取360加固正确位置")
+        return
+    }
+
+    String jiaguApkOutputPath = getJiaguApkOutputPath()
+    String channelOutputFilePath = getChannelOutputPath()
+
+    def toolsPath = getBuildDirPath() + File.separator + TOOLSDIRPATH
+    def workPath = toolsPath + File.separator + JIAGUDIRPATH + File.separator + JiaguJarPath
+    def jarPath = workPath + File.separator + JAR
+    println("登陆360账号 ")
+
+    exec {
+        workingDir(workPath)
+        commandLine 'java', '-jar', jarPath, '-login', JIAGU_USERNAME, JIAGU_PWD
+    }
+
+    exec {
+        workingDir(workPath)
+        commandLine('java', '-jar', jarPath, '-showsign')
+    }
+
+    println("开始进行加固")
+    exec {
+        workingDir(workPath)
+        commandLine('java', '-jar', jarPath, '-jiagu', apkFile, jiaguApkOutputPath)
+    }
+
+    File tmpApkFile = getJiaguApk(jiaguApkOutputPath,baseApkName)
+    String jiaguApkName = baseApkName + "_jiagu.apk"
+    File jiaguApkFile = new File(jiaguApkOutputPath,jiaguApkName)
+    if (!tmpApkFile.renameTo(jiaguApkFile)){
+        return
+    }
+
+    if (jiaguApkFile != null && jiaguApkFile.exists()) {
+        def pyWorkPath = toolsPath + File.separator + WALL_SCRIPT_DIR_PATH
+        def sdkBuildToolPath = android.getSdkDirectory().getPath() + File.separator +
+                "build-tools"+File.separator + rootProject.ext.android.buildToolsVersion
+
+        def keystorePropertiesFile = rootProject.file(KEYSOTRE_CONFIG_FILE_PATH)
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        def keystorePath = file(keystoreProperties['PATH']).getAbsolutePath()
+        def keyAlias = keystoreProperties['ALIAS']
+        def keystorePassword = keystoreProperties['STORE_PASSWORD']
+        def keyPassword = keystoreProperties['ALIAS_PASSWORD']
+
+        exec {
+            workingDir(pyWorkPath)
+            commandLine('python', 'ApkResigner.py', jiaguApkFile.getName(),
+                    jiaguApkOutputPath, channelOutputFilePath, sdkBuildToolPath,
+                    keystorePath, keyAlias, keystorePassword, keyPassword,
+                    getChannelConfigFileName(buildType))
+        }
+
+        if (buildType == TYPE_ALL_TASK){
+            println("channel 包输出完毕")
+            compressDir(channelOutputFilePath)
+            deleteAllChannelApk(channelOutputFilePath)
+        }else if (buildType == TYPE_TEST_TASK){
+            println("test 包输出完毕 上传apk到蒲公英")
+            File file = getSpecificChannelApk(channelOutputFilePath,"test.apk")
+            uploadPgyer(file.getAbsolutePath())
+        }else if (buildType == TYPE_BETA_TASK){
+            println("beta 包输出完毕 上传apk到蒲公英")
+            File file = getSpecificChannelApk(channelOutputFilePath,"beta.apk")
+            uploadPgyer(file.getAbsolutePath())
+        }
+
+        if (jiaguApkFile != null){
+            if (DELETE_JIAGU_FILE){
+                jiaguApkFile.delete()
+                println("删除加固apk文件")
+            }
+        }
+
+        File originParentFile = apkFile.getParentFile()
+        if (originParentFile != null){
+            if (DELETE_ORIGIN_FILE){
+                originParentFile.deleteDir()
+                println("删除原始apk文件")
+            }
+        }else {
+            println("apk文件父目录不存在")
+        }
+    } else {
+        println("jiaguApkFile is null")
+    }
+}
+
+def uploadPgyer(String apkPath){
+    exec {
+        commandLine('curl', '-k', 'http://www.pgyer.com/apiv2/app/upload',
+                '-F', "uKey=${PGYER_USER_KEY}",
+                '-F', "_api_key=${PGYER_API_KEY}",
+                '-F', "file=@${apkPath}")
+    }
+}
+
+String getJiaguJarFilePathByOs(){
+    String osName = org.gradle.internal.os.OperatingSystem.current().getName();
+    String osVersion = org.gradle.internal.os.OperatingSystem.current().getVersion();
+    println "*** $osName $osVersion was detected."
+
+    if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+        println("Linux")
+        return "linux"+File.separator+"jiagu"
+    } else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        println("Windows")
+        return null
+    } else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+        println("OSX")
+        return "os"+File.separator+"jiagu"
+    } else {
+        println("unknown OS")
+        return null
+    }
+}
+
+/**
+ * 获得加固完成的apk文件
+ * @param jiaguApkOutputPath jiagu 文件输出目录
+ * @return
+ */
+File getJiaguApk(jiaguApkOutputPath,baseApkName){
+    File jiaguDir = new File(jiaguApkOutputPath)
+    File[] fileList = jiaguDir.listFiles()
+    File jiaguApkFile = null
+    for (int i = 0; i < fileList.length; i++) {
+        File file = fileList[i]
+        if (file.name.startsWith(baseApkName)) {
+            jiaguApkFile = file
+            break
+        }
+    }
+    return jiaguApkFile
+}
+
+/**
+ * 获得以特殊标志结尾的渠道包
+ * @param channelOutputPath     渠道包输出目录
+ * @param endMarkStr    结尾标志
+ * @return
+ */
+File getSpecificChannelApk(channelOutputPath, endMarkStr){
+    File channelDir = new File(channelOutputPath)
+    File[] fileList = channelDir.listFiles()
+    File apkFile = null;
+    for (int i = 0; i < fileList.length; i++) {
+        File file = fileList[i]
+        if (file.name.endsWith(endMarkStr)){
+            apkFile = file
+            break
+        }
+    }
+    return apkFile
+}
+/**
+ * 删除全部渠道包
+ * @param channelOutputPath
+ */
+def deleteAllChannelApk(channelOutputPath){
+    File channelDir = new File(channelOutputPath)
+    File[] fileList = channelDir.listFiles()
+    for (int i = 0; i < fileList.length; i++) {
+        File file = fileList[i]
+        if (file.name.endsWith(".apk")){
+            file.delete()
+        }
+    }
+}
+
+/**
+ * 压缩全部的apk文件为一个zip包
+ */
+def compressDir(String outputDirPath) {
+
+    String zipName = outputDirPath.substring(outputDirPath.lastIndexOf(File.separator) + 1)
+    File outputDir = new File(outputDirPath)
+    println("开始压缩渠道包 name:"+zipName  + " outPutDir:"+outputDir.getPath())
+    File zipFile = new File(outputDir.getParent() + File.separator + zipName+ ".zip")
+
+    if (zipFile.exists()) {
+        zipFile.delete()
+    }
+
+    ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))
+    File[] files = outputDir.listFiles()
+    for (int i = 0; i < files.length; i++) {
+        File file = files[i]
+
+        byte[] bf = new byte[8192]
+        FileInputStream fis = new FileInputStream(file)
+        zos.putNextEntry(new ZipEntry(file.getName()))
+
+        int len
+        while ((len = fis.read(bf)) > 0) {
+            zos.write(bf, 0, len)
+        }
+        zos.flush()
+        fis.close()
+    }
+
+    zos.close()
+
+    File newZipFile = new File(outputDirPath,zipFile.name);
+
+    def moveFileResult = zipFile.renameTo(newZipFile)
+    if (moveFileResult){
+        println("压缩完毕")
+    }else {
+        println("压缩失败")
+    }
+
+
+}

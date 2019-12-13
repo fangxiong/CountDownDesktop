@@ -97,7 +97,7 @@ public class WidgetTextElementEditFragment extends Fragment {
                 TextView mTv = holder.getView(R.id.tv_element);
                 mTv.setText(s);
                 if(position == mCurrentSelectedPos){
-                    mTv.setBackgroundResource(R.color.c_BDBDBA);
+                    mTv.setBackgroundResource(R.color.c_FCF43C);
                 }else {
                     mTv.setBackgroundResource(R.color.transparent);
                 }
@@ -107,7 +107,7 @@ public class WidgetTextElementEditFragment extends Fragment {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                 TextView mTv = view.findViewById(R.id.tv_element);
-                mTv.setBackgroundResource(R.color.c_BDBDBA);
+                mTv.setBackgroundResource(R.color.c_FCF43C);
                 dataSetChanged(position);
                 mListAdapter.notifyItemChanged(mCurrentSelectedPos);
                 mCurrentSelectedPos = position;

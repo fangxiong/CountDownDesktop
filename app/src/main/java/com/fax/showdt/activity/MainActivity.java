@@ -10,6 +10,9 @@ import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonViewPagerAdapter;
+import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
+import com.fax.showdt.dialog.ios.util.BaseDialog;
+import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.fragment.SelectionWidgetFragment;
 import com.fax.showdt.permission.EasyPermission;
 import com.fax.showdt.permission.GrantResult;
@@ -95,29 +98,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.nav_widget:{
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_widget: {
 
                         break;
                     }
-                    case R.id.nav_lock:{
+                    case R.id.nav_lock: {
                         break;
                     }
-                    case R.id.nav_add_qq:{
-                        CommonUtils.startQQ(MainActivity.this,START_QQ_TYPE_GROUP_PROFILE,"721030399");
+                    case R.id.nav_add_qq: {
+                        CommonUtils.startQQ(MainActivity.this, START_QQ_TYPE_GROUP_PROFILE, "721030399");
                         break;
 
                     }
-                    case R.id.nav_feedback:{
+                    case R.id.nav_feedback: {
                         FeedbackAPI.openFeedbackActivity();
                         break;
 
                     }
-                    case R.id.nav_check_version:{
+                    case R.id.nav_check_version: {
                         break;
 
                     }
-                    case R.id.nav_setting:{
+                    case R.id.nav_setting: {
                         break;
 
                     }
@@ -143,6 +146,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    private void showPermissionReqDialog(final String[]  perms) {
+        MessageDialog.show(this, "提示", "你需要开启以下权限", "知道了")
+                .setCustomView(R.layout.req_app_permission_dialog, new MessageDialog.OnBindView() {
+                    @Override
+                    public void onBind(MessageDialog dialog, View v) {
+                        //绑定布局事件
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+//                                requestPermission(perms);
+                            }
+                        });
+                    }
+                }).setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+            @Override
+            public boolean onClick(BaseDialog baseDialog, View v) {
+                requestPermission(perms);
+                return false;
+            }
+        });
+    }
 
     private void requestPermission(String[] perms) {
         EasyPermission.with(this)
@@ -178,7 +202,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Permission.READ_PHONE_STATE, Permission.ACCESS_COARSE_LOCATION,
                 Permission.ACCESS_FINE_LOCATION};
         if (!PermissionUtils.isHasElfPermission(this)) {
-            requestPermission(perms);
+            showPermissionReqDialog(perms);
         }
     }
 

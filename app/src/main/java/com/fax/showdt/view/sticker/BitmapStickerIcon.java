@@ -93,14 +93,12 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
     @Override
     public DrawableSticker setDrawable(@NonNull Drawable drawable) {
         DrawableSticker drawableSticker = super.setDrawable(drawable);
-        if (getWidth() > 60) {
-            float ratio = 60 * 1.0f / getWidth();
-            PointF pointF = new PointF();
-            getCenterPoint(pointF);
-            getMatrix().reset();
-            getMatrix().postTranslate(x - pointF.x , y - pointF.y);
-            getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
-        }
+        float ratio = 60 * 1.0f / getWidth();
+        PointF pointF = new PointF();
+        getCenterPoint(pointF);
+        getMatrix().reset();
+        getMatrix().postTranslate(x - pointF.x, y - pointF.y);
+        getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
         return drawableSticker;
     }
 

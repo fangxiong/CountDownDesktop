@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:background="@color/white">
+        android:background="@color/c_FCF43C">
 
         <FrameLayout
             android:id="@+id/rl_consume"
@@ -37,14 +37,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:background="#88000000"
+            android:background="@color/white"
             android:gravity="center_vertical"
             android:minHeight="@dimen/margin_32"
             android:paddingTop="@dimen/margin_12"
             android:paddingBottom="@dimen/margin_12"
             android:paddingStart="@dimen/margin_12"
             android:paddingEnd="@dimen/margin_12"
-            android:textColor="@color/white"
+            android:textColor="@color/c_222222"
             android:textSize="@dimen/textSize_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
