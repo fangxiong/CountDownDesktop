@@ -13,6 +13,7 @@ import com.fax.showdt.adapter.CommonViewPagerAdapter;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
+import com.fax.showdt.fragment.MyWidgetFragment;
 import com.fax.showdt.fragment.SelectionWidgetFragment;
 import com.fax.showdt.permission.EasyPermission;
 import com.fax.showdt.permission.GrantResult;
@@ -46,8 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ArrayList<Fragment> fragments = new ArrayList<>();
-    private SelectionWidgetFragment selectionWidgetFragment;
-    private String[] titles = new String[]{"精选", "锁屏", "我的"};
+    private String[] titles = new String[]{"精选", "我的"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,17 +56,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         checkPermission();
         mImmersionBar = ImmersionBar.with(this);
         //当设置fitsSystemWindows为true和状态栏颜色后就不是沉浸式状态栏了
-//        mImmersionBar.fitsSystemWindows(true);
         mImmersionBar.statusBarColor(initStatusBarColor());
         mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
         mImmersionBar.statusBarDarkFont(false).init();
-
         mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
-
-        for (int i = 0; i < titles.length; i++) {
-            fragments.add(new SelectionWidgetFragment());
-            mTabLayout.addTab(mTabLayout.newTab());
-        }
+        fragments.add(new SelectionWidgetFragment());
+        fragments.add(new MyWidgetFragment());
         pagerAdapter = new CommonViewPagerAdapter(getSupportFragmentManager(), fragments);
         mTabLayout.setupWithViewPager(viewPager, false);
         viewPager.setAdapter(pagerAdapter);
@@ -146,7 +141,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void showPermissionReqDialog(final String[]  perms) {
+    private void showPermissionReqDialog(final String[] perms) {
         MessageDialog.show(this, "提示", "你需要开启以下权限", "知道了")
                 .setCustomView(R.layout.req_app_permission_dialog, new MessageDialog.OnBindView() {
                     @Override

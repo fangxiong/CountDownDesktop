@@ -1,5 +1,8 @@
 package com.fax.showdt.manager.weather;
 
+import android.os.Handler;
+import android.util.Log;
+
 import com.fax.showdt.bean.WeatherDataBean;
 import com.fax.showdt.bean.WeatherDetailBean;
 import com.fax.showdt.manager.location.LocationManager;
@@ -8,10 +11,12 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
@@ -25,7 +30,7 @@ import okhttp3.Response;
 public class WeatherManager {
     public static WeatherManager mInstance;
     private final String WEATHER_URL = "https://restapi.amap.com/v3/weather/weatherInfo";
-    private final String WEATHER_KEY = "3fac03be7fad5955928b6cf1e7419977";
+    private final String WEATHER_KEY = "a8f5dc18b7c13ae86f616a82a1240ced";
     public static String temperature = "26℃";
     public static String weather = "阴";
     private String city_key = "";
@@ -57,12 +62,19 @@ public class WeatherManager {
         long timeGap = System.currentTimeMillis() - lastUpdateTime;
         if (!city_key.equals(LocationManager.LOCATION_CITY_CODE) || lastUpdateTime == 0 || timeGap > UPDATE_GAP) {
             lastUpdateTime = System.currentTimeMillis();
-            reqWeatherData();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    reqWeatherData();
+                }
+            },2000);
         }
 
     }
 
     private void reqWeatherData() {
+        //当启动天气服务之前 需开启定位服务,获取其城市编码
+        LocationManager.getInstance().startLocation();
         Observable.create(new ObservableOnSubscribe<WeatherDataBean>() {
             @Override
             public void subscribe(ObservableEmitter<WeatherDataBean> e) throws Exception {
@@ -71,18 +83,26 @@ public class WeatherManager {
                 Map<String, String> map = new HashMap<>();
                 map.put("key", WEATHER_KEY);
                 map.put("city", city_key);
-                map.put("extensions", "base");
+                Log.i("test_param:","city:"+city_key);
                 Response response = OkHttpUtils.get().url(WEATHER_URL).params(map).build().execute();
                 if (response != null) {
-                    e.onNext(GsonUtils.parseJsonWithGson(response.toString(), WeatherDataBean.class));
+//                    Log.i("test_param:",response.body().string());
+                    String result = response.body().string();
+                    WeatherDataBean bean = GsonUtils.parseJsonWithGson(result,WeatherDataBean.class);
+                    Log.i("test_param:",bean.toJSONString());
+                    if(bean != null) {
+                    e.onNext(bean);
+                    }else {
+                        e.onError(new Exception("请求失败"));
+                    }
                 }
-                e.onError(new Exception("请求失败"));
             }
         }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<WeatherDataBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        d.dispose();
+                        disposable = d;
                     }
 
                     @Override
@@ -98,11 +118,17 @@ public class WeatherManager {
                             }
 
                         }
+                        if(disposable != null && !disposable.isDisposed()){
+                            disposable.dispose();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        e.printStackTrace();
+                        if(disposable != null && !disposable.isDisposed()){
+                            disposable.dispose();
+                        }
                     }
 
                     @Override

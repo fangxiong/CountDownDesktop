@@ -45,16 +45,16 @@
         android:layout_below="@id/titleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/c_FCF43C"
+        android:background="@color/white"
         android:layout_centerHorizontal="true">
 
         <com.fax.showdt.view.sticker.StickerView
             android:id="@+id/sticker_view"
             android:layout_width="330dp"
             android:layout_height="165dp"
-            android:layout_margin="@dimen/margin_5"
+            android:layout_margin="@dimen/margin_2"
             android:layout_centerHorizontal="true"
-            app:borderColor="@color/c_FCF43C"
+            app:borderColor="@color/white"
             app:showBorder="true"
             app:showIcons="true">
 
@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/transparent"
-                android:scaleType="center" />
+                android:scaleType="centerCrop" />
 
         </com.fax.showdt.view.sticker.StickerView>
     </FrameLayout>

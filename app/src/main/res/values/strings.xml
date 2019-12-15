@@ -2,6 +2,7 @@
     <string name="app_name">CountDownDesktop</string>
 
 
+    <string name="close">关闭</string>
     <string name="cpv_default_title">挑选颜色</string>
     <string name="cpv_presets">内置颜色</string>
     <string name="cpv_custom">自定义颜色</string>

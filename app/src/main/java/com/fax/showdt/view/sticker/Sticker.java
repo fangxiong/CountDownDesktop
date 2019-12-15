@@ -188,7 +188,7 @@ public abstract class Sticker {
         }
         float ratio = henRatio > shuRatio ?  shuRatio : henRatio;
         Matrix matrix = new Matrix();
-        matrix.postScale(ratio, ratio, getMappedCenterPoint().x, getMappedCenterPoint().y);
+        matrix.postScale(ratio+0.1f, ratio+0.1f, getMappedCenterPoint().x, getMappedCenterPoint().y);
 
         float[] resultPoints = new float[8];
         matrix.mapPoints(resultPoints, mappedPoints);

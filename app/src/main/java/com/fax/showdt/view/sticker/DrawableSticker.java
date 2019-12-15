@@ -19,7 +19,10 @@ import com.fax.showdt.view.svg.SVGBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
@@ -35,18 +38,30 @@ public class DrawableSticker extends Sticker {
     private boolean mShowFrame;
     private int mFrame = ViewUtils.dp2px(6);
     private float mRatio = 1;
+    public static final int ASSET = 0;
+    public static final int SVG = 1;
+    public static final int SDCARD = 2;
+    @PicType
+    private int mPicType = ASSET;
 
+    @IntDef({ASSET, SVG,SDCARD})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PicType {
+    }
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
         this.drawable = drawable;
         realBounds = new Rect(0, 0, getWidth(), getHeight());
-        if (getWidth() > defaultWidth) {
-            float ratio = defaultWidth * 1.0f / getWidth();
-            PointF pointF = new PointF();
-            getCenterPoint(pointF);
-            getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
-            mRatio = ratio;
+        int minLength = getWidth() > getHeight() ? getHeight() : getWidth();
+        int maxLength = getWidth() > getHeight() ? getWidth() : getHeight();
+        float ratio = defaultWidth * 1.0f / minLength;
+        if (maxLength * ratio / defaultWidth > 3.0f) {
+            ratio = 3.0f;
         }
+        PointF pointF = new PointF();
+        getCenterPoint(pointF);
+        getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
+        mRatio = ratio;
     }
 
     public DrawableSticker(Drawable drawable, long id) {
@@ -89,10 +104,10 @@ public class DrawableSticker extends Sticker {
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
         canvas.save();
         canvas.concat(getMatrix());
-        if (mMaskBitmap != null){
+        if (mMaskBitmap != null) {
             int width = drawable.getIntrinsicWidth();
             int height = drawable.getIntrinsicHeight();
-            Bitmap newBitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
+            Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas drawCanvas = new Canvas(newBitmap);
             drawable.setBounds(realBounds);
             drawable.draw(drawCanvas);
@@ -100,27 +115,27 @@ public class DrawableSticker extends Sticker {
             Paint paint = new Paint();
             paint.reset();
             paint.setXfermode(xfermode);
-            drawCanvas.drawBitmap(mMaskBitmap,0,0,paint);
+            drawCanvas.drawBitmap(mMaskBitmap, 0, 0, paint);
             paint.setXfermode(null);
 
-            if (mShowFrame){
+            if (mShowFrame) {
                 Bitmap alphaBitmap = getAlphaBitmap(mMaskBitmap);
                 Paint alphaPaint = new Paint();
                 alphaPaint.setAntiAlias(true);
                 alphaPaint.setFilterBitmap(true);
 
-                canvas.drawBitmap(alphaBitmap,0,0,alphaPaint);
+                canvas.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
                 int frame = (int) (mFrame / mRatio);
                 int newWidth = width - frame;
                 int newHeight = height - frame;
                 int offSet = frame / 2;
-                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap,newWidth,newHeight,true);
-                canvas.drawBitmap(zoomBitmap,offSet,offSet,null);
-            }else {
-                canvas.drawBitmap(newBitmap,0,0,null);
+                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap, newWidth, newHeight, true);
+                canvas.drawBitmap(zoomBitmap, offSet, offSet, null);
+            } else {
+                canvas.drawBitmap(newBitmap, 0, 0, null);
             }
 
-        }else {
+        } else {
             drawable.setBounds(realBounds);
             drawable.draw(canvas);
         }
@@ -152,11 +167,11 @@ public class DrawableSticker extends Sticker {
         }
     }
 
-    public void addMaskBitmap(Context context, String svgName){
+    public void addMaskBitmap(Context context, String svgName) {
         this.mSvgName = svgName;
         String svgFolderName = "svg";
         String svgPath = svgFolderName + File.separator + mSvgName;
-        if (TextUtils.isEmpty(mSvgName)){
+        if (TextUtils.isEmpty(mSvgName)) {
             return;
         }
         int width = drawable.getIntrinsicWidth();
@@ -164,16 +179,16 @@ public class DrawableSticker extends Sticker {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         SVG svg;
-        RectF rectF = new RectF(0,0,width,height);
+        RectF rectF = new RectF(0, 0, width, height);
         try {
             svg = new SVGBuilder()
-                    .readFromAsset(context.getAssets(),svgPath).build();
+                    .readFromAsset(context.getAssets(), svgPath).build();
         } catch (IOException e) {
             e.printStackTrace();
             svg = null;
         }
-        if (svg != null){
-            canvas.drawPicture(svg.getPicture(),rectF);
+        if (svg != null) {
+            canvas.drawPicture(svg.getPicture(), rectF);
             mMaskBitmap = bitmap;
         }
     }
@@ -200,7 +215,7 @@ public class DrawableSticker extends Sticker {
         return mAlphaBitmap;
     }
 
-    public void setShowFrame(boolean isAddFrame){
+    public void setShowFrame(boolean isAddFrame) {
         mShowFrame = isAddFrame;
     }
 
@@ -210,5 +225,13 @@ public class DrawableSticker extends Sticker {
 
     public String getSvgName() {
         return mSvgName == null ? "" : mSvgName;
+    }
+
+    public int getmPicType() {
+        return mPicType;
+    }
+
+    public void setmPicType(int mPicType) {
+        this.mPicType = mPicType;
     }
 }

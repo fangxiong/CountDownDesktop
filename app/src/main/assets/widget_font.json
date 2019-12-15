@@ -1,0 +1,34 @@
+[
+  {
+    "fontPath": "fonts/minijianqi.ttf",
+    "fontIcon": "fontIcon/minijianqi.png"
+  },
+  {
+    "fontPath": "fonts/fangzhengchaocuhei.ttf",
+    "fontIcon": "fontIcon/fangzhengchaocu.png"
+  },
+  {
+    "fontPath": "fonts/fangzhengheiti.ttf",
+    "fontIcon": "fontIcon/fangzhengheiti.png"
+  },
+  {
+    "fontPath": "fonts/hanyixiaobo.ttf",
+    "fontIcon": "fontIcon/hanyixiaobo.png"
+  },
+  {
+    "fontPath": "fonts/huawenxingkai.ttf",
+    "fontIcon": "fontIcon/huawenxingkai.png"
+  },
+  {
+    "fontPath": "fonts/fangmen.ttf",
+    "fontIcon": "fontIcon/fangmeng.png"
+  },
+  {
+    "fontPath": "fonts/wawatijian.ttf",
+    "fontIcon": "fontIcon/huakangwawati.png"
+  },
+  {
+    "fontPath": "fonts/xindixiaowanzi.ttf",
+    "fontIcon": "fontIcon/xiaowanzi.png"
+  }
+]

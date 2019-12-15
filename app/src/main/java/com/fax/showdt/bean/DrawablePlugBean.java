@@ -1,6 +1,8 @@
 package com.fax.showdt.bean;
 
 
+import com.fax.showdt.view.sticker.DrawableSticker;
+
 /**
  * Created by fax on 19-4-25.
  */
@@ -10,6 +12,8 @@ public class DrawablePlugBean extends BasePlugBean {
     private String name;
     private String svgName;
     private boolean isShowFrame;
+    @DrawableSticker.PicType
+    private int mPicType;
 
     public String getDrawablePath() {
         return drawablePath;
@@ -41,5 +45,13 @@ public class DrawablePlugBean extends BasePlugBean {
 
     public void setShowFrame(boolean showFrame) {
         isShowFrame = showFrame;
+    }
+
+    public void setmPicType(int mPicType) {
+        this.mPicType = mPicType;
+    }
+
+    public int getmPicType() {
+        return mPicType;
     }
 }

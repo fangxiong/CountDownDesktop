@@ -9,4 +9,5 @@ package com.fax.showdt.callback;
 public interface WidgetEditTextCallback {
 
     void onAddSticker();
+    void closePanel();
 }

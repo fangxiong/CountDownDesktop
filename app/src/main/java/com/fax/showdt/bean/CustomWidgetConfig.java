@@ -59,10 +59,6 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     private boolean isFromFeatured;
 
-
-    @TypeConverters({FontConverters.class})
-    private ThemeFontBean fontInfo;
-
     public List<TextPlugBean> getTextPlugList() {
         if (textPlugList == null) {
             return new ArrayList<>();
@@ -240,14 +236,6 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
         isFromFeatured = fromFeatured;
     }
 
-
-    public ThemeFontBean getFontInfo() {
-        return fontInfo;
-    }
-
-    public void setFontInfo(ThemeFontBean fontInfo) {
-        this.fontInfo = fontInfo;
-    }
 
     public boolean isForVip() {
         return forVip;

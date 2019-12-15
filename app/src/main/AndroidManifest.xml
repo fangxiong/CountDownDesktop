@@ -24,7 +24,9 @@
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
-
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="4dc2257639ace12b4f3f7810660d9c01" />
         <service
             android:name="com.amap.api.location.APSService"
             android:process="com.xjlmh.classic.wallpaper" />

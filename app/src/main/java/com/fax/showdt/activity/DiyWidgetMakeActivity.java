@@ -1,7 +1,9 @@
 package com.fax.showdt.activity;
 
 import android.app.WallpaperManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
@@ -14,22 +16,44 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
+import com.fax.showdt.adapter.CommonAdapter;
+import com.fax.showdt.adapter.MultiItemTypeAdapter;
+import com.fax.showdt.adapter.ViewHolder;
+import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
+import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditTextCallback;
+import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
+import com.fax.showdt.dialog.ios.interfaces.OnShowListener;
+import com.fax.showdt.dialog.ios.util.BaseDialog;
+import com.fax.showdt.dialog.ios.util.DialogSettings;
+import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
+import com.fax.showdt.dialog.ios.v3.MessageDialog;
+import com.fax.showdt.dialog.ios.v3.TipDialog;
+import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.fragment.WidgetProgressEditFragment;
 import com.fax.showdt.fragment.WidgetShapeEditFragment;
 import com.fax.showdt.fragment.WidgetStickerEditFragment;
 import com.fax.showdt.fragment.WidgetTextEditFragment;
+import com.fax.showdt.manager.location.LocationManager;
+import com.fax.showdt.manager.weather.WeatherManager;
+import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
+import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.WidgetConfig;
 import com.fax.showdt.utils.BitmapUtils;
+import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.utils.Environment;
+import com.fax.showdt.utils.GlideUtils;
+import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.utils.ViewUtils;
-import com.fax.showdt.view.EventConvertView;
 import com.fax.showdt.view.sticker.BitmapStickerIcon;
 import com.fax.showdt.view.sticker.DeleteIconEvent;
 import com.fax.showdt.view.sticker.DrawableSticker;
@@ -41,15 +65,27 @@ import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
 import com.gyf.barlibrary.ImmersionBar;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Author: fax
@@ -63,12 +99,20 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private ImageView mStickerViewBg;
     private RelativeLayout mRLEditBody;
     private boolean mEditPaneShowing = false;
+    private RecyclerView mRvEditBg;
+    private Bitmap mEditBitmap, mSystemBgBitmap;
+    private List<String> mEditBgList = new ArrayList<>();
+    private CommonAdapter<String> mEditBgAdapter;
     private WidgetTextEditFragment mTextEditFragment;
     private WidgetStickerEditFragment mStickerEditFragment;
     private WidgetShapeEditFragment mShapeEditFragment;
     private WidgetProgressEditFragment mProgressEditFragment;
     private Sticker mHandlingSticker;
     private LongSparseArray<Sticker> mStickerList;
+    private FullScreenDialog mEditBgDialog;
+    private boolean mIsGetSystemBgSuc = true;
+    private CustomWidgetConfig customWidgetConfig;
+    private TipDialog mWaitDialog;
 
     enum EditType {
         EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
@@ -78,8 +122,13 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.diy_widget_make_activity);
+        WeatherManager.getInstance().starGetWeather();
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocationManager.getInstance().stopLocation();
     }
 
     @Override
@@ -97,16 +146,17 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
     }
 
-    private void initData(){
+    private void initData() {
         mStickerList = new LongSparseArray<>();
     }
+
     @Override
     public void onClick(View v) {
         int resId = v.getId();
         if (resId == R.id.tv_text) {
             TextSticker textSticker = new TextSticker(System.currentTimeMillis());
             textSticker.setTextColor("#FFFFFF");
-            textSticker.setFontPath("fonts/ButterTangXin-Italic.ttf");
+            textSticker.setFontPath("fonts/minijianqi.ttf");
             mTextEditFragment.setWidgetEditTextSticker(textSticker);
             mStickerView.addSticker(textSticker, Sticker.Position.TOP);
             switchToOneFragment(EditType.EDIT_TEXT);
@@ -116,6 +166,19 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
             switchToOneFragment(EditType.EDIT_SHAPE);
         } else if (resId == R.id.tv_progress) {
             switchToOneFragment(EditType.EDIT_PROGRESS);
+        } else if (resId == R.id.iv_back) {
+            MessageDialog.show(this, "提示", "确定要退出编辑吗？")
+                    .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                        @Override
+                        public boolean onClick(BaseDialog baseDialog, View v) {
+                            finish();
+                            return false;
+                        }
+                    });
+        } else if (resId == R.id.iv_change_bg) {
+            showEditBgPanel();
+        } else if(resId == R.id.iv_save){
+            saveConfig();
         }
     }
 
@@ -151,7 +214,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onStickerClicked(@NonNull Sticker sticker) {
-                Log.i("test_click:","click");
+                Log.i("test_click:", "click");
 //                if(sticker instanceof TextSticker){
 //                    switchToOneFragment(EditType.EDIT_TEXT);
 //                }else if(sticker instanceof DrawableSticker){
@@ -171,12 +234,17 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onStickerTouchedDown(@NonNull Sticker sticker) {
-                Log.i("test_click:","touch");
+                Log.i("test_click:", "touch");
                 mHandlingSticker = mStickerView.getCurrentSticker();
-                if(sticker instanceof TextSticker){
+                if (sticker instanceof TextSticker) {
+                    mTextEditFragment.setWidgetEditTextSticker((TextSticker) sticker);
                     switchToOneFragment(EditType.EDIT_TEXT);
-                }else if(sticker instanceof DrawableSticker){
-                    switchToOneFragment(EditType.EDIT_SHAPE);
+                } else if (sticker instanceof DrawableSticker) {
+                    if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SVG) {
+                        switchToOneFragment(EditType.EDIT_SHAPE);
+                    } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.ASSET) {
+                        switchToOneFragment(EditType.EDIT_STICKER);
+                    }
                 }
             }
 
@@ -192,14 +260,14 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
             @Override
             public void onStickerDoubleTapped(@NonNull Sticker sticker) {
-                if(sticker instanceof TextSticker){
-                     mTextEditFragment.showInputDialog(100);
+                if (sticker instanceof TextSticker) {
+                    mTextEditFragment.showInputDialog(100);
                 }
             }
 
             @Override
             public void onStickerNoTouched() {
-                if(mEditPaneShowing) {
+                if (mEditPaneShowing) {
                     setEditBodySlideOutAnimation();
                     mEditPaneShowing = false;
                 }
@@ -241,10 +309,13 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private void initStickerViewBg() {
         Bitmap bitmap = getSystemBitmap();
         if (bitmap != null) {
-            Bitmap resultBitmap = clipWidgetSizeBitmap(bitmap);
-            mStickerViewBg.setImageBitmap(resultBitmap);
+            mIsGetSystemBgSuc = true;
+            mEditBitmap = clipWidgetSizeBitmap(bitmap);
+            mSystemBgBitmap = bitmap;
+            mStickerViewBg.setImageBitmap(mEditBitmap);
         } else {
-
+            mIsGetSystemBgSuc = false;
+            mEditBitmap = CommonUtils.getAssetPic(this, "file:///android_asset/widgetBg/template00.png");
         }
     }
 
@@ -261,7 +332,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private void initAllEditFragments() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mTextEditFragment = new WidgetTextEditFragment(this);
-        mStickerEditFragment = new WidgetStickerEditFragment();
+        mStickerEditFragment = new WidgetStickerEditFragment(this);
         mShapeEditFragment = new WidgetShapeEditFragment(this);
         mProgressEditFragment = new WidgetProgressEditFragment();
         transaction.add(R.id.rl_edit_body, mTextEditFragment);
@@ -269,32 +340,62 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         transaction.add(R.id.rl_edit_body, mShapeEditFragment);
         transaction.add(R.id.rl_edit_body, mProgressEditFragment);
         transaction.commitAllowingStateLoss();
-       mTextEditFragment.setWidgetEditTextCallback(new WidgetEditTextCallback() {
+        mTextEditFragment.setWidgetEditTextCallback(new WidgetEditTextCallback() {
             @Override
             public void onAddSticker() {
                 TextSticker textSticker = new TextSticker(System.currentTimeMillis());
                 textSticker.setTextColor("#FFFFFF");
-                textSticker.setFontPath("fonts/ButterTangXin-Italic.ttf");
+                textSticker.setFontPath("fonts/minijianqi.ttf");
                 mTextEditFragment.setWidgetEditTextSticker(textSticker);
                 mStickerView.addSticker(textSticker, Sticker.Position.TOP);
             }
+
+            @Override
+            public void closePanel() {
+                setEditBodySlideOutAnimation();
+                mStickerView.clearCurrentSticker();
+            }
         });
-       mShapeEditFragment.setWidgetEditShapeCallback(new WidgetEditShapeCallback() {
-           @Override
-           public void onAddShapeSticker(WidgetShapeBean widgetShapeBean) {
-               try {
-                   SVG svg = new SVGBuilder()
-                           .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
-                   PictureDrawable drawable = svg.getDrawable();
-                   DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
-                   mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
-                   Log.i("test_add_sticker:","添加DrawSticker成功");
-               }catch (IOException e){
+        mStickerEditFragment.setWidgetEditStickerCallback(new WidgetEditStickerCallback() {
+            @Override
+            public void onAddSticker(String path) {
+                Drawable drawable = new BitmapDrawable(getResources(), CommonUtils.getAssetPic(DiyWidgetMakeActivity.this, path));
+                DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+                drawableSticker.setmPicType(DrawableSticker.ASSET);
+                drawableSticker.setDrawablePath(path);
+                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+            }
 
-               }
+            @Override
+            public void closePanel() {
+                setEditBodySlideOutAnimation();
+                mStickerView.clearCurrentSticker();
+            }
+        });
+        mShapeEditFragment.setWidgetEditShapeCallback(new WidgetEditShapeCallback() {
+            @Override
+            public void onAddShapeSticker(WidgetShapeBean widgetShapeBean) {
+                try {
+                    SVG svg = new SVGBuilder()
+                            .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
+                    PictureDrawable drawable = svg.getDrawable();
+                    DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+                    drawableSticker.setmPicType(DrawableSticker.SVG);
+                    drawableSticker.setDrawablePath(widgetShapeBean.getSvgPath());
+                    mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+                    Log.i("test_add_sticker:", "添加DrawSticker成功");
+                } catch (IOException e) {
 
-           }
-       });
+                }
+
+            }
+
+            @Override
+            public void closePanel() {
+                setEditBodySlideOutAnimation();
+                mStickerView.clearCurrentSticker();
+            }
+        });
 
     }
 
@@ -325,7 +426,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     }
 
     private void switchToOneFragment(EditType editType) {
-        if(!mEditPaneShowing) {
+        if (!mEditPaneShowing) {
             setEditBodySlideInAnimation();
         }
         mEditPaneShowing = true;
@@ -368,14 +469,158 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
     }
 
+    private void showEditBgPanel() {
+        FullScreenDialog.show(this, R.layout.widget_edit_bg_selector_panel, new FullScreenDialog.OnBindView() {
+            @Override
+            public void onBind(final FullScreenDialog dialog, View rootView) {
+                Log.i("test_dialog:", "initEditBgPanel");
+                mRvEditBg = rootView.findViewById(R.id.rv);
+                TextView mTvClose = rootView.findViewById(R.id.tv_close);
+                mEditBgDialog = dialog;
+                mTvClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.doDismiss();
+                    }
+                });
+            }
+        }).setOnShowListener(new OnShowListener() {
+            @Override
+            public void onShow(BaseDialog dialog) {
+                Log.i("test_dialog:", "initEditBgPanel");
+                initEditBgPanel();
+            }
+        });
+    }
+
+    private void showEditDialog() {
+        MessageDialog.show(this, "提示", "确定要退出编辑吗？")
+                .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v) {
+                        finish();
+                        return false;
+                    }
+                });
+    }
+
+    private void initEditBgPanel() {
+        mEditBgList.clear();
+        if (mIsGetSystemBgSuc) {
+            mEditBgList.add(0, "");
+        }
+        Resources res = AppContext.get().getResources();
+        String[] strs = res.getStringArray(R.array.widget_edit_bg);
+        List<String> tempList = Arrays.asList(strs);
+        mEditBgList.addAll(tempList);
+        Log.i("test_dialog:", "mEditBgList.size:" + mEditBgList.size());
+        mEditBgAdapter = new CommonAdapter<String>(this, R.layout.widget_make_edit_bg_item, mEditBgList) {
+            @Override
+            protected void convert(ViewHolder holder, String s, int position) {
+                ImageView mIv = holder.getView(R.id.iv_item);
+                if (position == 0 && mIsGetSystemBgSuc) {
+                    mIv.setImageBitmap(mSystemBgBitmap);
+                } else {
+                    GlideUtils.loadImage(DiyWidgetMakeActivity.this, "file:///android_asset/" + s, mIv);
+                }
+            }
+        };
+        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        mRvEditBg.setLayoutManager(manager);
+        mEditBgAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                if (position == 0 && mIsGetSystemBgSuc) {
+                    mStickerViewBg.setImageBitmap(mSystemBgBitmap);
+                } else {
+                    mEditBitmap = CommonUtils.getAssetPic(DiyWidgetMakeActivity.this, mEditBgList.get(position));
+                    mStickerViewBg.setImageBitmap(mEditBitmap);
+                }
+                if (mEditBgDialog != null) {
+                    mEditBgDialog.doDismiss();
+                }
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                return false;
+            }
+        });
+        mRvEditBg.setAdapter(mEditBgAdapter);
+    }
+
+    private void saveConfig() {
+        Bitmap bgBitmap = BitmapUtils.viewToBitmap(mStickerViewBg);
+        mStickerView.setShowGrid(false);
+        mStickerView.requestLayout();
+        Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
+        final Bitmap coverBitmap = BitmapUtils.mergeBitmap(bgBitmap, stickerBitmap, 0);
+        final String fileName = "widget_" + System.currentTimeMillis()+".png";
+        final String dir = Environment.getSdcardDir("showdesktop/widget_screenshot").getAbsolutePath();
+        Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                BitmapUtils.saveFile(coverBitmap, fileName, dir);
+                customWidgetConfig = new CustomWidgetConfig();
+                customWidgetConfig.setCoverUrl(dir+"/"+fileName);
+                customWidgetConfig.setId(System.currentTimeMillis());
+                CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
+                mHelper.saveConfig(customWidgetConfig,mStickerList);
+                CustomWidgetConfigDao.getInstance(DiyWidgetMakeActivity.this).insert(customWidgetConfig);
+                e.onNext(true);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        DialogSettings.tipTheme = DialogSettings.THEME.LIGHT;
+                       mWaitDialog =  TipDialog.showWait(DiyWidgetMakeActivity.this,"加工数据中...");
+                    }
+                })
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        mWaitDialog.setTip(TipDialog.TYPE.SUCCESS);
+                        mWaitDialog.setMessage("保存成功");
+                        Log.i("test_config:", GsonUtils.toJsonWithSerializeNulls(customWidgetConfig));
+                        Log.i("test_config:", "保存成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.i("test_config:", e.getMessage());
+                        mWaitDialog.setTip(TipDialog.TYPE.ERROR);
+                        mWaitDialog.setMessage("保存失败");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && mEditPaneShowing){
-            mEditPaneShowing = false;
-            setEditBodySlideOutAnimation();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mEditPaneShowing) {
+                mEditPaneShowing = false;
+                setEditBodySlideOutAnimation();
+            } else {
+                showEditDialog();
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 }

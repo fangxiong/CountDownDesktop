@@ -50,7 +50,8 @@
         android:background="@color/c_F1F1F1"/>
 
     <FrameLayout
-        android:id="@+id/fl_text_edit_body"
+        android:id="@+id/fl_sticker_edit_body"
+        android:layout_below="@id/rl_tab_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

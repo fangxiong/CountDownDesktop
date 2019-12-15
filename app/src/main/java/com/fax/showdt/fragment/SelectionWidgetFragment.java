@@ -12,6 +12,8 @@ import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.TestBen;
 import com.fax.showdt.bean.TestData;
+import com.fax.showdt.dialog.ios.v3.TipDialog;
+import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -22,24 +24,27 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 
 public class SelectionWidgetFragment extends Fragment {
 
     private RecyclerView mRv;
-    private ProgressBar mProgressBar;
     private CommonAdapter<TestBen> mAdapter;
     private List<TestBen> mData = new ArrayList<>();
+    private TipDialog mTipsDialog;
+    private SwipeRefreshLayout mRefreshLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.selection_widget_fragment,container,false);
         mRv = view.findViewById(R.id.rv);
-        mProgressBar = view.findViewById(R.id.progress_circular);
-        initRecyclerView();
+        mRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        initView();
         reqHomeWidgetData();
         return view;
     }
@@ -50,7 +55,7 @@ public class SelectionWidgetFragment extends Fragment {
 
     }
 
-    private void initRecyclerView(){
+    private void initView(){
         mAdapter = new CommonAdapter<TestBen>(getActivity(),R.layout.widget_show_item,mData) {
             @Override
             protected void convert(ViewHolder holder, TestBen testBen, int position) {
@@ -61,30 +66,34 @@ public class SelectionWidgetFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
         mRv.setLayoutManager(gridLayoutManager);
         mRv.setAdapter(mAdapter);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                reqHomeWidgetData();
+            }
+        });
     }
 
     private void reqHomeWidgetData(){
+        mTipsDialog = WaitDialog.show((AppCompatActivity) getActivity(),"加载中...");
         OkHttpUtils.get().url("http://q2cjxj02l.bkt.clouddn.com/test1.txt").build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
-                if(mProgressBar != null){
-                    mProgressBar.setVisibility(View.GONE);
-                }
+                mTipsDialog.doDismiss();
+                mRefreshLayout.setRefreshing(false);
                 e.printStackTrace();
             }
 
             @Override
             public void onResponse(String response, int id) {
-                if(mProgressBar != null){
-                    mProgressBar.setVisibility(View.GONE);
-                }
+                mTipsDialog.doDismiss();
                 Log.i("test_result;",response);
-
                 if(response != null){
                     TestData testData = GsonUtils.parseJsonWithGson(response,TestData.class);
                     mData.clear();
                     mData.addAll(testData.getList());
                     mAdapter.notifyDataSetChanged();
+                    mRefreshLayout.setRefreshing(false);
                 }
             }
         });

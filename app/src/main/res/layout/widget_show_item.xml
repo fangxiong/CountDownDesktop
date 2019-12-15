@@ -8,7 +8,7 @@
     <com.fax.showdt.view.ProportionLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_1"
+        android:layout_margin="@dimen/margin_2"
         app:isBaseWidth="true"
         app:proportion="16:9">
 

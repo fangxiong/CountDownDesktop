@@ -38,7 +38,7 @@ public class DialogSettings {
     public static THEME theme = THEME.LIGHT;
     
     //全局提示框明暗风格
-    public static THEME tipTheme = THEME.DARK;
+    public static THEME tipTheme = THEME.LIGHT;
     
     //全局标题文字样式
     public static TextInfo titleTextInfo;
@@ -71,7 +71,7 @@ public class DialogSettings {
     public static boolean cancelable = true;
     
     //全局提示框及等待框（WaitDialog、TipDialog）默认是否可以关闭
-    public static boolean cancelableTipDialog = false;
+    public static boolean cancelableTipDialog = true;
     
     //是否允许显示日志
     public static boolean DEBUGMODE = false;

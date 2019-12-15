@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditTextCallback;
 import com.fax.showdt.callback.WidgetEditTextElementSelectedCallback;
+import com.fax.showdt.callback.WidgetEditTextFontSelectedCallback;
 import com.fax.showdt.dialog.TimePickerDialog;
 import com.fax.showdt.dialog.WidgetTextInputDialog;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextColorEditFragment;
@@ -23,6 +24,7 @@ import com.fax.showdt.fragment.widgetTextEdit.WidgetTextElementEditFragment;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextFontEditFragment;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.CustomPlugUtil;
+import com.fax.showdt.utils.FontCache;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
@@ -39,7 +41,7 @@ import java.util.List;
 
 public class WidgetTextEditFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd;
+    private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd,mConsume;
     private WidgetEditTextCallback mWidgetEditTextCallback;
     private Context mContext;
     private TextSticker mTextSticker;
@@ -65,16 +67,19 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         mFont = view.findViewById(R.id.iv_font);
         mColor = view.findViewById(R.id.iv_color);
         mAdd = view.findViewById(R.id.iv_add);
+        mConsume = view.findViewById(R.id.iv_consume);
         mIvKeyboard.setOnClickListener(this);
         mElement.setOnClickListener(this);
         mFont.setOnClickListener(this);
         mColor.setOnClickListener(this);
         mAdd.setOnClickListener(this);
+        mConsume.setOnClickListener(this);
         mViews.add(mElement);
         mViews.add(mFont);
         mViews.add(mColor);
         initAllEditFragments();
         refreshSelectedViewStatus(mElement);
+        switchToOneFragment(EditTextType.ELEMENT);
         return view;
     }
 
@@ -121,6 +126,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     public void setWidgetEditTextSticker(TextSticker textSticker) {
         this.mTextSticker = textSticker;
+        mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
     }
 
     @Override
@@ -133,7 +139,6 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 mWidgetEditTextCallback.onAddSticker();
             }
         }else if(resId == R.id.iv_element){
-            mElement.setSelected(true);
             refreshSelectedViewStatus(mElement);
             switchToOneFragment(EditTextType.ELEMENT);
         }else if(resId == R.id.iv_font){
@@ -143,6 +148,10 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         }else if(resId == R.id.iv_color){
 //            refreshSelectedViewStatus(mColor);
             showColorPickDialog(mTextSticker.getTextColor());
+        }else if(resId == R.id.iv_consume){
+            if(mWidgetEditTextCallback != null){
+                mWidgetEditTextCallback.closePanel();
+            }
         }
     }
 
@@ -186,10 +195,10 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
     private void initAllEditFragments() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         mElementEditFragment = new WidgetTextElementEditFragment(mContext);
-        mFontEditFragment = new WidgetTextFontEditFragment();
+        mFontEditFragment = new WidgetTextFontEditFragment(mContext);
 //        mColorEditFragment = new WidgetTextColorEditFragment();
-        transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
         transaction.add(R.id.fl_text_edit_body, mFontEditFragment);
+        transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
 //        transaction.add(R.id.fl_text_edit_body, mColorEditFragment);
         mElementEditFragment.setWidgetEditTextElementSelectedCallback(new WidgetEditTextElementSelectedCallback() {
             @Override
@@ -200,6 +209,13 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                     String lastText = mTextSticker.getText();
                     mTextSticker.setText(lastText+text);
                 }
+            }
+        });
+//        mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
+        mFontEditFragment.setWidgetTextFontSeelctedCallback(new WidgetEditTextFontSelectedCallback() {
+            @Override
+            public void selectTextFont(String fontPath) {
+                mTextSticker.setFontPath(fontPath);
             }
         });
         transaction.commitAllowingStateLoss();

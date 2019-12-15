@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetShapeEditFragment extends Fragment implements View.OnClickListener {
-    private ImageView mIvLocal, mIvColor;
+    private ImageView mIvLocal, mIvColor,mConsume;
     private Context mContext;
     private WidgetShapeElementEditFragment mShapeElementEditFragment;
     private WidgetEditShapeCallback mWidgetEditShapeCallback;
@@ -35,15 +35,23 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.widget_shape_edit_fragment, container, false);
         mIvLocal = view.findViewById(R.id.iv_local);
         mIvColor = view.findViewById(R.id.iv_color);
+        mConsume = view.findViewById(R.id.iv_consume);
         mIvLocal.setOnClickListener(this);
         mIvColor.setOnClickListener(this);
+        mConsume.setOnClickListener(this);
+        mIvLocal.setSelected(true);
         initFragment();
         return view;
     }
 
     @Override
     public void onClick(View view) {
-
+        int resId = view.getId();
+        if (resId == R.id.iv_consume) {
+            if (mWidgetEditShapeCallback != null) {
+                mWidgetEditShapeCallback.closePanel();
+            }
+        }
     }
 
     private void initFragment() {

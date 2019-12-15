@@ -81,7 +81,7 @@ public class CountdownService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startMyOwnForeground() {
-        String NOTIFICATION_CHANNEL_ID = "com.xjlmh.classic";
+        String NOTIFICATION_CHANNEL_ID = "com.fax.showdt";
         String channelName = "My Background Service";
         NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
         chan.setLightColor(Color.BLUE);

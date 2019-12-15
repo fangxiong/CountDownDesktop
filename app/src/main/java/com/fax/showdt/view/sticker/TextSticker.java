@@ -103,7 +103,7 @@ public class TextSticker extends Sticker {
         if (!TextUtils.isEmpty(mFontPath)) {
             Typeface typeface = FontCache.get(mFontPath,context);
             if (typeface != null) {
-                Log.i("test_font:",mFontPath);
+//                Log.i("test_font:",mFontPath);
                 textPaint.setTypeface(typeface);
             }
         } else {
@@ -118,11 +118,11 @@ public class TextSticker extends Sticker {
     }
 
     private void initRect() {
-        Log.i("test_font:",mFontPath);
+//        Log.i("test_font:",mFontPath== null ? " null" : mFontPath);
         if (!TextUtils.isEmpty(mFontPath)) {
             Typeface typeface = FontCache.get(mFontPath,context);
             if (typeface != null) {
-                Log.i("test_font:","设置字体");
+//                Log.i("test_font:","设置字体");
                 textPaint.setTypeface(typeface);
             }
         } else {
@@ -151,7 +151,7 @@ public class TextSticker extends Sticker {
 //            drawable.draw(canvas);
 //        }
         String textStr = CustomPlugUtil.getPlugTextFromSigns(text);
-        Log.i("test_text_draw:","origin text:"+text+" result text:"+textStr);
+//        Log.i("test_text_draw:","origin text:"+text+" result text:"+textStr);
         Paint.FontMetricsInt fm = textPaint.getFontMetricsInt();
         if (isShimmerText) {
             initShimmer(textPaint, textStr);

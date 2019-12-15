@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +16,8 @@ import androidx.core.app.ActivityCompat;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class CommonUtils {
@@ -21,6 +26,7 @@ public class CommonUtils {
     public static final int START_QQ_TYPE_PERSON_PROFILE = 2;
     public static final int START_QQ_TYPE_GROUP_PROFILE = 3;
     public static final String QQ_APP_ID = "com.tencent.mobileqq";
+
     /**
      * 判断服务是否开启
      *
@@ -45,8 +51,8 @@ public class CommonUtils {
         return false;
     }
 
-    public  static String toHexEncoding(int color) {
-        String A,R, G, B;
+    public static String toHexEncoding(int color) {
+        String A, R, G, B;
         StringBuffer sb = new StringBuffer();
         A = Integer.toHexString(Color.alpha(color));
         R = Integer.toHexString(Color.red(color));
@@ -109,5 +115,18 @@ public class CommonUtils {
         } catch (Throwable tr) {
         }
         return false;
+    }
+
+    public static Bitmap getAssetPic(Context context,String fileName) {
+        Bitmap bitmap = null;
+        AssetManager assetManager = context.getAssets();
+        try {
+            InputStream inputStream = assetManager.open(fileName);
+            //filename是assets目录下的图片名
+            bitmap = BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }

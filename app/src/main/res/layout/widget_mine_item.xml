@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/c_222222">
+
+    <com.fax.showdt.view.ProportionLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2"
+        app:isBaseWidth="true"
+        app:proportion="1:1">
+
+        <RelativeLayout
+            android:id="@+id/rl_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.fax.showdt.view.FadeInImageView
+                android:id="@+id/iv_widget"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:scaleType="center" />
+
+        </RelativeLayout>
+
+
+    </com.fax.showdt.view.ProportionLayout>
+
+</RelativeLayout>

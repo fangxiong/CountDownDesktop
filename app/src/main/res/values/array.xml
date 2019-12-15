@@ -23,5 +23,18 @@
         <item>S02</item>
     </string-array>
 
+    <string-array name="widget_edit_bg">
+        <item>widgetBg/template00.png</item>
+        <item>widgetBg/template01.png</item>
+        <item>widgetBg/template02.png</item>
+        <item>widgetBg/template03.png</item>
+        <item>widgetBg/template04.png</item>
+        <item>widgetBg/template05.png</item>
+        <item>widgetBg/template06.png</item>
+        <item>widgetBg/template07.png</item>
+        <item>widgetBg/template08.png</item>
+        <item>widgetBg/template09.png</item>
+        <item>widgetBg/template10.png</item>
+    </string-array>
 
 </resources>

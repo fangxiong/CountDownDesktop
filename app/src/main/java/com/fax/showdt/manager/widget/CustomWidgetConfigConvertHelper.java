@@ -139,6 +139,7 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setAppName(appName);
                 drawablePlugBean.setSvgName(((DrawableSticker) sticker).getSvgName());
                 drawablePlugBean.setShowFrame(((DrawableSticker) sticker).isShowFrame());
+                drawablePlugBean.setmPicType(((DrawableSticker) sticker).getmPicType());
 
                 PointF point = sticker.getMappedCenterPoint();
                 drawablePlugBean.setLocation(new PlugLocation(point.x, point.y));
@@ -153,7 +154,6 @@ public class CustomWidgetConfigConvertHelper {
         newConfig.setTextPlugList(mTextList);
         newConfig.setDrawablePlugList(mDrawableList);
         newConfig.setCreatedTime(System.currentTimeMillis());
-        newConfig.setFontInfo(originConfig.getFontInfo());
         HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
 
         for (int i = 0; i < mTextList.size(); i++) {
@@ -225,10 +225,6 @@ public class CustomWidgetConfigConvertHelper {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             Sticker sticker = null;
             if (bean instanceof TextPlugBean) {
-                ThemeFontBean themeFontBean = mThemeConfig.getFontInfo();
-                if (themeFontBean != null) {
-                    ((TextPlugBean) bean).setFontPath(themeFontBean.getFontPath());
-                }
                 sticker = initTextSticker(view, (TextPlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
             } else if (bean instanceof LinePlugBean) {
                 sticker = initLineSticker(view, (LinePlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
@@ -280,10 +276,6 @@ public class CustomWidgetConfigConvertHelper {
         for (int i = 0; i < mStickerBeanList.size(); i++) {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             if (bean instanceof TextPlugBean) {
-                ThemeFontBean themeFontBean = mCustomWidgetConfig.getFontInfo();
-                if (themeFontBean != null) {
-                    ((TextPlugBean) bean).setFontPath(themeFontBean.getFontPath());
-                }
                 drawTextSticker(canvas, (TextPlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
             } else if (bean instanceof LinePlugBean) {
                 drawLineSticker(canvas, (LinePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());

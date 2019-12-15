@@ -963,7 +963,7 @@ public class StickerView extends FrameLayout {
             offsetX /= 2f;
         }
         if (position != Sticker.Position.INITIAL) {
-            sticker.getMatrix().postTranslate(offsetX+0.1f, offsetY+0.1f);
+            sticker.getMatrix().postTranslate(offsetX, offsetY);
         }
     }
 

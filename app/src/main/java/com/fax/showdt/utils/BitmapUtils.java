@@ -439,4 +439,24 @@ public class BitmapUtils {
         return bitmap;
     }
 
+    public static boolean saveFile(Bitmap bm, String fileName, String path) throws IOException {
+        try {
+            File foder = new File(path);
+            if (!foder.exists()) {
+                foder.mkdirs();
+            }
+            File myCaptureFile = new File(path, fileName);
+            if (!myCaptureFile.exists()) {
+                myCaptureFile.createNewFile();
+            }
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+            bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+            bos.flush();
+            bos.close();
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
 }

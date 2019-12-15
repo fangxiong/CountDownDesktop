@@ -51,7 +51,6 @@ public class CustomWidgetScreenAdaptHelper {
         mResultConfig.setCreatedTime(System.currentTimeMillis());
         mResultConfig.setFromFeatured(true);
         mResultConfig.setDesc(config.getDesc());
-        mResultConfig.setFontInfo(config.getFontInfo());
         mResultConfig.setOriginX(config.getOriginX());
         mResultConfig.setOriginY(config.getOriginY());
         mResultConfig.setForVip(config.isForVip());

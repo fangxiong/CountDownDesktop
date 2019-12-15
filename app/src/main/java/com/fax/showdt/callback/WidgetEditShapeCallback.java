@@ -10,4 +10,5 @@ import com.fax.showdt.bean.WidgetShapeBean;
  */
 public interface WidgetEditShapeCallback {
     void onAddShapeSticker(WidgetShapeBean widgetShapeBean);
+    void closePanel();
 }
