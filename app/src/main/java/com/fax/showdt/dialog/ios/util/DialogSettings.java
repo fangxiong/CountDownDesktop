@@ -26,7 +26,7 @@ public class DialogSettings {
     }
     
     //是否开启模糊效果
-    public static boolean isUseBlur = false;
+    public static boolean isUseBlur = true;
     
     //开启模态化队列启动方式
     public static boolean modalDialog = false;
@@ -77,7 +77,7 @@ public class DialogSettings {
     public static boolean DEBUGMODE = false;
     
     //模糊透明度(0~255)
-    public static int blurAlpha = 210;
+    public static int blurAlpha = 160;
     
     //允许自定义系统对话框style，注意设置此功能会导致原对话框风格和动画失效
     public static int systemDialogStyle;

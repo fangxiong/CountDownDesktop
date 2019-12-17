@@ -43,12 +43,16 @@ public class WidgetManager {
     }
 
     public static WidgetManager getInstance() {
-        synchronized (SLOCK) {
-            if (mInstance == null) {
-                mInstance = new WidgetManager();
+        if(mInstance == null) {
+            synchronized (SLOCK) {
+                if (mInstance == null) {
+                    mInstance = new WidgetManager();
+                }
             }
         }
-        mWidgetContext = new WidgetContext();
+        if(mWidgetContext != null) {
+            mWidgetContext = new WidgetContext();
+        }
         return mInstance;
     }
 

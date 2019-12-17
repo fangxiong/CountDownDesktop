@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 获取精确位置 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name="com.fax.showdt.AppContext"
         tools:replace="android:allowBackup"
@@ -38,6 +39,9 @@
             android:name="com.fax.showdt.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MainActivityTheme"/>
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name="com.fax.showdt.activity.SplashActivity"
             android:theme="@style/SplashTheme"

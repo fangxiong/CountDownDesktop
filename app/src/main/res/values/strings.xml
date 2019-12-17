@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CountDownDesktop</string>
+    <string name="app_name">秀桌面</string>
 
 
     <string name="close">关闭</string>
@@ -24,4 +24,11 @@
     <string name="app_permission03">● 手机信息权限</string>
 
 
+    <string name="setting">设置</string>
+    <string name="setting_check_version">检查更新</string>
+    <string name="setting_help">帮助手册</string>
+    <string name="setting_share">分享给小伙伴</string>
+    <string name="setting_feedback">我要反馈</string>
+    <string name="setting_lock_switch">锁屏</string>
+    <string name="setting_market_scoring">给秀桌面打分</string>
 </resources>

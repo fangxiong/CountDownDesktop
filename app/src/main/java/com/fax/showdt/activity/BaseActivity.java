@@ -169,7 +169,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             mImmersionBar.statusBarColor(initStatusBarColor());
         }
         mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
-        mImmersionBar.statusBarDarkFont(true).init();
+//        mImmersionBar.statusBarDarkFont(true).init();
     }
 
     protected ImmersionBar getImmersionBar() {
@@ -185,7 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected  @ColorRes
     int initStatusBarColor() {
-        return R.color.white;
+        return R.color.c_222222;
     }
 
     /**

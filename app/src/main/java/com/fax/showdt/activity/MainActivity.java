@@ -55,7 +55,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.main_activity);
         checkPermission();
         mImmersionBar = ImmersionBar.with(this);
-        //当设置fitsSystemWindows为true和状态栏颜色后就不是沉浸式状态栏了
         mImmersionBar.statusBarColor(initStatusBarColor());
         mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
         mImmersionBar.statusBarDarkFont(false).init();
@@ -106,16 +105,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
 
                     }
-                    case R.id.nav_feedback: {
-                        FeedbackAPI.openFeedbackActivity();
-                        break;
-
-                    }
-                    case R.id.nav_check_version: {
-                        break;
-
-                    }
                     case R.id.nav_setting: {
+                        startActivity(new Intent(MainActivity.this,SettingActivity.class));
                         break;
 
                     }
