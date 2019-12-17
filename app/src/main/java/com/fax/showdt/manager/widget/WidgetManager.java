@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.fax.showdt.R;
 import com.fax.showdt.activity.MainActivity;
-import com.fax.showdt.provider.WidgetProvider4x1;
+import com.fax.showdt.activity.WidgetSelectedActivity;
+import com.fax.showdt.provider.WidgetProvider1x1;
 import com.fax.showdt.provider.WidgetProvider4x2;
 import com.fax.showdt.provider.WidgetProvider4x3;
 import com.fax.showdt.provider.WidgetProvider4x4;
@@ -33,9 +35,7 @@ public class WidgetManager {
     private Bitmap mBitmap;
     private boolean isPause = false;
     private Handler mHandler;
-    private static int[] widget4x1;
-    private static int[] widget4x2;
-    private static int[] widget4x3;
+    private static int[] widget1x1;
     private static int[] widget4x4;
     public final static String WIDGET_CLICK_ACTION = "widget_click_action";
 
@@ -97,11 +97,12 @@ public class WidgetManager {
                     @Override
                     public void run() {
                         mBitmap = mWidgetContext.getViewBitmap();
+                        Log.i("test_widget_draw:",mBitmap == null ? " null" : "not null");
                         if (mBitmap != null) {
                             views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
                             views.setImageViewBitmap(R.id.content, mBitmap);
                             Intent configIntent = new Intent();
-                            configIntent.setClass(context, MainActivity.class);
+                            configIntent.setClass(context, WidgetSelectedActivity.class);
                             configIntent.setAction(WIDGET_CLICK_ACTION);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
                             views.setOnClickPendingIntent(R.id.content, pendingIntent);
@@ -113,7 +114,7 @@ public class WidgetManager {
                         }else {
                             views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
                             Intent configIntent = new Intent();
-                            configIntent.setClass(context,MainActivity.class);
+                            configIntent.setClass(context,WidgetSelectedActivity.class);
                             configIntent.setAction(WIDGET_CLICK_ACTION);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
                             views.setOnClickPendingIntent(R.id.rl_body, pendingIntent);
@@ -134,20 +135,14 @@ public class WidgetManager {
 
     public static int[] getAllProviderWidgetId(Context mContext) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-        int []widget4x1_cur;
-        int []widget4x2_cur;
-        int []widget4x3_cur;
+        int []widget1x1_cur;
         int []widget4x4_cur;
-        widget4x1_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x1.class));
-        widget4x2_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x2.class));
-        widget4x3_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x3.class));
+        widget1x1_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider1x1.class));
         widget4x4_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x4.class));
-        widget4x1 = widget4x1_cur;
-        widget4x2 = widget4x2_cur;
-        widget4x3 = widget4x3_cur;
+        widget1x1 = widget1x1_cur;
         widget4x4 = widget4x4_cur;
 
-        return combine_two_intdata(combine_two_intdata(widget4x1, widget4x2), combine_two_intdata(widget4x3, widget4x4));
+        return combine_two_intdata(widget1x1, widget4x4);
     }
 
     public static int[] combine_two_intdata(int[] a, int[] b) {

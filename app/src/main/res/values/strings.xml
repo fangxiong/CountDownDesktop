@@ -31,4 +31,9 @@
     <string name="setting_feedback">我要反馈</string>
     <string name="setting_lock_switch">锁屏</string>
     <string name="setting_market_scoring">给秀桌面打分</string>
+
+    <string name="countdown4_4">秀桌面4x4</string>
+    <string name="countdown1_1">秀桌面1x1</string>
+    <string name="countdownContent_default_desktop">点击设置倒计时\n长按可调节宽高</string>
+
 </resources>

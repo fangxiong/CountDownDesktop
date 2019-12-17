@@ -30,10 +30,19 @@
             android:value="4dc2257639ace12b4f3f7810660d9c01" />
         <service
             android:name="com.amap.api.location.APSService"
-            android:process="com.xjlmh.classic.wallpaper" />
+            android:process=":remote" />
         <service
             android:name="com.fax.showdt.service.CountdownService"
-            android:process="com.xjlmh.classic.wallpaper" />
+            android:process=":remote" />
+
+        <service
+            android:name="com.fax.showdt.service.NLService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:process=":remoter">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name="com.fax.showdt.activity.MainActivity"
@@ -56,17 +65,47 @@
             android:name="com.fax.showdt.activity.DiyWidgetMakeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MainActivityTheme" />
+        <activity
+            android:name="com.fax.showdt.activity.WidgetSelectedActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
 
-        <!-- 歌词插件：通知栏监听服务 -->
-        <service
-            android:name="com.fax.showdt.service.NLService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:process="com.fax.cddt.wallpaper">
+        <receiver
+            android:name=".provider.WidgetProvider4x4"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/countdown4_4"
+            android:process=":remote">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+                <action android:name="widget_click_action" />
             </intent-filter>
-        </service>
 
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget4x4" />
+        </receiver>
+        <receiver
+            android:name=".provider.WidgetProvider1x1"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/countdown1_1"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+                <action android:name="widget_click_action" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget1x1" />
+        </receiver>
 
     </application>
 

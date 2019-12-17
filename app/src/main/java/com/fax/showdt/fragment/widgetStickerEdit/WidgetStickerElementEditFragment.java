@@ -38,7 +38,7 @@ public class WidgetStickerElementEditFragment extends Fragment {
     private List<StickerBean> mCurrentStickerBean =new ArrayList<>();
     private Context mContext;
     private RecyclerView mStickerContentRv,mStickerListRv;
-    private String[] titles = new String[]{"表情","love","对话框","便签","课程表"};
+    private String[] titles = new String[]{"对话框","love","表情","便签","课程表"};
     private int mCurrentSelectedPos = 0;
     private WidgetEditStickerElementSelectedCallback mWidgetEditStickertElementSelectedCallback;
 

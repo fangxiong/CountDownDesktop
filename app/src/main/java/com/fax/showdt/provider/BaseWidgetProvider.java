@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.manager.widget.WidgetManager;
@@ -16,14 +17,18 @@ public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        Log.i("test_widget:","更新widget");
+        Log.i("test_widget:","widget的个数："+appWidgetIds.length);
         CountdownService.startSelf(context);
         NLService.startSelf(context);
         SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,true);
     }
 
+
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
+        Log.i("test_widget:","删除widget");
         int[] appWidgetIdArray = WidgetManager.getAllProviderWidgetId(context);
         if(appWidgetIdArray == null || appWidgetIdArray.length == 0){
             //当桌面widget全部删除后,关闭服务,避免无谓消耗资源
@@ -41,6 +46,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
+        Log.i("test_widget:","添加widget");
     }
 
     @Override
@@ -54,6 +60,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i("test_widget:",intent.getAction());
         super.onReceive(context, intent);
         if(WidgetManager.WIDGET_CLICK_ACTION.equals(intent.getAction())) {
             //当用户点击widget时候,重启一次service,可起到服务被杀后重新拉起作用

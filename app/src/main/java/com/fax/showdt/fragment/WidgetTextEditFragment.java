@@ -232,7 +232,8 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 result = CustomPlugUtil.posAndNegSwitchTimer(result, time);
                 if(mTextSticker != null){
                     Log.i("test_time:",result+"");
-                    mTextSticker.setText(result);
+                    String lastText = mTextSticker.getText();
+                    mTextSticker.setText(lastText+result);
                 }
             }
         }, new TimePickerDialog.IClickCancelCallback() {

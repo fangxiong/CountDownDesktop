@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.ViewHolder;
@@ -76,7 +78,7 @@ public class SelectionWidgetFragment extends Fragment {
 
     private void reqHomeWidgetData(){
         mTipsDialog = WaitDialog.show((AppCompatActivity) getActivity(),"加载中...");
-        OkHttpUtils.get().url("http://q2cjxj02l.bkt.clouddn.com/test1.txt").build().execute(new StringCallback() {
+        OkHttpUtils.get().url(ConstantString.req_widget_home_selection).build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 mTipsDialog.doDismiss();
