@@ -6,5 +6,5 @@ package com.fax.showdt.provider;
  * Date: 19-8-16
  * Description:
  */
-public class WidgetProvider4x4 extends WidgetProvider4x2 {
+public class WidgetProvider4x4 extends BaseWidgetProvider {
 }

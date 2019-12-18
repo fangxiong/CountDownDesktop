@@ -298,19 +298,32 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     }
 
     private Bitmap clipWidgetSizeBitmap(Bitmap bitmap) {
-        float w = bitmap.getWidth(); // 得到图片的宽，高
-        int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
-        int x = (int) ((w - cropWidth) * 1.0f / 2);
-        int marginTop = ViewUtils.dp2px(60);
-        int cropHeight = cropWidth;
-        return Bitmap.createBitmap(bitmap, x, marginTop, cropWidth, cropHeight, null, false);
+        Bitmap resultBitmap = null;
+
+        try {
+            float w = bitmap.getWidth();
+            float h = bitmap.getHeight();
+            Log.i("test_size:", "height:" + bitmap.getHeight() + " width:" + bitmap.getWidth());
+            int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
+            int x = (int) ((w - cropWidth) * 1.0f / 2);
+            int marginTop = ViewUtils.dp2px(60);
+            if ((w < h || w == h) && w > h - marginTop) {
+                marginTop = (int) (h - w);
+            }else if(w > h){
+                 cropWidth = (int)(cropWidth/2f);
+            }
+            resultBitmap = Bitmap.createBitmap(bitmap, x, marginTop, cropWidth, cropWidth, null, false);
+        }catch (Exception e){
+            resultBitmap = null;
+        }
+        return resultBitmap;
     }
 
     private void initStickerViewBg() {
-        Bitmap bitmap = getSystemBitmap();
+        Bitmap bitmap = clipWidgetSizeBitmap(getSystemBitmap());
         if (bitmap != null) {
             mIsGetSystemBgSuc = true;
-            mEditBitmap = clipWidgetSizeBitmap(bitmap);
+            mEditBitmap = bitmap;
             mSystemBgBitmap = bitmap;
             mStickerViewBg.setImageBitmap(mEditBitmap);
         } else {

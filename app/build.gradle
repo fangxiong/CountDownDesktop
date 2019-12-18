@@ -33,6 +33,29 @@ android {
         }
     }
 
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                if (variant.getBuildType().isMinifyEnabled()){
+                    def outPutRootPath = rootDir.getPath() + File.separator + apkBuilder.apkOutputRoot +
+                            File.separator + apkBuilder.origin_apk_output_path + File.separator + cfg.versionCode
+                    def info = "fax-"+cfg.versionName+"-"+cfg.versionCode
+                    File outPutFile = new File(outPutRootPath)
+                    variant.getPackageApplication().outputDirectory = outPutFile
+                    outputFileName = info + ".apk"
+                    variant.assemble.doLast {
+                        copy {
+                            from variant.mappingFile
+                            into outPutFile
+                            rename {
+                                String fileName -> info+"-mapping.txt"
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
     buildTypes {
         release {
             buildConfigField "boolean", "ENABLE_TEST_URL", "false"

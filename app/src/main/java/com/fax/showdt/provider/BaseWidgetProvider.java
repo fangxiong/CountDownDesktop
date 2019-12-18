@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.manager.widget.WidgetManager;
-import com.fax.showdt.service.CountdownService;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.SharedPreferenceUtil;
 
@@ -19,7 +19,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         Log.i("test_widget:","更新widget");
         Log.i("test_widget:","widget的个数："+appWidgetIds.length);
-        CountdownService.startSelf(context);
+        WidgetUpdateService.startSelf(context);
         NLService.startSelf(context);
         SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,true);
     }
@@ -32,7 +32,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
         int[] appWidgetIdArray = WidgetManager.getAllProviderWidgetId(context);
         if(appWidgetIdArray == null || appWidgetIdArray.length == 0){
             //当桌面widget全部删除后,关闭服务,避免无谓消耗资源
-            CountdownService.stopSelf(context);
+            WidgetUpdateService.stopSelf(context);
             NLService.stopSelf(context);
             SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,false);
         }
@@ -64,7 +64,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
         if(WidgetManager.WIDGET_CLICK_ACTION.equals(intent.getAction())) {
             //当用户点击widget时候,重启一次service,可起到服务被杀后重新拉起作用
-            CountdownService.startSelf(context);
+            WidgetUpdateService.startSelf(context);
             NLService.startSelf(context);
         }
     }

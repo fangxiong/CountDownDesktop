@@ -12,6 +12,7 @@
 
         <ImageView
             android:id="@+id/iv_back"
+            android:onClick="onClick"
             android:src="@drawable/common_iv_back_white"
             android:layout_width="@dimen/margin_35"
             android:layout_height="@dimen/margin_35"

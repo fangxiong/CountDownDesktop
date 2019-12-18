@@ -82,7 +82,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }else if(resId == R.id.rl_help){
 
         }else if(resId == R.id.rl_share){
-
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "我正在使用《桌面秀》,很好用哦,推荐给你哦\nhttp://www.baidu.com");
+            shareIntent = Intent.createChooser(shareIntent, "我正在使用《桌面秀》,很好用哦,推荐给你");
+            startActivity(shareIntent);
         }else if(resId == R.id.rl_market_scoring){
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("market://details?id=" + getPackageName()));

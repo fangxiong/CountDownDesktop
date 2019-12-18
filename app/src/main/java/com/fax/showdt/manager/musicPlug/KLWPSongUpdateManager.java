@@ -9,7 +9,7 @@ import android.media.session.PlaybackState;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.fax.showdt.service.CountdownService;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.FileExUtils;
@@ -63,7 +63,7 @@ public class KLWPSongUpdateManager {
     @TargetApi(21)
     public void refreshMusicInfoWith21() {
         mMediaController = NLService.getMediaController();
-        if (mMediaController != null && (CountdownService.isServiceRunning() || isEditWidget)) {
+        if (mMediaController != null && (WidgetUpdateService.isServiceRunning() || isEditWidget)) {
             Log.i("test_update_audio:", "更新audioinfo");
             mPlaybackState = mMediaController.getPlaybackState();
             updateAudioInfo(mMediaController.getMetadata(), mPlaybackState);

@@ -25,7 +25,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 
-public class CountdownService extends Service {
+public class WidgetUpdateService extends Service {
     private static final int ALARM_DURATION = 5 * 60 * 1000;
     private static final int DELAY_TIME = 1000;
     private Context context;
@@ -34,15 +34,15 @@ public class CountdownService extends Service {
     private String name = "countDown";
     public final static String WIDGET_CONFIG_CHANGED = "widget_config_changed";
     private WidgetUpdateReceiver mWidgetUpdateReceiver;
-    private volatile static CountdownService service;
+    private volatile static WidgetUpdateService service;
 
     public static void startSelf(Context context) {
-        Intent intent = new Intent(context, CountdownService.class);
+        Intent intent = new Intent(context, WidgetUpdateService.class);
         ContextCompat.startForegroundService(context, intent);
     }
 
     public static void stopSelf(Context context) {
-        context.stopService(new Intent(context, CountdownService.class));
+        context.stopService(new Intent(context, WidgetUpdateService.class));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class CountdownService extends Service {
         Notification notification = notificationBuilder.setOngoing(true)
 //                .setSmallIcon(R.drawable.logo_small_icon)
 //                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.umeng_push_notification_default_large_icon))
-                .setContentTitle("桌面美化大师正在运行")
+                .setContentTitle("秀桌面正在运行")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
@@ -126,7 +126,7 @@ public class CountdownService extends Service {
     }
 
     private PendingIntent getPendingIntent() {
-        Intent alarmIntent = new Intent(context, CountdownService.class);
+        Intent alarmIntent = new Intent(context, WidgetUpdateService.class);
         PendingIntent pendingIntent = PendingIntent.getService(context, 123456789,
                 alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;

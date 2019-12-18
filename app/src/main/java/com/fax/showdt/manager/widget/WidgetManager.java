@@ -50,7 +50,7 @@ public class WidgetManager {
                 }
             }
         }
-        if(mWidgetContext != null) {
+        if(mWidgetContext == null) {
             mWidgetContext = new WidgetContext();
         }
         return mInstance;
@@ -86,7 +86,9 @@ public class WidgetManager {
      */
     public void updateAppWidget(final Context context) {
         try {
+            Log.i("test_widget_draw:","更新widget");
             if (isPause) {
+                Log.i("test_widget_draw:","isPause:"+isPause);
                 return;
             }
             if (mWidgetContext != null) {

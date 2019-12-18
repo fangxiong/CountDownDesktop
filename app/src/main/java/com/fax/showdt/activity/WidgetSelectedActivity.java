@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class WidgetSelectedActivity extends BaseActivity {
+public class WidgetSelectedActivity extends BaseActivity implements View.OnClickListener{
     private RecyclerView mRv;
     private CommonAdapter<CustomWidgetConfig> mAdapter;
     private List<CustomWidgetConfig> mData = new ArrayList<>();
@@ -41,7 +41,7 @@ public class WidgetSelectedActivity extends BaseActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.widget_mine_fragment);
+        setContentView(R.layout.widget_selected_activity);
         mRv = findViewById(R.id.rv);
         mRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         initData();
@@ -50,10 +50,23 @@ public class WidgetSelectedActivity extends BaseActivity {
     }
 
     @Override
+    protected boolean isEnableImmersionBar() {
+        return false;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if(disposable != null){
             disposable.dispose();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int resId = v.getId();
+        if(resId == R.id.iv_back){
+            finish();
         }
     }
 
