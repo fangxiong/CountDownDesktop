@@ -74,6 +74,7 @@
             android:excludeFromRecents="true"
             android:process="@string/process_name"
             android:exported="false"
+            android:launchMode="singleTask"
             android:theme="@style/WidgetSelectActivityTheme"
             android:screenOrientation="portrait" />
 

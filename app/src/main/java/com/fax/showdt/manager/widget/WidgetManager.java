@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.activity.MainActivity;
 import com.fax.showdt.activity.WidgetSelectedActivity;
@@ -17,8 +18,13 @@ import com.fax.showdt.provider.WidgetProvider1x1;
 import com.fax.showdt.provider.WidgetProvider4x2;
 import com.fax.showdt.provider.WidgetProvider4x3;
 import com.fax.showdt.provider.WidgetProvider4x4;
+import com.fax.showdt.utils.WidgetDataHandlerUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import me.eugeniomarletti.kotlin.metadata.shadow.resolve.constants.StringValue;
 
 /**
  * Author: fax
@@ -27,7 +33,7 @@ import java.util.ArrayList;
  * Description:处理widget的相关逻辑
  */
 public class WidgetManager {
-
+    public final static String WIDGET_CLICK_ACTION = "widget_click_action";
     private static WidgetContext mWidgetContext;
     public static WidgetManager mInstance;
     private static final Object SLOCK = new Object();
@@ -35,15 +41,12 @@ public class WidgetManager {
     private Bitmap mBitmap;
     private boolean isPause = false;
     private Handler mHandler;
-    private static int[] widget1x1;
-    private static int[] widget4x4;
-    public final static String WIDGET_CLICK_ACTION = "widget_click_action";
 
     private WidgetManager() {
     }
 
     public static WidgetManager getInstance() {
-        if(mInstance == null) {
+        if (mInstance == null) {
             synchronized (SLOCK) {
                 if (mInstance == null) {
                     mInstance = new WidgetManager();
@@ -86,44 +89,46 @@ public class WidgetManager {
      */
     public void updateAppWidget(final Context context) {
         try {
-            Log.i("test_widget_draw:","更新widget");
             if (isPause) {
-                Log.i("test_widget_draw:","isPause:"+isPause);
                 return;
             }
             if (mWidgetContext != null) {
-                if(mHandler == null){
+                if (mHandler == null) {
                     mHandler = new Handler();
                 }
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mBitmap = mWidgetContext.getViewBitmap();
-                        Log.i("test_widget_draw:",mBitmap == null ? " null" : "not null");
-                        if (mBitmap != null) {
-                            views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
-                            views.setImageViewBitmap(R.id.content, mBitmap);
-                            Intent configIntent = new Intent();
-                            configIntent.setClass(context, WidgetSelectedActivity.class);
-                            configIntent.setAction(WIDGET_CLICK_ACTION);
-                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
-                            views.setOnClickPendingIntent(R.id.content, pendingIntent);
-                            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                            int[] widgetIds = getAllProviderWidgetId(context);
-                            for (int i = 0; i < widgetIds.length; i++) {
-                                appWidgetManager.updateAppWidget(widgetIds[i], views);
-                            }
-                        }else {
-                            views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
-                            Intent configIntent = new Intent();
-                            configIntent.setClass(context,WidgetSelectedActivity.class);
-                            configIntent.setAction(WIDGET_CLICK_ACTION);
-                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
-                            views.setOnClickPendingIntent(R.id.rl_body, pendingIntent);
-                            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                            int[] widgetIds = getAllProviderWidgetId(context);
-                            for (int i = 0; i < widgetIds.length; i++) {
-                                appWidgetManager.updateAppWidget(widgetIds[i], views);
+                        int[] allWidgets = getAllProviderWidgetIds(context);
+                        HashMap<String, String> map = getAllBindDataWidgetIds();
+                        for (int i = 0; i < allWidgets.length; i++) {
+                            String widgetId = String.valueOf(allWidgets[i]);
+                            if (map.containsKey(widgetId)) {
+                                //刷新已经绑定过widget data的插件
+                                Log.i("test_widget","bind:"+widgetId);
+                                mBitmap = mWidgetContext.getViewBitmap(widgetId);
+                                if (mBitmap != null) {
+                                    views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
+                                    views.setImageViewBitmap(R.id.content, mBitmap);
+                                    Intent configIntent1 = new Intent();
+                                    configIntent1.setClass(context, WidgetSelectedActivity.class);
+                                    configIntent1.setAction(WIDGET_CLICK_ACTION);
+                                    configIntent1.putExtra(ConstantString.widget_id,widgetId);
+                                    PendingIntent pendingIntent1 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    views.setOnClickPendingIntent(R.id.content, pendingIntent1);
+                                    AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
+                                }
+                            } else {
+                                Log.i("test_widget","unbind:"+widgetId);
+                                //刷新没有绑定过widget data的插件
+                                views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
+                                Intent configIntent2 = new Intent();
+                                configIntent2.setClass(context, WidgetSelectedActivity.class);
+                                configIntent2.setAction(WIDGET_CLICK_ACTION);
+                                configIntent2.putExtra(ConstantString.widget_id, widgetId);
+                                PendingIntent pendingIntent2 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
+                                views.setOnClickPendingIntent(R.id.rl_body, pendingIntent2);
+                                AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
                             }
                         }
                     }
@@ -135,42 +140,13 @@ public class WidgetManager {
         }
     }
 
-    public static int[] getAllProviderWidgetId(Context mContext) {
+    public static int[] getAllProviderWidgetIds(Context mContext) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-        int []widget1x1_cur;
-        int []widget4x4_cur;
-        widget1x1_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider1x1.class));
-        widget4x4_cur = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x4.class));
-        widget1x1 = widget1x1_cur;
-        widget4x4 = widget4x4_cur;
-
-        return combine_two_intdata(widget1x1, widget4x4);
+        return appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x4.class));
     }
 
-    public static int[] combine_two_intdata(int[] a, int[] b) {
-        if(a == null){
-            a= new int[0];
-        }
-        if(b == null){
-            b = new int[0];
-        }
-
-        ArrayList<Integer> alist = new ArrayList<Integer>(a.length + b.length);
-
-        for (int j = 0; j < a.length; j++) {
-            alist.add(a[j]);
-        }
-
-        for (int k = 0; k < b.length; k++) {
-            alist.add(b[k]);
-        }
-
-        int c[] = new int[alist.size()];
-
-        for (int i = 0; i < alist.size(); i++) {
-            c[i] = alist.get(i);
-        }
-        return c;
-
+    public static HashMap<String, String> getAllBindDataWidgetIds() {
+        return WidgetDataHandlerUtils.getHashMapData(ConstantString.widget_map_data_key);
     }
+
 }

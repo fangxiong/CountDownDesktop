@@ -8,12 +8,15 @@ import android.widget.ImageView;
 
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
+import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.dialog.ios.util.DialogSettings;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
+import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.GlideUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +81,19 @@ public class MyWidgetFragment extends Fragment {
             @Override
             public void onRefresh() {
                 queryDataFromDataBase();
+            }
+        });
+        mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                CustomWidgetConfig config = mData.get(position);
+                CommonConfigManager.getInstance().setWidgetConfig(config);
+                WidgetUpdateService.startSelf(getContext());
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                return false;
             }
         });
     }

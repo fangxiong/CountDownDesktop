@@ -26,7 +26,7 @@ public class DialogSettings {
     }
     
     //是否开启模糊效果
-    public static boolean isUseBlur = true;
+    public static boolean isUseBlur = false;
     
     //开启模态化队列启动方式
     public static boolean modalDialog = false;

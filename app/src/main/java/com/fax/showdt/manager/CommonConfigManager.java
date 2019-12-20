@@ -1,10 +1,12 @@
 package com.fax.showdt.manager;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.fax.lib.config.ConfigManager;
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.utils.GsonUtils;
-import com.fax.showdt.utils.SharedPreferenceUtil;
 
 public class CommonConfigManager {
 
@@ -24,11 +26,14 @@ public class CommonConfigManager {
 
 
     public  void setWidgetConfig(CustomWidgetConfig config){
-        SharedPreferenceUtil.getInstance().put("key_widget_config", GsonUtils.toJsonWithSerializeNulls(config));
+        ConfigManager.getMainConfig().putString(ConstantString.key_widget_config,config.toJSONString());
+        Log.i("test_config_put:",GsonUtils.toJsonWithSerializeNulls(config));
+
     }
 
     public  CustomWidgetConfig getWidgetConfig(){
-       String json =  (String)SharedPreferenceUtil.getInstance().get("key_widget_config","");
+       String json =  ConfigManager.getMainConfig().getString(ConstantString.key_widget_config,"");
+        Log.i("test_config_get:",json);
        if(!TextUtils.isEmpty(json)){
            return GsonUtils.parseJsonWithGson(json,CustomWidgetConfig.class);
        }

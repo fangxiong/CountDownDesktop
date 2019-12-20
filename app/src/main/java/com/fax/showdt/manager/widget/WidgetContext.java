@@ -2,10 +2,17 @@ package com.fax.showdt.manager.widget;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.Size;
 
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.manager.CommonConfigManager;
+import com.fax.showdt.utils.GsonUtils;
+import com.fax.showdt.utils.WidgetDataHandlerUtils;
+
+import java.util.HashMap;
 
 
 /**
@@ -16,18 +23,17 @@ import com.fax.showdt.manager.CommonConfigManager;
  */
 public class WidgetContext {
     private CustomWidgetConfig mCustomWidgetConfig;
-    //    public int widgetId;
-    public Size mSize;
+    private HashMap<String,CustomWidgetConfig> map = new HashMap<>();
 
     public WidgetContext() {
     }
 
     /**
      * 为了避免反复从本地读json配置数据，导致消耗资源
-     * 每次更新新的数据时才从本地文件读，配置通过对象方式存储在内存中
+     * 每次更新新的数据时才从本地文件读
      */
     public void changeWidgetInfo() {
-        mCustomWidgetConfig = CommonConfigManager.getInstance().getWidgetConfig();
+        map.clear();
     }
 
     /**
@@ -35,9 +41,15 @@ public class WidgetContext {
      *
      * @return
      */
-    public Bitmap getViewBitmap() {
-        if (mCustomWidgetConfig == null) {
-            mCustomWidgetConfig = CommonConfigManager.getInstance().getWidgetConfig();
+    public Bitmap getViewBitmap(String widgetId) {
+        if(map.containsKey(widgetId)){
+            mCustomWidgetConfig = map.get(widgetId);
+        }else {
+            String json = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
+            if (!TextUtils.isEmpty(json)) {
+                mCustomWidgetConfig = GsonUtils.parseJsonWithGson(json,CustomWidgetConfig.class);
+                map.put(widgetId,mCustomWidgetConfig);
+            }
         }
         if (mCustomWidgetConfig != null) {
             int width = mCustomWidgetConfig.getBaseOnWidthPx();

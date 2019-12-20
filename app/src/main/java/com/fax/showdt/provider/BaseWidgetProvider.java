@@ -6,12 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
+import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.manager.widget.WidgetManager;
 import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.service.NLService;
-import com.fax.showdt.utils.SharedPreferenceUtil;
 
 public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
@@ -19,9 +18,12 @@ public class BaseWidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         Log.i("test_widget:","更新widget");
         Log.i("test_widget:","widget的个数："+appWidgetIds.length);
+        for(int i = 0;i<appWidgetIds.length;i++){
+            Log.i("test_widget:","widget的个数："+appWidgetIds[i]);
+        }
         WidgetUpdateService.startSelf(context);
         NLService.startSelf(context);
-        SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,true);
+        ConfigManager.getMainConfig().putBool(ConstantString.countdown_widget_is_open,true);
     }
 
 
@@ -29,12 +31,13 @@ public class BaseWidgetProvider extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
         Log.i("test_widget:","删除widget");
-        int[] appWidgetIdArray = WidgetManager.getAllProviderWidgetId(context);
+        int[] appWidgetIdArray = WidgetManager.getAllProviderWidgetIds(context);
         if(appWidgetIdArray == null || appWidgetIdArray.length == 0){
             //当桌面widget全部删除后,关闭服务,避免无谓消耗资源
             WidgetUpdateService.stopSelf(context);
             NLService.stopSelf(context);
-            SharedPreferenceUtil.getInstance().put(ConstantString.countdown_widget_is_open,false);
+            ConfigManager.getMainConfig().putBool(ConstantString.countdown_widget_is_open,false);
+
         }
     }
 
@@ -46,6 +49,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
+        WidgetManager.getInstance().changeWidgetInfo();
         Log.i("test_widget:","添加widget");
     }
 

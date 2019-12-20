@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.widget.WidgetManager;
@@ -140,6 +141,7 @@ public class WidgetUpdateService extends Service {
         alarmManager.cancel(getPendingIntent());
         if (handlerThread != null) {
             handlerThread.quit();
+            Log.i("test_widget:","handlerThread被杀");
         }
         //当服务被杀后需要关掉定位服务,避免消耗资源
         LocationManager.getInstance().stopLocation();

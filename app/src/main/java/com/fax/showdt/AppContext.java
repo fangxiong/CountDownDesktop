@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
+import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.utils.OkHttpClientHelper;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -28,7 +29,7 @@ public class AppContext extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
-
+        ConfigManager.init(mContext);
         String processName = getProcessName();
         if (!TextUtils.isEmpty(processName) &&processName.equals(this.getPackageName())) {
             Log.i("test_init_application:","初始化主进程");

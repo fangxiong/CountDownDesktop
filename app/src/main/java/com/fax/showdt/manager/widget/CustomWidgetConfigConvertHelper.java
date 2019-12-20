@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
+import android.util.Log;
 import android.util.LongSparseArray;
 
 import com.fax.showdt.AppContext;
@@ -28,6 +29,8 @@ import com.fax.showdt.view.sticker.ProgressSticker;
 import com.fax.showdt.view.sticker.Sticker;
 import com.fax.showdt.view.sticker.StickerView;
 import com.fax.showdt.view.sticker.TextSticker;
+
+import org.antlr.runtime.debug.DebugEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +53,7 @@ public class CustomWidgetConfigConvertHelper {
      * @return
      */
     public CustomWidgetConfig saveConfig(CustomWidgetConfig originConfig, LongSparseArray<Sticker> mStickerList) {
+        Log.i("test_widget_config1:",originConfig.toJSONString());
         CustomWidgetConfig newConfig = originConfig;
         List<TextPlugBean> mTextList = new ArrayList<>();
         List<LinePlugBean> mLineList = new ArrayList<>();
@@ -80,6 +84,7 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setAlignment(((TextSticker) sticker).getAlignment());
                 PointF point = sticker.getMappedCenterPoint();
                 textPlugBean.setLocation(new PlugLocation(point.x, point.y));
+                Log.i("test_text_sticker:",textPlugBean.toJSONString());
                 mTextList.add(textPlugBean);
             } else if (sticker instanceof LineSticker) {
                 LinePlugBean linePlugBean = new LinePlugBean();
@@ -182,6 +187,7 @@ public class CustomWidgetConfigConvertHelper {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             bean.setId(String.valueOf(i));
         }
+        Log.i("test_widget_config2:",originConfig.toJSONString());
         return newConfig;
     }
 

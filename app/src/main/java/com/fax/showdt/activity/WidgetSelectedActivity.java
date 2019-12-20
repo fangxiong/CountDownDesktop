@@ -1,11 +1,15 @@
 package com.fax.showdt.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
@@ -16,7 +20,9 @@ import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
+import com.fax.showdt.manager.widget.WidgetManager;
 import com.fax.showdt.utils.GlideUtils;
+import com.fax.showdt.utils.WidgetDataHandlerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import es.dmoral.toasty.Toasty;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -37,6 +45,7 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
     private Disposable disposable;
     private TipDialog mTipsDialog;
     private SwipeRefreshLayout mRefreshLayout;
+    private String mWidgetId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,9 +53,16 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.widget_selected_activity);
         mRv = findViewById(R.id.rv);
         mRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        initData();
         queryDataFromDataBase();
+        initData();
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        initData();
     }
 
     @Override
@@ -70,7 +86,9 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         }
     }
 
+
     private void initData() {
+        mWidgetId = getIntent().getStringExtra(ConstantString.widget_id);
         mAdapter = new CommonAdapter<CustomWidgetConfig>(this, R.layout.widget_mine_item, mData) {
             @Override
             protected void convert(ViewHolder holder, CustomWidgetConfig customWidgetConfig, int position) {
@@ -90,7 +108,12 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         mAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                CommonConfigManager.getInstance().setWidgetConfig(mData.get(position));
+                CustomWidgetConfig config = mData.get(position);
+                if(!TextUtils.isEmpty(mWidgetId)) {
+                    Log.i("test_widget","put widget"+mWidgetId);
+                    WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId,config.toJSONString(),ConstantString.widget_map_data_key);
+                    WidgetManager.getInstance().changeWidgetInfo();
+                }
             }
 
             @Override

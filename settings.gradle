@@ -1,2 +1,2 @@
-include ':app'
+include ':app', 'lib_collections', ':lib_common', ':lib_config'
 rootProject.name='CountDownDesktop'

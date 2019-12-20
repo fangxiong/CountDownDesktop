@@ -1,12 +1,15 @@
 package com.fax.showdt.db;
 
 
+import android.util.Log;
+
 import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.bean.LinePlugBean;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.ShortcutIconBean;
 import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.utils.GsonUtils;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class DIYConverters {
 
         @TypeConverter
         public static String TextPlugListToString(List<TextPlugBean> list){
-            return GsonUtils.toJsonArrayWithExpose(list);
+            return GsonUtils.toJsonArrayWithSerializeNulls(list);
         }
     }
 
@@ -34,7 +37,7 @@ public class DIYConverters {
 
         @TypeConverter
         public static String LinePlugListToString(List<LinePlugBean> list){
-            return GsonUtils.toJsonArrayWithExpose(list);
+            return GsonUtils.toJsonArrayWithSerializeNulls(list);
         }
     }
 
@@ -46,7 +49,7 @@ public class DIYConverters {
 
         @TypeConverter
         public static String ProgressPlugListToString(List<ProgressPlugBean> list){
-            return GsonUtils.toJsonArrayWithExpose(list);
+            return GsonUtils.toJsonArrayWithSerializeNulls(list);
         }
     }
 
@@ -58,20 +61,8 @@ public class DIYConverters {
 
         @TypeConverter
         public static String IconPlugListToString(List<DrawablePlugBean> list){
-            return GsonUtils.toJsonArrayWithExpose(list);
+            return GsonUtils.toJsonArrayWithSerializeNulls(list);
         }
     }
 
-
-    public static class ShortcutIconListConverters {
-        @TypeConverter
-        public static List<ShortcutIconBean> fromShortcutPlugList(String str){
-            return GsonUtils.parseJsonArrayWithGson(str, ShortcutIconBean.class);
-        }
-
-        @TypeConverter
-        public static String ShortcutListToString(List<ShortcutIconBean> list){
-            return GsonUtils.toJsonArrayWithExpose(list);
-        }
-    }
 }

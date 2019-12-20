@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+def cfg = rootProject.ext.android
+
+android {
+    compileSdkVersion cfg.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion cfg.minSdkVersion
+        targetSdkVersion cfg.targetSdkVersion
+        versionCode cfg.versionCode
+        versionName cfg.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        innerTestRelease {
+        }
+        betaRelease {
+        }
+    }
+
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}
+

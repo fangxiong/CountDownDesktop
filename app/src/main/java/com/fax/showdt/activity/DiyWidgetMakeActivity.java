@@ -1,8 +1,14 @@
 package com.fax.showdt.activity;
 
 import android.app.WallpaperManager;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
@@ -48,6 +54,7 @@ import com.fax.showdt.manager.weather.WeatherManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.WidgetConfig;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.BitmapUtils;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.Environment;
@@ -73,6 +80,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -209,6 +217,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
             @Override
             public void onStickerAdded(@NonNull Sticker sticker) {
+                mHandlingSticker = sticker;
                 mStickerList.put(sticker.getId(), sticker);
             }
 
@@ -389,10 +398,12 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onAddShapeSticker(WidgetShapeBean widgetShapeBean) {
                 try {
-                    SVG svg = new SVGBuilder()
+                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor("#FCF344"), PorterDuff.Mode.SRC_IN))
                             .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
                     PictureDrawable drawable = svg.getDrawable();
-                    DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+                    Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
+                    DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#FFFcf433"));
+                    DrawableSticker drawableSticker = new DrawableSticker(wrappedDrawable, System.currentTimeMillis());
                     drawableSticker.setmPicType(DrawableSticker.SVG);
                     drawableSticker.setDrawablePath(widgetShapeBean.getSvgPath());
                     mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
@@ -562,10 +573,17 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         mRvEditBg.setAdapter(mEditBgAdapter);
     }
 
+    private void  sendConfigChangedBroadcast() {
+        Intent intent =new Intent();
+        intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
+        sendBroadcast(intent);
+    }
+
     private void saveConfig() {
         Bitmap bgBitmap = BitmapUtils.viewToBitmap(mStickerViewBg);
         mStickerView.setShowGrid(false);
         mStickerView.requestLayout();
+        mStickerView.clearCurrentSticker();
         Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
         final Bitmap coverBitmap = BitmapUtils.mergeBitmap(bgBitmap, stickerBitmap, 0);
         final String fileName = "widget_" + System.currentTimeMillis()+".png";
@@ -577,9 +595,12 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
                 customWidgetConfig = new CustomWidgetConfig();
                 customWidgetConfig.setCoverUrl(dir+"/"+fileName);
                 customWidgetConfig.setId(System.currentTimeMillis());
+                customWidgetConfig.setBaseOnHeightPx(mStickerView.getHeight());
+                customWidgetConfig.setBaseOnWidthPx(mStickerView.getWidth());
                 CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
-                mHelper.saveConfig(customWidgetConfig,mStickerList);
-                CustomWidgetConfigDao.getInstance(DiyWidgetMakeActivity.this).insert(customWidgetConfig);
+                CustomWidgetConfig newConfig = mHelper.saveConfig(customWidgetConfig,mStickerList);
+                Log.i("test_widget_config:","保存到数据库："+newConfig.toJSONString());
+                CustomWidgetConfigDao.getInstance(DiyWidgetMakeActivity.this).insert(newConfig);
                 e.onNext(true);
             }
         }).subscribeOn(Schedulers.io())
@@ -601,6 +622,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
                     public void onNext(Boolean aBoolean) {
                         mWaitDialog.setTip(TipDialog.TYPE.SUCCESS);
                         mWaitDialog.setMessage("保存成功");
+                        sendConfigChangedBroadcast();
                         Log.i("test_config:", GsonUtils.toJsonWithSerializeNulls(customWidgetConfig));
                         Log.i("test_config:", "保存成功");
                     }
