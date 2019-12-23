@@ -1,18 +1,19 @@
 package com.fax.showdt.activity;
 
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
 import android.view.KeyEvent;
@@ -28,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fax.showdt.AppContext;
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
@@ -44,20 +46,24 @@ import com.fax.showdt.dialog.ios.util.DialogSettings;
 import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
-import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.fragment.WidgetProgressEditFragment;
 import com.fax.showdt.fragment.WidgetShapeEditFragment;
 import com.fax.showdt.fragment.WidgetStickerEditFragment;
 import com.fax.showdt.fragment.WidgetTextEditFragment;
 import com.fax.showdt.manager.location.LocationManager;
+import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.WidgetConfig;
+import com.fax.showdt.service.NLService;
 import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.BitmapUtils;
 import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.utils.Constant;
+import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.Environment;
+import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.utils.ViewUtils;
@@ -78,11 +84,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentTransaction;
-
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
@@ -91,7 +94,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -101,7 +103,7 @@ import io.reactivex.schedulers.Schedulers;
  * Date: 19-12-9
  * Description:
  */
-public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickListener {
+public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View.OnClickListener {
 
     private StickerView mStickerView;
     private ImageView mStickerViewBg;
@@ -121,9 +123,17 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     private boolean mIsGetSystemBgSuc = true;
     private CustomWidgetConfig customWidgetConfig;
     private TipDialog mWaitDialog;
+    private UpdateLrcReceiver mUpdateLrcReceiver;
+
 
     enum EditType {
         EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
+    }
+
+    public static void startSelf(Context context,CustomWidgetConfig config){
+        Intent intent = new Intent(context,DiyWidgetMakeActivity.class);
+        intent.putExtra(ConstantString.widget_make_data,config.toJSONString());
+        context.startActivity(intent);
     }
 
     @Override
@@ -136,6 +146,12 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //当服务开启后通知 通知监听器刷新歌曲信息
+        Intent intent = new Intent();
+        intent.putExtra("switch_flag", false);
+        intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
+        sendBroadcast(intent);
+        unregisterReceiver(mUpdateLrcReceiver);
         LocationManager.getInstance().stopLocation();
     }
 
@@ -146,16 +162,39 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         mStickerViewBg = findViewById(R.id.iv_select_bg);
         mRLEditBody = findViewById(R.id.rl_edit_body);
         initStatusBar();
+        intervalRefreshStickerView();
+        initAllEditFragments();
         initStickerView();
         initStickerViewBg();
-        intervelRefreshStickerView();
-        initAllEditFragments();
         initData();
-
     }
 
     private void initData() {
         mStickerList = new LongSparseArray<>();
+        Intent intent = getIntent();
+        String json = intent.getStringExtra(ConstantString.widget_make_data);
+        if(!TextUtils.isEmpty(json)){
+            customWidgetConfig = GsonUtils.parseJsonWithGson(json,CustomWidgetConfig.class);
+            initStickers();
+        }
+    }
+
+    private void initStickers(){
+        if(customWidgetConfig != null){
+            mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
+            mStickerViewBg.setImageBitmap(mEditBitmap);
+            CustomWidgetConfigConvertHelper  mHelper = new CustomWidgetConfigConvertHelper();
+            mHelper.initAllStickerPlugs( mStickerView, customWidgetConfig, mStickerList);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mUpdateLrcReceiver = new UpdateLrcReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(KLWPSongUpdateManager.ACTION_UPDATE_MEDIA_INFO);
+        registerReceiver(mUpdateLrcReceiver, intentFilter);
     }
 
     @Override
@@ -251,6 +290,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
                 } else if (sticker instanceof DrawableSticker) {
                     if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SVG) {
                         switchToOneFragment(EditType.EDIT_SHAPE);
+                        mShapeEditFragment.setWidgetEditShapeSticker((DrawableSticker) sticker);
                     } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.ASSET) {
                         switchToOneFragment(EditType.EDIT_STICKER);
                     }
@@ -341,7 +381,7 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void intervelRefreshStickerView() {
+    private void intervalRefreshStickerView() {
         addDisponsable(Observable.interval(30, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Long>() {
                     @Override
@@ -353,9 +393,9 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
 
     private void initAllEditFragments() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mTextEditFragment = new WidgetTextEditFragment(this);
-        mStickerEditFragment = new WidgetStickerEditFragment(this);
-        mShapeEditFragment = new WidgetShapeEditFragment(this);
+        mTextEditFragment = new WidgetTextEditFragment();
+        mStickerEditFragment = new WidgetStickerEditFragment();
+        mShapeEditFragment = new WidgetShapeEditFragment();
         mProgressEditFragment = new WidgetProgressEditFragment();
         transaction.add(R.id.rl_edit_body, mTextEditFragment);
         transaction.add(R.id.rl_edit_body, mStickerEditFragment);
@@ -393,21 +433,25 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
                 setEditBodySlideOutAnimation();
                 mStickerView.clearCurrentSticker();
             }
+
+            @Override
+            public void onPickPhoto() {
+                startCropOneImg(1,1);
+            }
         });
         mShapeEditFragment.setWidgetEditShapeCallback(new WidgetEditShapeCallback() {
             @Override
             public void onAddShapeSticker(WidgetShapeBean widgetShapeBean) {
                 try {
-                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor("#FCF344"), PorterDuff.Mode.SRC_IN))
+                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN))
                             .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
                     PictureDrawable drawable = svg.getDrawable();
-                    Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
-                    DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#FFFcf433"));
-                    DrawableSticker drawableSticker = new DrawableSticker(wrappedDrawable, System.currentTimeMillis());
+                    DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
                     drawableSticker.setmPicType(DrawableSticker.SVG);
                     drawableSticker.setDrawablePath(widgetShapeBean.getSvgPath());
                     mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
                     Log.i("test_add_sticker:", "添加DrawSticker成功");
+                    mShapeEditFragment.setWidgetEditShapeSticker(drawableSticker);
                 } catch (IOException e) {
 
                 }
@@ -580,20 +624,30 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
     }
 
     private void saveConfig() {
-        Bitmap bgBitmap = BitmapUtils.viewToBitmap(mStickerViewBg);
+        final Bitmap bgBitmap = BitmapUtils.viewToBitmap(mStickerViewBg);
         mStickerView.setShowGrid(false);
         mStickerView.requestLayout();
         mStickerView.clearCurrentSticker();
         Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
         final Bitmap coverBitmap = BitmapUtils.mergeBitmap(bgBitmap, stickerBitmap, 0);
-        final String fileName = "widget_" + System.currentTimeMillis()+".png";
-        final String dir = Environment.getSdcardDir("showdesktop/widget_screenshot").getAbsolutePath();
+        final String coverFileName = "widget_cover" + System.currentTimeMillis()+".png";
+        final String bgFileName = "widget_bg" + System.currentTimeMillis()+".png";
+        final String coverDir = Environment.getHomeDir()+File.separator+Constant.WIDGET_DATA_DIR+File.separator+"widget_screenshot";
+        final String bgDir = Environment.getHomeDir()+File.separator+Constant.WIDGET_DATA_DIR+File.separator+"widget_bg";
         Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                BitmapUtils.saveFile(coverBitmap, fileName, dir);
+                BitmapUtils.saveFile(coverBitmap, coverFileName, coverDir);
+                BitmapUtils.saveFile(bgBitmap,bgFileName,bgDir);
                 customWidgetConfig = new CustomWidgetConfig();
-                customWidgetConfig.setCoverUrl(dir+"/"+fileName);
+                if(FileExUtils.exists(customWidgetConfig.getCoverUrl())){
+                    FileExUtils.deleteSingleFile(customWidgetConfig.getCoverUrl());
+                }
+                if(FileExUtils.exists(customWidgetConfig.getBgPath())){
+                    FileExUtils.deleteSingleFile(customWidgetConfig.getBgPath());
+                }
+                customWidgetConfig.setCoverUrl(coverDir+ File.separator+coverFileName);
+                customWidgetConfig.setBgPath(bgDir+ File.separator+bgFileName);
                 customWidgetConfig.setId(System.currentTimeMillis());
                 customWidgetConfig.setBaseOnHeightPx(mStickerView.getHeight());
                 customWidgetConfig.setBaseOnWidthPx(mStickerView.getWidth());
@@ -657,5 +711,46 @@ public class DiyWidgetMakeActivity extends BaseActivity implements View.OnClickL
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void cropSuc(String path) {
+        super.cropSuc(path);
+        Drawable drawable = new BitmapDrawable(getResources(), path);
+        DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+        drawableSticker.setmPicType(DrawableSticker.SDCARD);
+        drawableSticker.setDrawablePath(path);
+        mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+    }
 
+    @Override
+    public void cropFail(Throwable throwable) {
+        throwable.printStackTrace();
+        Log.i("crop_fail:","msg:"+throwable.getMessage());
+        super.cropFail(throwable);
+    }
+
+    /**
+     * 接收第三方播放器播放时的歌词
+     */
+    class UpdateLrcReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (KLWPSongUpdateManager.ACTION_UPDATE_MEDIA_INFO.equals(action)) {
+                CustomPlugUtil.lrc = intent.getStringExtra(KLWPSongUpdateManager.LRC_KEY);
+                CustomPlugUtil.album = intent.getStringExtra(KLWPSongUpdateManager.ALBUM_KEY);
+                CustomPlugUtil.singerName = intent.getStringExtra(KLWPSongUpdateManager.SINGER_KEY);
+                CustomPlugUtil.songName = intent.getStringExtra(KLWPSongUpdateManager.SONGNAME_KEY);
+                CustomPlugUtil.duration = intent.getLongExtra(KLWPSongUpdateManager.DURATION_KEY,0L);
+                CustomPlugUtil.currentDuration = intent.getLongExtra(KLWPSongUpdateManager.CURRENT_DURATION_KEY,0L);
+                Log.i("test_song:","lrc:"+CustomPlugUtil.lrc);
+                Log.i("test_song:","album:"+CustomPlugUtil.album);
+                Log.i("test_song:","singerName:"+CustomPlugUtil.singerName);
+                Log.i("test_song:","songName:"+CustomPlugUtil.songName);
+                Log.i("test_song:","duration:"+CustomPlugUtil.duration);
+                Log.i("test_song:","currentDuration:"+CustomPlugUtil.currentDuration);
+            }
+        }
+
+    }
 }

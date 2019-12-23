@@ -1,6 +1,10 @@
 package com.fax.showdt.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +16,15 @@ import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
 import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
 import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
+import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.view.colorPicker.ColorPickerDialog;
+import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
+import com.fax.showdt.view.sticker.DrawableSticker;
+import com.fax.showdt.view.sticker.TextSticker;
+import com.fax.showdt.view.svg.SVG;
+import com.fax.showdt.view.svg.SVGBuilder;
+
+import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +33,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetShapeEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mIvColor,mConsume;
-    private Context mContext;
     private WidgetShapeElementEditFragment mShapeElementEditFragment;
     private WidgetEditShapeCallback mWidgetEditShapeCallback;
+    private DrawableSticker mDrawableSticker;
 
 
-    public WidgetShapeEditFragment(Context context) {
-        this.mContext = context;
-    }
+    public WidgetShapeEditFragment(){}
 
     @Nullable
     @Override
@@ -51,12 +62,54 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
             if (mWidgetEditShapeCallback != null) {
                 mWidgetEditShapeCallback.closePanel();
             }
+        }else if(resId == R.id.iv_color){
+            if(mDrawableSticker!= null) {
+                showColorPickDialog(mDrawableSticker.getSvgColor());
+            }
         }
+    }
+
+    public void setWidgetEditShapeSticker(DrawableSticker drawableSticker) {
+        mDrawableSticker = drawableSticker;
+    }
+    private void showColorPickDialog(String color){
+        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
+                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+                .setAllowPresets(true)
+                .setDialogId(0)
+                .setColor(Color.parseColor(color))
+                .setShowAlphaSlider(true)
+                .setShowAlphaSlider(true)
+                .create();
+        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
+            @Override
+            public void onColorSelected(int dialogId, int color) {
+                String hexCode = "";
+                hexCode = CommonUtils.toHexEncoding(color);
+                if (mDrawableSticker != null) {
+                    mDrawableSticker.setSvgColor(hexCode);
+                    try {
+                        SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN))
+                                .readFromAsset(getActivity().getAssets(), mDrawableSticker.getDrawablePath()).build();
+                        PictureDrawable drawable = svg.getDrawable();
+                        mDrawableSticker.setDrawable(drawable);
+                    }catch (IOException e){
+
+                    }
+                }
+            }
+
+            @Override
+            public void onDialogDismissed(int dialogId) {
+
+            }
+        });
+        dialog.show(getChildFragmentManager(),"color_dialog");
     }
 
     private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mShapeElementEditFragment = new WidgetShapeElementEditFragment(mContext);
+        mShapeElementEditFragment = new WidgetShapeElementEditFragment();
         transaction.add(R.id.fl_shape_edit_body, mShapeElementEditFragment);
         transaction.commitAllowingStateLoss();
         mShapeElementEditFragment.setWidgetEditShapeElementSelectedCallback(new WidgetEditShapeElementSelectedCallback() {
@@ -69,39 +122,5 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
     public void setWidgetEditShapeCallback(WidgetEditShapeCallback callback) {
         this.mWidgetEditShapeCallback = callback;
     }
-//    public void showInputDialog(int maxLength) {
-//        final String str =mTextSticker.getText();
-//        final SpannableStringBuilder content = CustomPlugUtil.getSpannableStrFromSigns(str, mContext);
-//        final WidgetTextInputDialog textInputDialog = new WidgetTextInputDialog(getActivity(), maxLength);
-//        FragmentManager fragmentManager = getChildFragmentManager();
-//        textInputDialog.show(fragmentManager, "textInputDialog");
-//        textInputDialog.setOnFontEditListener(new WidgetTextInputDialog.OnFontEditListener() {
-//            @Override
-//            public void onShow() {
-//                textInputDialog.showSoftInput();
-//                final EditText mEtInput = textInputDialog.getEditText();
-//                mEtInput.setText(content);
-//                mEtInput.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        String text = mEtInput.getText().toString().trim();
-//                        if (mTextSticker != null) {
-//                            mTextSticker.setText(text);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                });
-//            }
-//        });
-//
-//    }
+
 }

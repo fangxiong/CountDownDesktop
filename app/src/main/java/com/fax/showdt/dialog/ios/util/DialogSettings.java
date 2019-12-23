@@ -77,7 +77,7 @@ public class DialogSettings {
     public static boolean DEBUGMODE = false;
     
     //模糊透明度(0~255)
-    public static int blurAlpha = 160;
+    public static int blurAlpha = 190;
     
     //允许自定义系统对话框style，注意设置此功能会导致原对话框风格和动画失效
     public static int systemDialogStyle;

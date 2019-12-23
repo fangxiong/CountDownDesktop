@@ -19,12 +19,10 @@ import com.fax.showdt.callback.WidgetEditTextElementSelectedCallback;
 import com.fax.showdt.callback.WidgetEditTextFontSelectedCallback;
 import com.fax.showdt.dialog.TimePickerDialog;
 import com.fax.showdt.dialog.WidgetTextInputDialog;
-import com.fax.showdt.fragment.widgetTextEdit.WidgetTextColorEditFragment;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextElementEditFragment;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextFontEditFragment;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.CustomPlugUtil;
-import com.fax.showdt.utils.FontCache;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
@@ -43,19 +41,15 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd,mConsume;
     private WidgetEditTextCallback mWidgetEditTextCallback;
-    private Context mContext;
     private TextSticker mTextSticker;
     private WidgetTextElementEditFragment mElementEditFragment;
     private WidgetTextFontEditFragment mFontEditFragment;
-    private WidgetTextColorEditFragment mColorEditFragment;
     private List<View> mViews = new ArrayList<>();
     enum EditTextType {
         ELEMENT, FONT, COLOR
     }
 
-    public WidgetTextEditFragment(Context context) {
-        mContext = context;
-    }
+    public WidgetTextEditFragment(){}
 
 
     @Nullable
@@ -85,7 +79,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     public void showInputDialog(int maxLength) {
         final String str =mTextSticker.getText();
-        final SpannableStringBuilder content = CustomPlugUtil.getSpannableStrFromSigns(str, mContext);
+        final SpannableStringBuilder content = CustomPlugUtil.getSpannableStrFromSigns(str, getActivity());
         final WidgetTextInputDialog textInputDialog = new WidgetTextInputDialog(getActivity(), maxLength);
         FragmentManager fragmentManager = getChildFragmentManager();
         textInputDialog.show(fragmentManager, "textInputDialog");
@@ -194,8 +188,8 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     private void initAllEditFragments() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mElementEditFragment = new WidgetTextElementEditFragment(mContext);
-        mFontEditFragment = new WidgetTextFontEditFragment(mContext);
+        mElementEditFragment = new WidgetTextElementEditFragment();
+        mFontEditFragment = new WidgetTextFontEditFragment();
 //        mColorEditFragment = new WidgetTextColorEditFragment();
         transaction.add(R.id.fl_text_edit_body, mFontEditFragment);
         transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
@@ -232,8 +226,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 result = CustomPlugUtil.posAndNegSwitchTimer(result, time);
                 if(mTextSticker != null){
                     Log.i("test_time:",result+"");
-                    String lastText = mTextSticker.getText();
-                    mTextSticker.setText(lastText+result);
+//                    String lastText = mTextSticker.getText();
+//                    mTextSticker.setText(lastText+result);
+                    mTextSticker.setText(result);
                 }
             }
         }, new TimePickerDialog.IClickCancelCallback() {

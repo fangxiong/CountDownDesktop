@@ -22,6 +22,7 @@ import com.fax.showdt.bean.TestData;
 import com.fax.showdt.bean.VersionUpdateBean;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
+import com.fax.showdt.dialog.ios.util.ShareUtils;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
@@ -82,12 +83,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }else if(resId == R.id.rl_help){
 
         }else if(resId == R.id.rl_share){
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "我正在使用《桌面秀》,很好用哦,推荐给你哦\nhttp://www.baidu.com");
-            shareIntent = Intent.createChooser(shareIntent, "我正在使用《桌面秀》,很好用哦,推荐给你");
-            startActivity(shareIntent);
+            ShareUtils.shareText(this,"我正在使用《桌面秀》,很好用哦,推荐给你","我正在使用《桌面秀》,很好用哦,推荐给你哦\nhttp://www.baidu.com");
         }else if(resId == R.id.rl_market_scoring){
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("market://details?id=" + getPackageName()));

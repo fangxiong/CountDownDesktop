@@ -1,4 +1,6 @@
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="app_name">桌面秀</string>
     <string name="process_name">com.fax.showdt.service</string>
 
@@ -8,7 +10,6 @@
     <string name="cpv_custom">自定义颜色</string>
     <string name="cpv_select">选择</string>
     <string name="cpv_transparency">透明度</string>
-
     <string name="pickerview_cancel">取消</string>
     <string name="pickerview_submit">确定</string>
     <string name="pickerview_year">年</string>
@@ -36,5 +37,6 @@
     <string name="countdown1_1">秀桌面1x1</string>
     <string name="countdownContent_default_desktop">点击设置倒计时\n长按可调节宽高</string>
     <string name="widget_select">选择插件</string>
+
 
 </resources>

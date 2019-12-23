@@ -1,6 +1,9 @@
 package com.fax.showdt.fragment.widgetShapeEdit;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,8 +26,11 @@ import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GsonUtils;
+import com.fax.showdt.view.svg.SVG;
+import com.fax.showdt.view.svg.SVGBuilder;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +43,12 @@ import java.util.List;
 public class WidgetShapeElementEditFragment extends Fragment {
     private CommonAdapter<WidgetShapeBean> mListAdapter;
     private List<WidgetShapeBean> mList;
-    private Context mContext;
     private RecyclerView mRv;
     private WidgetEditShapeElementSelectedCallback mCallback;
 
 
-    public WidgetShapeElementEditFragment(Context context){
-        mContext = context;
-    }
+    public WidgetShapeElementEditFragment(){}
+
 
     @Nullable
     @Override
@@ -58,17 +62,21 @@ public class WidgetShapeElementEditFragment extends Fragment {
 
     private void initTextPlugSelectUI() {
         mList = new ArrayList<>();
-        String str = FileExUtils.getJsonFromAssest(mContext, "widget_shape.json");
+        String str = FileExUtils.getJsonFromAssest(getActivity(), "widget_shape.json");
         mList = GsonUtils.parseJsonArrayWithGson(str, WidgetShapeBean.class);
-        final GridLayoutManager manager = new GridLayoutManager(mContext, 4, RecyclerView.VERTICAL, false);
+        final GridLayoutManager manager = new GridLayoutManager(getActivity(), 4, RecyclerView.VERTICAL, false);
 
         mRv.setLayoutManager(manager);
-        mListAdapter = new CommonAdapter<WidgetShapeBean>(mContext,R.layout.widget_shape_element_item, mList) {
+        mListAdapter = new CommonAdapter<WidgetShapeBean>(getActivity(),R.layout.widget_shape_element_item, mList) {
             @Override
             protected void convert(ViewHolder holder, WidgetShapeBean bean, int position) {
                 ImageView mIv = holder.getView(R.id.iv_element);
-                Log.i("test_item:",bean.getSvgPath()+" uri:"+Uri.parse(bean.getSvgPath()));
-                GlideToVectorYou.justLoadImage(getActivity(), Uri.parse("file:///android_asset/"+bean.getSvgPath()), mIv);
+                try {
+                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.c_A0A0A0), PorterDuff.Mode.SRC_IN))
+                            .readFromAsset(mContext.getAssets(), bean.getSvgPath()).build();
+                    mIv.setImageDrawable(svg.getDrawable());
+                }catch (IOException e){
+                }
             }
         };
         mListAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {

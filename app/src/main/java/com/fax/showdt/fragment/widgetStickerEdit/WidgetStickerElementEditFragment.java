@@ -1,6 +1,5 @@
 package com.fax.showdt.fragment.widgetStickerEdit;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,16 +35,13 @@ public class WidgetStickerElementEditFragment extends Fragment {
     private CommonAdapter<StickerBean> mStickerAdapter;
     private List<StickerBean> mAllStickerBean=new ArrayList<>();
     private List<StickerBean> mCurrentStickerBean =new ArrayList<>();
-    private Context mContext;
     private RecyclerView mStickerContentRv,mStickerListRv;
     private String[] titles = new String[]{"对话框","love","表情","便签","课程表"};
     private int mCurrentSelectedPos = 0;
     private WidgetEditStickerElementSelectedCallback mWidgetEditStickertElementSelectedCallback;
 
 
-    public WidgetStickerElementEditFragment(Context context){
-        mContext = context;
-    }
+    public WidgetStickerElementEditFragment(){}
 
     @Nullable
     @Override
@@ -59,7 +55,7 @@ public class WidgetStickerElementEditFragment extends Fragment {
 
 
     private void initTextPlugSelectUI() {
-        mStickerAdapter = new CommonAdapter<StickerBean>(mContext,R.layout.widget_sticker_content_item, mCurrentStickerBean) {
+        mStickerAdapter = new CommonAdapter<StickerBean>(getActivity(),R.layout.widget_sticker_content_item, mCurrentStickerBean) {
             @Override
             protected void convert(ViewHolder holder, StickerBean stickerBean, int position) {
                 ImageView mIvElement = holder.getView(R.id.iv_element);
@@ -79,7 +75,7 @@ public class WidgetStickerElementEditFragment extends Fragment {
                 return false;
             }
         });
-        final GridLayoutManager manager = new GridLayoutManager(mContext, 8, RecyclerView.VERTICAL, false);
+        final GridLayoutManager manager = new GridLayoutManager(getActivity(), 8, RecyclerView.VERTICAL, false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -90,8 +86,8 @@ public class WidgetStickerElementEditFragment extends Fragment {
         mStickerContentRv.setLayoutManager(manager);
         mStickerContentRv.setAdapter(mStickerAdapter);
 
-        mStickerListRv.setLayoutManager(new LinearLayoutManager(mContext));
-        mListAdapter = new CommonAdapter<String>(mContext,R.layout.widget_text_element_list_item, Arrays.asList(titles)) {
+        mStickerListRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mListAdapter = new CommonAdapter<String>(getActivity(),R.layout.widget_text_element_list_item, Arrays.asList(titles)) {
             @Override
             protected void convert(ViewHolder holder, String s, int position) {
                 TextView mTv = holder.getView(R.id.tv_element);
@@ -125,7 +121,7 @@ public class WidgetStickerElementEditFragment extends Fragment {
 
     private void dataSetChange(int pos){
         if(mAllStickerBean.isEmpty()) {
-            String str = FileExUtils.getJsonFromAssest(mContext, "widget_sticker.json");
+            String str = FileExUtils.getJsonFromAssest(getActivity(), "widget_sticker.json");
             mAllStickerBean = GsonUtils.parseJsonArrayWithGson(str, StickerBean.class);
         }
         mCurrentStickerBean.clear();

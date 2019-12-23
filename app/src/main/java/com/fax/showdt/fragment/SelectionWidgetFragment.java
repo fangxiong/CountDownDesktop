@@ -40,6 +40,9 @@ public class SelectionWidgetFragment extends Fragment {
     private List<TestBen> mData = new ArrayList<>();
     private TipDialog mTipsDialog;
     private SwipeRefreshLayout mRefreshLayout;
+
+    public SelectionWidgetFragment(){}
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

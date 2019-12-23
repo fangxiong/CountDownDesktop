@@ -9,4 +9,5 @@ import androidx.fragment.app.Fragment;
  * Description:
  */
 public class WidgetTextColorEditFragment extends Fragment {
+
 }

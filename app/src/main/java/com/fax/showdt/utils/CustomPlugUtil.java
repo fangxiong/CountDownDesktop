@@ -50,6 +50,11 @@ public class CustomPlugUtil {
     private static SimpleDateFormat mHour_12Format = new SimpleDateFormat("hh", Constant.LOCALE);
     private static SimpleDateFormat mMinuteFormat = new SimpleDateFormat("mm", Constant.LOCALE);
     public static String lrc = "";
+    public static String singerName = "";
+    public static String album = "";
+    public static String songName = "";
+    public static long currentDuration = 0L;
+    public static long duration = 0L;
 
 
     public static void refreshTime() {
@@ -133,7 +138,77 @@ public class CustomPlugUtil {
             result = lrc;
         }
         if (TextUtils.isEmpty(result)) {
-            result = "此处会显示实时歌词";
+            result = "歌词";
+        }
+        return result;
+    }
+
+    /**
+     * 获取歌手名字
+     * @return
+     */
+    public static String getSingerName() {
+        String result = "";
+        if (TextUtils.isEmpty(singerName)) {
+            result = KLWPSongUpdateManager.singerName;
+        } else {
+            result = singerName;
+        }
+        if (TextUtils.isEmpty(result)) {
+            result = "歌手名";
+        }
+        return result;
+    }
+
+    /**
+     * 获取歌名
+     * @return
+     */
+    public static String getSongName() {
+        String result = "";
+        if (TextUtils.isEmpty(songName)) {
+            result = KLWPSongUpdateManager.songName;
+        } else {
+            result = songName;
+        }
+        if (TextUtils.isEmpty(result)) {
+            result = "歌名";
+        }
+        return result;
+    }
+
+    public static String getDuration(){
+        long result = 0L;
+        if (duration == 0L) {
+            result = KLWPSongUpdateManager.duration;
+        } else {
+            result = duration;
+        }
+        return TimeUtils.timeParse(result);
+    }
+    public static String getCurrentDuration(){
+        long result = 0L;
+        if (currentDuration == 0L) {
+            result = KLWPSongUpdateManager.currentDuration;
+        } else {
+            result = currentDuration;
+        }
+        return TimeUtils.timeParse(result);
+    }
+
+    /**
+     * 获取专辑名称
+     * @return
+     */
+    public static String getAlbum() {
+        String result = "";
+        if (TextUtils.isEmpty(album)) {
+            result = KLWPSongUpdateManager.album;
+        } else {
+            result = album;
+        }
+        if (TextUtils.isEmpty(result)) {
+            result = "专辑";
         }
         return result;
     }
@@ -451,14 +526,34 @@ public class CustomPlugUtil {
      * @return
      */
     public static String getLrcPlugText(String lrcId) {
-        String lrcStr = "";
+        String result = "";
         switch (lrcId) {
             case "L00": {
-                lrcStr = getLrc();
+                result = getLrc();
+                break;
+            }
+            case "L01": {
+                result =getAlbum();
+                break;
+            }
+            case "L02": {
+                result = getSingerName();
+                break;
+            }
+            case "L03": {
+                result = getSongName();
+                break;
+            }
+            case "L04": {
+                result = getDuration();
+                break;
+            }
+            case "L05":{
+                result = getCurrentDuration();
                 break;
             }
         }
-        return lrcStr;
+        return result;
     }
 
     /**
@@ -642,6 +737,7 @@ public class CustomPlugUtil {
 
     /**
      * 文本中是否包含插件的标识码
+     *
      * @param str
      * @return
      */
@@ -867,6 +963,7 @@ public class CustomPlugUtil {
 
     /**
      * 是否包含天时分秒的倒计时插件
+     *
      * @param text
      * @return
      */
@@ -876,8 +973,10 @@ public class CustomPlugUtil {
         }
         return getSpecialTimerPlugTargetTime(text) != 0;
     }
+
     /**
      * 是否包含天时分秒的倒计时插件
+     *
      * @param text
      * @return
      */
@@ -885,16 +984,17 @@ public class CustomPlugUtil {
         if (TextUtils.isEmpty(text)) {
             return false;
         }
-        if (StringUtils.startsWith(text,"[C00-")||StringUtils.startsWith(text,"[C01-")){
-            if (StringUtils.endsWith(text,"]")){
+        if (StringUtils.startsWith(text, "[C00-") || StringUtils.startsWith(text, "[C01-")) {
+            if (StringUtils.endsWith(text, "]")) {
                 return true;
             } else {
                 return false;
             }
-        }else {
+        } else {
             return false;
         }
     }
+
     /**
      * 获取文本中的天时分秒倒计时元素的目标时间
      *
@@ -902,16 +1002,16 @@ public class CustomPlugUtil {
      * @return
      */
     public static long getSpecialTimerPlugTargetTime(String text) {
-            String result = "";
-            result = StringUtils.substringBetween(text, "[C00-", "-]");
-            if (TextUtils.isEmpty(result)) {
-                result = StringUtils.substringBetween(text, "[C01-", "-]");
-            }
-            if (!TextUtils.isEmpty(result) && TextUtils.isDigitsOnly(result)) {
-                return Long.valueOf(result);
-            }else{
-                return 0;
-            }
+        String result = "";
+        result = StringUtils.substringBetween(text, "[C00-", "-]");
+        if (TextUtils.isEmpty(result)) {
+            result = StringUtils.substringBetween(text, "[C01-", "-]");
+        }
+        if (!TextUtils.isEmpty(result) && TextUtils.isDigitsOnly(result)) {
+            return Long.valueOf(result);
+        } else {
+            return 0;
+        }
     }
 
     public static String[] getSpecialSignArray() {

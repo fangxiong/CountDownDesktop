@@ -3,6 +3,7 @@ package com.fax.showdt.utils;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
 
 
 import java.text.DateFormat;
@@ -125,25 +126,25 @@ public final class TimeUtils {
         return format.format(calendar.getTime());
     }
 
-    public static long getCurrentTimeStamp(){
-        long time = System.currentTimeMillis()/1000;
+    public static long getCurrentTimeStamp() {
+        long time = System.currentTimeMillis() / 1000;
         return time;
     }
 
-    public static String stampToDate(long timestamp){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");//这个是你要转成后的时间的格式
+    public static String stampToDate(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//这个是你要转成后的时间的格式
         String sd = sdf.format(new Date(timestamp));
         return sd;
     }
 
-    public static String covertToDate(long timestamp){
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy.MM.dd");//这个是你要转成后的时间的格式
+    public static String covertToDate(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");//这个是你要转成后的时间的格式
         String sd = sdf.format(new Date(timestamp));
         return sd;
     }
 
-    public static String createDateFromPattern(long timestamp, String pattern){
-        SimpleDateFormat sdf=new SimpleDateFormat(pattern);
+    public static String createDateFromPattern(long timestamp, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         String sd = sdf.format(new Date(timestamp));
         return sd;
     }
@@ -161,4 +162,29 @@ public final class TimeUtils {
         calendar.set(Calendar.YEAR, currentYear);
         return calendar.getTimeInMillis();
     }
+
+    /**
+     * Android 音乐播放器应用里，读出的音乐时长为 long 类型以毫秒数为单位，例如：将 234736 转化为分钟和秒应为 03:55 （包含四舍五入）
+     * * @param duration 音乐时长
+     * * @return
+     */
+    public static String timeParse(long duration) {
+        String time = "";
+        Log.i("test_time0:",duration+"");
+
+        long minute = duration / 60000;
+        long seconds = duration % 60000;
+        long second = Math.round((float) seconds / 1000);
+        if (minute < 10) {
+            time += "0";
+        }
+        time += minute + ":";
+        if (second < 10) {
+            time += "0";
+        }
+        time += second;
+        Log.i("test_time1:",time);
+        return time;
+    }
+
 }

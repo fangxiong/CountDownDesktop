@@ -36,13 +36,10 @@ public class WidgetTextFontEditFragment extends Fragment {
     private RecyclerView mFontRv;
     private List<FontBean> mFonts = new ArrayList<>();
     private CommonAdapter<FontBean> mFontAdapter;
-    private Context mContext;
     private int mCurrentPos = 1;
     private WidgetEditTextFontSelectedCallback mCallback;
 
-    public WidgetTextFontEditFragment(Context context){
-        mContext = context;
-    }
+    public WidgetTextFontEditFragment(){}
 
     @Nullable
     @Override
@@ -57,7 +54,7 @@ public class WidgetTextFontEditFragment extends Fragment {
         if(mFonts.isEmpty()){
             getFontBeans();
         }
-        mFontAdapter = new CommonAdapter<FontBean>(mContext,R.layout.widget_text_edit_font_item,mFonts) {
+        mFontAdapter = new CommonAdapter<FontBean>(getActivity(),R.layout.widget_text_edit_font_item,mFonts) {
             @Override
             protected void convert(ViewHolder holder, FontBean fontBean, int position) {
                 ImageView ivFont = holder.getView(R.id.iv_font);
@@ -103,7 +100,7 @@ public class WidgetTextFontEditFragment extends Fragment {
 
     public void getFontBeans(){
         mFonts = new ArrayList<>();
-        String str = FileExUtils.getJsonFromAssest(mContext, "widget_font.json");
+        String str = FileExUtils.getJsonFromAssest(getActivity(), "widget_font.json");
         mFonts = GsonUtils.parseJsonArrayWithGson(str,FontBean.class);
         mFonts.add(0,new FontBean());
     }

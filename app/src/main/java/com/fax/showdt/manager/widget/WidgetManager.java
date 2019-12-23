@@ -9,22 +9,13 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
-import com.fax.showdt.activity.MainActivity;
 import com.fax.showdt.activity.WidgetSelectedActivity;
-import com.fax.showdt.provider.WidgetProvider1x1;
-import com.fax.showdt.provider.WidgetProvider4x2;
-import com.fax.showdt.provider.WidgetProvider4x3;
 import com.fax.showdt.provider.WidgetProvider4x4;
 import com.fax.showdt.utils.WidgetDataHandlerUtils;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import me.eugeniomarletti.kotlin.metadata.shadow.resolve.constants.StringValue;
 
 /**
  * Author: fax

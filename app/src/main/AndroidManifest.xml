@@ -97,6 +97,16 @@
                 android:resource="@xml/widget4x4" />
         </receiver>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.fax.showdt.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/provider_path" />
+    </provider>
+
     </application>
 
 </manifest>

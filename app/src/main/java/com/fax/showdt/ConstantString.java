@@ -8,4 +8,5 @@ public interface ConstantString {
     String key_widget_config = "key_widget_config";
     String widget_map_data_key = "widget_map_data_key";
     String widget_id = "widget_id";
+    String widget_make_data = "widget_make_data";
 }

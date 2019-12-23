@@ -36,7 +36,7 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     private int version;
 
-    private String previewPath;
+    private String bgPath;
 
     private int defaultScale;
 
@@ -50,14 +50,7 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     private long createdTime;
 
-    private int originX;
-
-    private int originY;
-
-    private boolean forVip;
-
-    private boolean isFromFeatured;
-
+    private boolean drawWithBg;
     public List<TextPlugBean> getTextPlugList() {
         if (textPlugList == null) {
             return new ArrayList<>();
@@ -119,12 +112,12 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
         this.version = version;
     }
 
-    public String getPreviewPath() {
-        return previewPath == null ? "" : previewPath;
+    public String getBgPath() {
+        return bgPath == null ? "" : bgPath;
     }
 
-    public void setPreviewPath(String previewPath) {
-        this.previewPath = previewPath;
+    public void setBgPath(String bgPath) {
+        this.bgPath = bgPath;
     }
 
     public int getDefaultScale() {
@@ -187,28 +180,9 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     }
 
-    public void setOriginX(int originX) {
-        this.originX = originX;
-    }
-
-    public void setOriginY(int originY) {
-        this.originY = originY;
-    }
-
     public String getCoverUrl() {
         return coverUrl == null ? "" : coverUrl;
     }
-
-
-    public int getOriginX() {
-        return originX;
-    }
-
-    public int getOriginY() {
-        return originY;
-    }
-
-
 
     public String getTitle() {
         return title == null ? "" : title;
@@ -226,22 +200,11 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
         this.title = title;
     }
 
-
-    public boolean isFromFeatured() {
-        return isFromFeatured;
+    public void setDrawWithBg(boolean drawWithBg) {
+        this.drawWithBg = drawWithBg;
     }
 
-    public void setFromFeatured(boolean fromFeatured) {
-        isFromFeatured = fromFeatured;
+    public boolean isDrawWithBg() {
+        return drawWithBg;
     }
-
-
-    public boolean isForVip() {
-        return forVip;
-    }
-
-    public void setForVip(boolean forVip) {
-        this.forVip = forVip;
-    }
-
 }

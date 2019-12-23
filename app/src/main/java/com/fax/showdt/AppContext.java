@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.lib.config.ConfigManager;
+import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.OkHttpClientHelper;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -29,6 +30,7 @@ public class AppContext extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        Environment.init(mContext);
         ConfigManager.init(mContext);
         String processName = getProcessName();
         if (!TextUtils.isEmpty(processName) &&processName.equals(this.getPackageName())) {

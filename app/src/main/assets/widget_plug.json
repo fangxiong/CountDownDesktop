@@ -137,5 +137,47 @@
     "singleLine": false,
     "doubleLine": false,
     "category": "电量"
+  },
+  {
+    "id": 19,
+    "tag": "[L00]",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "音乐"
+  },
+  {
+    "id": 20,
+    "tag": "[L01]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "音乐"
+  },
+  {
+    "id": 21,
+    "tag": "[L02]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "音乐"
+  },
+  {
+    "id": 22,
+    "tag": "[L03]",
+    "singleLine": false,
+    "doubleLine": false,
+    "category": "音乐"
+  },
+  {
+    "id": 23,
+    "tag": "[L04]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "音乐"
+  },
+  {
+    "id": 24,
+    "tag": "[L05]",
+    "singleLine": true,
+    "doubleLine": false,
+    "category": "音乐"
   }
 ]

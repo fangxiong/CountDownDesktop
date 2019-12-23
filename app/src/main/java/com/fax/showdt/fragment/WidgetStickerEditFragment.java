@@ -23,12 +23,9 @@ import androidx.fragment.app.FragmentTransaction;
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mAdd,mConsume;
     private WidgetEditStickerCallback mCallback;
-    private Context mContext;
     private WidgetStickerElementEditFragment mStickerElementEditFragment;
 
-    public WidgetStickerEditFragment(Context context) {
-        mContext = context;
-    }
+    public WidgetStickerEditFragment(){}
 
     @Nullable
     @Override
@@ -52,12 +49,16 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
             if (mCallback != null) {
                 mCallback.closePanel();
             }
+        }else if(resId == R.id.iv_add){
+            if(mCallback != null){
+                mCallback.onPickPhoto();
+            }
         }
     }
 
     private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mStickerElementEditFragment = new WidgetStickerElementEditFragment(mContext);
+        mStickerElementEditFragment = new WidgetStickerElementEditFragment();
         transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
         transaction.commitAllowingStateLoss();
         mStickerElementEditFragment.setmWidgetEditStickertElementSelectedCallback(new WidgetEditStickerElementSelectedCallback() {

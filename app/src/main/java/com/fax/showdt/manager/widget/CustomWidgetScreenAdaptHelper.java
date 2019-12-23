@@ -49,12 +49,8 @@ public class CustomWidgetScreenAdaptHelper {
         mResultConfig.setTextSize(ViewUtils.dp2px(TextSticker.DEFAULT_TEXT_SIZE));
         mResultConfig.setDefaultScale(TextSticker.DEFAULT_TEXT_SIZE);
         mResultConfig.setCreatedTime(System.currentTimeMillis());
-        mResultConfig.setFromFeatured(true);
         mResultConfig.setDesc(config.getDesc());
-        mResultConfig.setOriginX(config.getOriginX());
-        mResultConfig.setOriginY(config.getOriginY());
-        mResultConfig.setForVip(config.isForVip());
-        mResultConfig.setPreviewPath(config.getPreviewPath());
+        mResultConfig.setBgPath(config.getBgPath());
         mResultConfig.setVersion(config.getVersion());
         mTextList = config.getTextPlugList();
         mLineList = config.getLinePlugList();

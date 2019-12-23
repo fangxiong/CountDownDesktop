@@ -38,9 +38,11 @@ public class DrawableSticker extends Sticker {
     private boolean mShowFrame;
     private int mFrame = ViewUtils.dp2px(6);
     private float mRatio = 1;
+    private String svgColor="#FFFFFF";
     public static final int ASSET = 0;
     public static final int SVG = 1;
     public static final int SDCARD = 2;
+
     @PicType
     private int mPicType = ASSET;
 
@@ -233,5 +235,13 @@ public class DrawableSticker extends Sticker {
 
     public void setmPicType(int mPicType) {
         this.mPicType = mPicType;
+    }
+
+    public String getSvgColor() {
+        return svgColor;
+    }
+
+    public void setSvgColor(String svgColor) {
+        this.svgColor = svgColor;
     }
 }

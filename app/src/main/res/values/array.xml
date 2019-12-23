@@ -17,7 +17,12 @@
         <item>B00</item>
         <item>C00</item>
         <item>C01</item>
-        <item>L00</item>
+        <item>L00</item>//歌词
+        <item>L01</item>//专辑
+        <item>L02</item>//歌手
+        <item>L03</item>//歌名
+        <item>L04</item>//总时长
+        <item>L05</item>//当前时长
         <item>S00</item>
         <item>S01</item>
         <item>S02</item>

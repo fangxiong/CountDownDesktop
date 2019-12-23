@@ -1,114 +1,114 @@
 [
   {
-    "svgPath": "svg/line1.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/line1.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/line2.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/line2.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/line3.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/line3.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/line4.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/line4.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon1.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon1.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon2.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon2.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon3.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon3.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon4.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon4.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon5.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon5.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/icon6.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/icon6.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape1.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape1.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape2.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape2.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape3.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape3.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape4.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape4.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape5.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape5.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape6.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape6.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape7.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape7.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape8.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape8.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape9.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape9.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape10.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape10.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape11.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape11.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape12.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape12.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape13.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape13.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape14.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape14.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape15.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape15.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape16.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape16.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape17.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape17.svg",
+    "svgColor": "#A0A0A0"
   },
   {
-    "svgPath": "svg/shape18.svg",
-    "svgColor": "#FFFFFF"
+    "svgPath": "svg/shape/shape18.svg",
+    "svgColor": "#A0A0A0"
   }
 ]

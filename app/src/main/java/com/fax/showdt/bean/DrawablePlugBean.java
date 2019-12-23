@@ -14,6 +14,7 @@ public class DrawablePlugBean extends BasePlugBean {
     private boolean isShowFrame;
     @DrawableSticker.PicType
     private int mPicType;
+    private String svgColor ="#FFFFFF";
 
     public String getDrawablePath() {
         return drawablePath;
@@ -53,5 +54,13 @@ public class DrawablePlugBean extends BasePlugBean {
 
     public int getmPicType() {
         return mPicType;
+    }
+
+    public String getSvgColor() {
+        return svgColor;
+    }
+
+    public void setSvgColor(String svgColor) {
+        this.svgColor = svgColor;
     }
 }

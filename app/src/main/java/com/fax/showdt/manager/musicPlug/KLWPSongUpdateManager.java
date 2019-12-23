@@ -16,10 +16,12 @@ import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.NetWorkUtils;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -44,9 +46,19 @@ public class KLWPSongUpdateManager {
     private AudioInfo mCurAudioInfo;
     private Disposable intervalDisposable, refreshDisposable;
     private TreeMap<Integer, LyricsLineInfo> mLrcMap;
-    public static final String ACTION_UPDATE_LRC = "action_update_lrc";
+    public static final String ACTION_UPDATE_MEDIA_INFO = "action_update_media_info";
     public static final String LRC_KEY = "lrc_key";
+    public static final String ALBUM_KEY = "album_key";
+    public static final String SINGER_KEY = "singer_key";
+    public static final String SONGNAME_KEY = "songname_key";
+    public static final String DURATION_KEY = "duration_key";
+    public static final String CURRENT_DURATION_KEY = "current_duration_key";
     public static String lrcStr = "";
+    public static String singerName = "";
+    public static String album = "";
+    public static String songName = "";
+    public static long currentDuration = 0L;
+    public static long duration = 0L;
     public static boolean isEditWidget = false;
 
 
@@ -80,10 +92,10 @@ public class KLWPSongUpdateManager {
     @TargetApi(21)
     public synchronized void updateAudioInfo(MediaMetadata mediaMetadata, PlaybackState playbackState) {
         if (mediaMetadata != null) {
-            String singerName = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
-            String songName = mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE);
-            String album = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
-            long duration = mediaMetadata.getLong(MediaMetadata.METADATA_KEY_DURATION);
+            singerName = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+            songName = mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE);
+            album = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
+            duration = mediaMetadata.getLong(MediaMetadata.METADATA_KEY_DURATION);
             //类似酷我播放器切换歌曲时存在duration返回为0的情况，这时候不予赋值 duration=0是无法检索到歌曲下载的
             if (duration == 0) {
                 return;
@@ -95,6 +107,8 @@ public class KLWPSongUpdateManager {
             mCurAudioInfo.setDuration(duration);
         }
         if (playbackState != null) {
+            Log.i("test_duration:",playbackState.getPosition()+"");
+            currentDuration = playbackState.getPosition();
             mCurAudioInfo.setPos(playbackState.getPosition());
             mCurAudioInfo.setPlayState(playbackState.getState());
         }
@@ -161,9 +175,18 @@ public class KLWPSongUpdateManager {
                     if (!TextUtils.isEmpty(lrc)) {
                         lrcStr = lrc;
                     }
+                    if(mPlaybackState != null){
+                        currentDuration = mPlaybackState.getPosition();
+                        Log.i("test_duration:",currentDuration+"");
+                    }
                     Intent intent = new Intent();
-                    intent.setAction(ACTION_UPDATE_LRC);
+                    intent.setAction(ACTION_UPDATE_MEDIA_INFO);
                     intent.putExtra(LRC_KEY, lrcStr);
+                    intent.putExtra(ALBUM_KEY, album);
+                    intent.putExtra(SINGER_KEY, singerName);
+                    intent.putExtra(SONGNAME_KEY, songName);
+                    intent.putExtra(DURATION_KEY, duration);
+                    intent.putExtra(CURRENT_DURATION_KEY, currentDuration);
                     mContext.sendBroadcast(intent);
                 }
             }

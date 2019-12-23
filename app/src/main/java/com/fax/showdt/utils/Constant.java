@@ -48,6 +48,9 @@ public interface Constant {
      */
     int DEBUG_MAX_CLICK_COUNT = 10;
 
-    String SD_HOME = "maimob";
+    String SD_HOME = "widgetshow";
+    String WIDGET_DATA_DIR = ".widget";
+    String WIDGET_CROP_DIR = ".crop";
+
 
 }

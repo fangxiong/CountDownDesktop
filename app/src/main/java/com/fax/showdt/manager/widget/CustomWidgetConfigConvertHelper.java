@@ -2,11 +2,16 @@ package com.fax.showdt.manager.widget;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.text.Layout;
 import android.util.Log;
 import android.util.LongSparseArray;
@@ -29,9 +34,10 @@ import com.fax.showdt.view.sticker.ProgressSticker;
 import com.fax.showdt.view.sticker.Sticker;
 import com.fax.showdt.view.sticker.StickerView;
 import com.fax.showdt.view.sticker.TextSticker;
-
-import org.antlr.runtime.debug.DebugEventListener;
-
+import com.fax.showdt.view.svg.SVG;
+import com.fax.showdt.view.svg.SVGBuilder;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -143,6 +149,7 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setAppIconPath(sticker.getAppIconPath());
                 drawablePlugBean.setAppName(appName);
                 drawablePlugBean.setSvgName(((DrawableSticker) sticker).getSvgName());
+                drawablePlugBean.setSvgColor(((DrawableSticker) sticker).getSvgColor());
                 drawablePlugBean.setShowFrame(((DrawableSticker) sticker).isShowFrame());
                 drawablePlugBean.setmPicType(((DrawableSticker) sticker).getmPicType());
 
@@ -279,6 +286,12 @@ public class CustomWidgetConfigConvertHelper {
         }
         Object[] key = mStickerBeanList.keySet().toArray();
         Arrays.sort(key);
+        if(mCustomWidgetConfig.isDrawWithBg()) {
+            Bitmap bgBitmap = BitmapUtils.decodeFile(new File(mCustomWidgetConfig.getBgPath()));
+            if (bgBitmap != null) {
+                canvas.drawBitmap(bgBitmap, 0, 0, new Paint());
+            }
+        }
         for (int i = 0; i < mStickerBeanList.size(); i++) {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             if (bean instanceof TextPlugBean) {
@@ -400,9 +413,22 @@ public class CustomWidgetConfigConvertHelper {
      * @return
      */
     private DrawableSticker initDrawableSticker(StickerView view, DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFile(bean.getDrawablePath());
-        if (bitmap != null) {
-            Drawable drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
+        Drawable drawable = null;
+        if(bean.getmPicType() == DrawableSticker.SVG){
+            try {
+                SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor(bean.getSvgColor()), PorterDuff.Mode.SRC_IN))
+                        .readFromAsset(AppContext.get().getAssets(), bean.getDrawablePath()).build();
+                drawable = svg.getDrawable();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }else if(bean.getmPicType() == DrawableSticker.SDCARD) {
+            drawable = new BitmapDrawable(AppContext.get().getResources(), bean.getDrawablePath());
+        }else {
+            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(),bean.getDrawablePath());
+            drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
+        }
+        if (drawable != null) {
             DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
             drawableSticker.addMaskBitmap(AppContext.get(), bean.getSvgName());
             drawableSticker.setShowFrame(bean.isShowFrame());
@@ -530,8 +556,24 @@ public class CustomWidgetConfigConvertHelper {
      * @param baseOnHeight
      */
     private void drawDrawableSticker(Canvas canvas, DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFile(bean.getDrawablePath());
-        Drawable drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
+        Drawable drawable = null;
+        Log.i("test_draw_drawable:",bean.toJSONString());
+        if(bean.getmPicType() == DrawableSticker.SVG){
+            try {
+                SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor(bean.getSvgColor()), PorterDuff.Mode.SRC_IN))
+                        .readFromAsset(AppContext.get().getAssets(), bean.getDrawablePath()).build();
+                drawable = svg.getDrawable();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }else if(bean.getmPicType() == DrawableSticker.SDCARD) {
+            drawable = new BitmapDrawable(AppContext.get().getResources(), bean.getDrawablePath());
+            Log.i("test_draw_drawable:",drawable.toString());
+
+        }else {
+            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(),bean.getDrawablePath());
+            drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
+        }
         DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
         drawableSticker.addMaskBitmap(AppContext.get(), bean.getSvgName());
         drawableSticker.setShowFrame(bean.isShowFrame());
