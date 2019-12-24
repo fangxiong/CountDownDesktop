@@ -1,6 +1,5 @@
 package com.fax.showdt.fragment;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -15,12 +14,11 @@ import com.fax.showdt.R;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
 import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
-import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
+import com.fax.showdt.fragment.widgetStickerEdit.WidgetShapeElementEditFragment;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.showdt.view.sticker.DrawableSticker;
-import com.fax.showdt.view.sticker.TextSticker;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
 
@@ -33,7 +31,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetShapeEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mIvColor,mConsume;
-    private WidgetShapeElementEditFragment mShapeElementEditFragment;
+    private WidgetShapeElementEditFragment mStickerElementEditFragment;
     private WidgetEditShapeCallback mWidgetEditShapeCallback;
     private DrawableSticker mDrawableSticker;
 
@@ -109,10 +107,10 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
 
     private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mShapeElementEditFragment = new WidgetShapeElementEditFragment();
-        transaction.add(R.id.fl_shape_edit_body, mShapeElementEditFragment);
+        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
+        transaction.add(R.id.fl_shape_edit_body, mStickerElementEditFragment);
         transaction.commitAllowingStateLoss();
-        mShapeElementEditFragment.setWidgetEditShapeElementSelectedCallback(new WidgetEditShapeElementSelectedCallback() {
+        mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditShapeElementSelectedCallback() {
             @Override
             public void selectShapeElement(WidgetShapeBean widgetShapeBean) {
                 mWidgetEditShapeCallback.onAddShapeSticker(widgetShapeBean);

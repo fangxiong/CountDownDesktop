@@ -22,7 +22,6 @@ android {
         }
     }
 
-    buildToolsVersion rootProject.ext.android.buildToolsVersion
 }
 
 dependencies {

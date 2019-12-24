@@ -195,6 +195,11 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(KLWPSongUpdateManager.ACTION_UPDATE_MEDIA_INFO);
         registerReceiver(mUpdateLrcReceiver, intentFilter);
+        //当服务开启后通知 通知监听器刷新歌曲信息
+        Intent intent = new Intent();
+        intent.putExtra("switch_flag", true);
+        intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -743,7 +748,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 CustomPlugUtil.songName = intent.getStringExtra(KLWPSongUpdateManager.SONGNAME_KEY);
                 CustomPlugUtil.duration = intent.getLongExtra(KLWPSongUpdateManager.DURATION_KEY,0L);
                 CustomPlugUtil.currentDuration = intent.getLongExtra(KLWPSongUpdateManager.CURRENT_DURATION_KEY,0L);
-                Log.i("test_song:","lrc:"+CustomPlugUtil.lrc);
+                Log.i("test_song:","lrc:"+intent.getStringExtra(KLWPSongUpdateManager.LRC_KEY));
                 Log.i("test_song:","album:"+CustomPlugUtil.album);
                 Log.i("test_song:","singerName:"+CustomPlugUtil.singerName);
                 Log.i("test_song:","songName:"+CustomPlugUtil.songName);

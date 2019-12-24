@@ -1,6 +1,5 @@
 package com.fax.showdt.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
-import com.fax.showdt.bean.WidgetShapeBean;
-import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
-import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
-import com.fax.showdt.fragment.widgetStickerEdit.WidgetStickerElementEditFragment;
+import com.fax.showdt.fragment.widgetStickerEdit.WidgetShapeElementEditFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mAdd,mConsume;
     private WidgetEditStickerCallback mCallback;
-    private WidgetStickerElementEditFragment mStickerElementEditFragment;
+    private WidgetShapeElementEditFragment mStickerElementEditFragment;
 
     public WidgetStickerEditFragment(){}
 
@@ -57,16 +53,16 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
     }
 
     private void initFragment() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mStickerElementEditFragment = new WidgetStickerElementEditFragment();
-        transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
-        transaction.commitAllowingStateLoss();
-        mStickerElementEditFragment.setmWidgetEditStickertElementSelectedCallback(new WidgetEditStickerElementSelectedCallback() {
-            @Override
-            public void selectSticker(String path) {
-                mCallback.onAddSticker(path);
-            }
-        });
+//        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+//        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
+//        transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
+//        transaction.commitAllowingStateLoss();
+//        mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditStickerElementSelectedCallback() {
+//            @Override
+//            public void selectSticker(String path) {
+//                mCallback.onAddSticker(path);
+//            }
+//        });
     }
 
     public void setWidgetEditStickerCallback(WidgetEditStickerCallback callback){

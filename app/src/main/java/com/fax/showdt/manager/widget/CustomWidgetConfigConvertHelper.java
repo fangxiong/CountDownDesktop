@@ -574,6 +574,9 @@ public class CustomWidgetConfigConvertHelper {
             Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(),bean.getDrawablePath());
             drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
         }
+        if(drawable == null){
+            return;
+        }
         DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
         drawableSticker.addMaskBitmap(AppContext.get(), bean.getSvgName());
         drawableSticker.setShowFrame(bean.isShowFrame());

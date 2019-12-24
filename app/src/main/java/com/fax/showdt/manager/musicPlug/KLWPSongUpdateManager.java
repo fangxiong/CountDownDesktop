@@ -96,6 +96,11 @@ public class KLWPSongUpdateManager {
             songName = mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE);
             album = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
             duration = mediaMetadata.getLong(MediaMetadata.METADATA_KEY_DURATION);
+            Log.i(TAG,"album:"+album);
+            Log.i(TAG,"singerName:"+singerName);
+            Log.i(TAG,"songName:"+songName);
+            Log.i(TAG,"duration:"+duration);
+            Log.i(TAG,"currentDuration:"+currentDuration);
             //类似酷我播放器切换歌曲时存在duration返回为0的情况，这时候不予赋值 duration=0是无法检索到歌曲下载的
             if (duration == 0) {
                 return;
@@ -179,6 +184,13 @@ public class KLWPSongUpdateManager {
                         currentDuration = mPlaybackState.getPosition();
                         Log.i("test_duration:",currentDuration+"");
                     }
+                    Log.i(TAG,"lrc:"+lrc);
+                    Log.i(TAG,"album:"+album);
+                    Log.i(TAG,"singerName:"+singerName);
+                    Log.i(TAG,"songName:"+songName);
+                    Log.i(TAG,"duration:"+duration);
+                    Log.i(TAG,"currentDuration:"+currentDuration);
+
                     Intent intent = new Intent();
                     intent.setAction(ACTION_UPDATE_MEDIA_INFO);
                     intent.putExtra(LRC_KEY, lrcStr);

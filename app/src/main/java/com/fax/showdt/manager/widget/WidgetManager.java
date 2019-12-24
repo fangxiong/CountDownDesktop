@@ -96,7 +96,6 @@ public class WidgetManager {
                             String widgetId = String.valueOf(allWidgets[i]);
                             if (map.containsKey(widgetId)) {
                                 //刷新已经绑定过widget data的插件
-                                Log.i("test_widget","bind:"+widgetId);
                                 mBitmap = mWidgetContext.getViewBitmap(widgetId);
                                 if (mBitmap != null) {
                                     views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
@@ -110,7 +109,6 @@ public class WidgetManager {
                                     AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
                                 }
                             } else {
-                                Log.i("test_widget","unbind:"+widgetId);
                                 //刷新没有绑定过widget data的插件
                                 views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
                                 Intent configIntent2 = new Intent();
