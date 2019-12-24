@@ -28,6 +28,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ali.ha.fulltrace.logger.Logger;
 import com.fax.showdt.AppContext;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
@@ -85,6 +86,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -153,6 +155,42 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         sendBroadcast(intent);
         unregisterReceiver(mUpdateLrcReceiver);
         LocationManager.getInstance().stopLocation();
+    }
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (mTextEditFragment == null && fragment instanceof WidgetTextEditFragment) {
+            Logger.e("onAttachFragment mTextEditFragment");
+            mTextEditFragment = (WidgetTextEditFragment) fragment;
+            transaction.remove(mTextEditFragment);
+        } else if (mShapeEditFragment == null && fragment instanceof WidgetShapeEditFragment) {
+            Logger.e("onAttachFragment mShapeEditFragment");
+            mShapeEditFragment = (WidgetShapeEditFragment) fragment;
+            transaction.remove(mShapeEditFragment);
+        } else if (mStickerEditFragment == null && fragment instanceof WidgetStickerEditFragment) {
+            Logger.e("onAttachFragment mStickerEditFragment");
+            mStickerEditFragment = (WidgetStickerEditFragment) fragment;
+            transaction.remove(mStickerEditFragment);
+        }else if(mProgressEditFragment == null && fragment instanceof WidgetProgressEditFragment){
+            Logger.e("onAttachFragment mProgressEditFragment");
+            mProgressEditFragment = (WidgetProgressEditFragment) fragment;
+            transaction.remove(mProgressEditFragment);
+        }
+        transaction.commitAllowingStateLoss();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        switchToOneFragment(EditType.EDIT_TEXT);
     }
 
     @Override

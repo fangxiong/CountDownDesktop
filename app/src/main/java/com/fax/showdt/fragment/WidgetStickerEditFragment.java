@@ -8,13 +8,11 @@ import android.widget.ImageView;
 
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
-import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
-import com.fax.showdt.fragment.widgetStickerEdit.WidgetShapeElementEditFragment;
+import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mAdd,mConsume;

@@ -14,12 +14,10 @@
     <View
         android:layout_width="0.5dp"
         android:layout_height="match_parent"
-        android:background="@color/c_F0F0F0"/>
+        android:background="@color/c_F0F0F0" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_content"
-        android:overScrollMode="never"
-        android:scrollbars="none"
+    <FrameLayout
+        android:id="@+id/fl_body"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

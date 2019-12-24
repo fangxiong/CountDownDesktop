@@ -200,8 +200,10 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 if(isCountdownPlug){
                     showTimePickerDialog(text);
                 }else {
-                    String lastText = mTextSticker.getText();
-                    mTextSticker.setText(lastText+text);
+                    if(mTextSticker != null) {
+                        String lastText = mTextSticker.getText();
+                        mTextSticker.setText(lastText + text);
+                    }
                 }
             }
         });
@@ -209,7 +211,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         mFontEditFragment.setWidgetTextFontSeelctedCallback(new WidgetEditTextFontSelectedCallback() {
             @Override
             public void selectTextFont(String fontPath) {
-                mTextSticker.setFontPath(fontPath);
+                if(mTextSticker != null) {
+                    mTextSticker.setFontPath(fontPath);
+                }
             }
         });
         transaction.commitAllowingStateLoss();
