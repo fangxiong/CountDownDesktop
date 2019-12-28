@@ -38,5 +38,8 @@
     <string name="countdownContent_default_desktop">点击设置倒计时\n长按可调节宽高</string>
     <string name="widget_select">选择插件</string>
 
+    <string name="widget_click">事件类型</string>
+    <string name="widget_click_url">网址</string>
+    <string name="widget_click_music">网址</string>
 
 </resources>

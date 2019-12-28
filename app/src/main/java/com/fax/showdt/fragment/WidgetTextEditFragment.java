@@ -78,38 +78,40 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
     }
 
     public void showInputDialog(int maxLength) {
-        final String str =mTextSticker.getText();
-        final SpannableStringBuilder content = CustomPlugUtil.getSpannableStrFromSigns(str, getActivity());
-        final WidgetTextInputDialog textInputDialog = new WidgetTextInputDialog(getActivity(), maxLength);
-        FragmentManager fragmentManager = getChildFragmentManager();
-        textInputDialog.show(fragmentManager, "textInputDialog");
-        textInputDialog.setOnFontEditListener(new WidgetTextInputDialog.OnFontEditListener() {
-            @Override
-            public void onShow() {
-                textInputDialog.showSoftInput();
-                final EditText mEtInput = textInputDialog.getEditText();
-                mEtInput.setText(content);
-                mEtInput.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        if(mTextSticker != null) {
+            final String str = mTextSticker.getText();
+            final SpannableStringBuilder content = CustomPlugUtil.getSpannableStrFromSigns(str, getActivity());
+            final WidgetTextInputDialog textInputDialog = new WidgetTextInputDialog(getActivity(), maxLength);
+            FragmentManager fragmentManager = getChildFragmentManager();
+            textInputDialog.show(fragmentManager, "textInputDialog");
+            textInputDialog.setOnFontEditListener(new WidgetTextInputDialog.OnFontEditListener() {
+                @Override
+                public void onShow() {
+                    textInputDialog.showSoftInput();
+                    final EditText mEtInput = textInputDialog.getEditText();
+                    mEtInput.setText(content);
+                    mEtInput.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String text = mEtInput.getText().toString().trim();
-                        if (mTextSticker != null) {
-                            mTextSticker.setText(text);
                         }
-                    }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            String text = mEtInput.getText().toString().trim();
+                            if (mTextSticker != null) {
+                                mTextSticker.setText(text);
+                            }
+                        }
 
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+                }
+            });
+        }
 
     }
 
@@ -120,7 +122,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     public void setWidgetEditTextSticker(TextSticker textSticker) {
         this.mTextSticker = textSticker;
-        mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
+        if(mFontEditFragment != null) {
+            mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
+        }
     }
 
     @Override
@@ -141,7 +145,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
         }else if(resId == R.id.iv_color){
 //            refreshSelectedViewStatus(mColor);
-            showColorPickDialog(mTextSticker.getTextColor());
+            if(mTextSticker != null) {
+                showColorPickDialog(mTextSticker.getTextColor());
+            }
         }else if(resId == R.id.iv_consume){
             if(mWidgetEditTextCallback != null){
                 mWidgetEditTextCallback.closePanel();
@@ -260,6 +266,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 transaction.hide(mElementEditFragment);
 //                transaction.hide(mColorEditFragment);
                 transaction.show(mFontEditFragment);
+                if(mTextSticker != null) {
+                    mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
+                }
                 transaction.commitAllowingStateLoss();
                 break;
             }

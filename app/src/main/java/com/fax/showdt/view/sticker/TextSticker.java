@@ -57,7 +57,7 @@ public class TextSticker extends Sticker {
     private boolean isShimmerText;
     private String shimmerColor;
 //    private Shimmer mShimmer;
-    private Layout.Alignment mAlignment = null;
+    private Layout.Alignment mAlignment = Layout.Alignment.ALIGN_CENTER;
     /**
      * Upper bounds for text size.
      * This acts as a starting point for resizing.

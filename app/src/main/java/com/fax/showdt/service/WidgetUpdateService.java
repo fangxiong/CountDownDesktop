@@ -18,17 +18,36 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.widget.WidgetManager;
+import com.fax.showdt.utils.CustomPlugUtil;
+import com.fax.showdt.utils.GsonUtils;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 public class WidgetUpdateService extends Service {
     private static final int ALARM_DURATION = 5 * 60 * 1000;
     private static final int DELAY_TIME = 1000;
+    public static final int REFRESH_WITH_ONE_SECOND = 0;//每1秒更新一次
+    public static final int REFRESH_WITH_SIXTY_SECOND = 1;//每一分钟更新一次
+    public static final int REFRESH_WITH_JUST_ONCE = 2;//只更新一次
+    private boolean isAllowRefreshAllWidget = true;
+    private List<String> widgetIdWithOneSec = new ArrayList<>();
+    private @RefreshGap
+    int mCurrentRefreshGap = REFRESH_WITH_ONE_SECOND;
     private Context context;
     private Handler mHandler;
     private HandlerThread handlerThread;
@@ -36,6 +55,11 @@ public class WidgetUpdateService extends Service {
     public final static String WIDGET_CONFIG_CHANGED = "widget_config_changed";
     private WidgetUpdateReceiver mWidgetUpdateReceiver;
     private volatile static WidgetUpdateService service;
+
+    @IntDef({REFRESH_WITH_ONE_SECOND, REFRESH_WITH_SIXTY_SECOND, REFRESH_WITH_JUST_ONCE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface RefreshGap {
+    }
 
     public static void startSelf(Context context) {
         Intent intent = new Intent(context, WidgetUpdateService.class);
@@ -114,6 +138,7 @@ public class WidgetUpdateService extends Service {
         intentFilter.addAction(WIDGET_CONFIG_CHANGED);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
         mWidgetUpdateReceiver = new WidgetUpdateReceiver();
         this.registerReceiver(mWidgetUpdateReceiver, intentFilter);
         //当服务开启后通知 通知监听器刷新歌曲信息
@@ -141,7 +166,7 @@ public class WidgetUpdateService extends Service {
         alarmManager.cancel(getPendingIntent());
         if (handlerThread != null) {
             handlerThread.quit();
-            Log.i("test_widget:","handlerThread被杀");
+            Log.i("test_widget:", "handlerThread被杀");
         }
         //当服务被杀后需要关掉定位服务,避免消耗资源
         LocationManager.getInstance().stopLocation();
@@ -155,9 +180,10 @@ public class WidgetUpdateService extends Service {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-    private void updateWidget() {
+    private void updateWidget(String widgetId) {
         try {
-            WidgetManager.getInstance().updateAppWidget(this);
+
+            WidgetManager.getInstance().updateAppWidget(this, widgetId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,8 +193,52 @@ public class WidgetUpdateService extends Service {
     class mRunnable implements Runnable {
         @Override
         public void run() {
-            updateWidget();
+            if(isAllowRefreshAllWidget) {
+                int allWidgetId[] = WidgetManager.getAllProviderWidgetIds(WidgetUpdateService.this);
+                for(int i =0;i<allWidgetId.length;i++) {
+                    Log.i("test_draw_bitmap:", "秒刷新所有插件:"+allWidgetId[i]);
+                    updateWidget(String.valueOf(allWidgetId[i]));
+                }
+            }else {
+                for(int i =0;i<widgetIdWithOneSec.size();i++) {
+                    Log.i("test_draw_bitmap:", "秒刷新匹配的插件:"+widgetIdWithOneSec.get(i));
+                    updateWidget(String.valueOf(widgetIdWithOneSec.get(i)));
+                }
+            }
             mHandler.postDelayed(this, DELAY_TIME);
+        }
+    }
+
+    private List<String> getWidgetIdsRefreshWithOneSec(){
+        List<String> result =new ArrayList<>();
+        HashMap<String, String> map = WidgetManager.getInstance().getAllBindDataWidgetIds();
+        Iterator map1it = map.entrySet().iterator();
+        Log.i("test_draw_bitmap:", "秒刷新map:" + map.size());
+        while (map1it.hasNext()) {
+            Map.Entry<String, String> entry = (Map.Entry<String, String>) map1it.next();
+            CustomWidgetConfig config = GsonUtils.parseJsonWithGson(entry.getValue(), CustomWidgetConfig.class);
+            if(isAllowRefreshAllWidget){
+                result.add(entry.getKey());
+            }else {
+                mCurrentRefreshGap = CustomPlugUtil.getWidgetRefreshGap(config);
+                if (mCurrentRefreshGap == REFRESH_WITH_ONE_SECOND) {
+                    result.add(entry.getKey());
+                }
+            }
+        }
+        return result;
+    }
+
+    private void updateWidgetRefreshWithSixtySec(){
+        HashMap<String, CustomWidgetConfig> map = WidgetManager.getInstance().getCustomWidgetConfig();
+        Iterator map1it = map.entrySet().iterator();
+        while (map1it.hasNext()) {
+            Map.Entry<String, CustomWidgetConfig> entry = (Map.Entry<String, CustomWidgetConfig>) map1it.next();
+            mCurrentRefreshGap = CustomPlugUtil.getWidgetRefreshGap(entry.getValue());
+            if (mCurrentRefreshGap == REFRESH_WITH_SIXTY_SECOND) {
+                Log.i("test_draw_bitmap:", "分钟刷新");
+                updateWidget(entry.getKey());
+            }
         }
     }
 
@@ -177,12 +247,21 @@ public class WidgetUpdateService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (WIDGET_CONFIG_CHANGED.equals(action)) {
+                Log.i("test_draw_bitmap:", "配置更新");
                 WidgetManager.getInstance().changeWidgetInfo();
+                isAllowRefreshAllWidget = true;
+                //当更换配置时,调用每秒更新的方式,避免之前更新间隔时间大,导致更新不及时问题
             } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 //熄屏下不更新widget更加省电
                 WidgetManager.getInstance().pause();
             } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 WidgetManager.getInstance().reStart();
+                updateWidgetRefreshWithSixtySec();
+            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
+                Log.i("test_draw_bitmap:", "接收到分钟刷新广播");
+                isAllowRefreshAllWidget = false;
+                widgetIdWithOneSec = getWidgetIdsRefreshWithOneSec();
+                updateWidgetRefreshWithSixtySec();
             }
         }
     }

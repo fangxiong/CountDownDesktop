@@ -66,5 +66,6 @@ public class TextPlugBean extends BasePlugBean {
             return null;
         }
     }
-
 }
+
+

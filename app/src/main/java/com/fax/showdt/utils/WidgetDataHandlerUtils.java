@@ -3,6 +3,7 @@ package com.fax.showdt.utils;
 import android.text.TextUtils;
 
 import com.fax.lib.config.ConfigManager;
+import com.fax.showdt.bean.CustomWidgetConfig;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class WidgetDataHandlerUtils {
         return map;
     }
 
-    public static String getWidgetDataFromId(String mKey,String mapKey) {
+    public static CustomWidgetConfig getWidgetDataFromId(String mKey, String mapKey) {
         Map map = getHashMapData(mapKey);
         Iterator iter = map.entrySet().iterator();
         while (iter.hasNext()) {
@@ -52,7 +53,7 @@ public class WidgetDataHandlerUtils {
             String key = (String) entry.getKey();
             if (key.equals(mKey)) {
                 String val = (String) entry.getValue();
-                return val;
+                return GsonUtils.parseJsonWithGson(val,CustomWidgetConfig.class);
             }
         }
         return null;

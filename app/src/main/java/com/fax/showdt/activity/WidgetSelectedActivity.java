@@ -26,6 +26,7 @@ import com.fax.showdt.fragment.MyWidgetFragment;
 import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.WidgetManager;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.TimeUtils;
@@ -138,8 +139,8 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
                 config.setDrawWithBg(false);
                 if(!TextUtils.isEmpty(mWidgetId)) {
                     Log.i("test_widget","put widget"+mWidgetId);
+                    sendConfigChangedBroadcast();
                     WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId,config.toJSONString(),ConstantString.widget_map_data_key);
-                    WidgetManager.getInstance().changeWidgetInfo();
                     ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"设置成功",Toasty.LENGTH_SHORT);
                 }
             }
@@ -149,6 +150,12 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
                 return false;
             }
         });
+    }
+
+    private void  sendConfigChangedBroadcast() {
+        Intent intent =new Intent();
+        intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
+        sendBroadcast(intent);
     }
 
     private class OnMenuClickListener implements View.OnClickListener{

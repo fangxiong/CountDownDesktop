@@ -110,5 +110,13 @@
   {
     "svgPath": "svg/shape/shape18.svg",
     "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/shape/shape19.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/shape/shape20.svg",
+    "svgColor": "#A0A0A0"
   }
 ]

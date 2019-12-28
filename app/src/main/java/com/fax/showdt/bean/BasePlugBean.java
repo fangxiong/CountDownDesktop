@@ -5,6 +5,7 @@ public class BasePlugBean extends Bean {
     private String id;
     private float scale;
     private String color;
+    private float angle;
 
     private PlugLocation location;
     private int width;
@@ -119,5 +120,13 @@ public class BasePlugBean extends Bean {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+
+    public float getAngle() {
+        return angle;
     }
 }

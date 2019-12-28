@@ -15,7 +15,6 @@ import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.LongSparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -81,10 +81,14 @@ import com.gyf.barlibrary.ImmersionBar;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -107,6 +111,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View.OnClickListener {
 
+    public static final int EDIT_TEXT = 0;
+    public static final int EDIT_STICKER = 1;
+    public static final int EDIT_SHAPE = 2;
+    public static final int EDIT_PROGRESS = 3;
     private StickerView mStickerView;
     private ImageView mStickerViewBg;
     private RelativeLayout mRLEditBody;
@@ -119,6 +127,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private WidgetStickerEditFragment mStickerEditFragment;
     private WidgetShapeEditFragment mShapeEditFragment;
     private WidgetProgressEditFragment mProgressEditFragment;
+    private LongSparseArray<Fragment> mFragments = new LongSparseArray<>();
     private Sticker mHandlingSticker;
     private LongSparseArray<Sticker> mStickerList;
     private FullScreenDialog mEditBgDialog;
@@ -128,8 +137,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private UpdateLrcReceiver mUpdateLrcReceiver;
 
 
-    enum EditType {
-        EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS
+    @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface EditType {
     }
 
     public static void startSelf(Context context,CustomWidgetConfig config){
@@ -148,7 +158,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //当服务开启后通知 通知监听器刷新歌曲信息
+        //当服务开启后通知 通知监听器停止刷新歌曲信息
         Intent intent = new Intent();
         intent.putExtra("switch_flag", false);
         intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
@@ -190,7 +200,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        switchToOneFragment(EditType.EDIT_TEXT);
+        switchToOneFragment(EDIT_TEXT);
     }
 
     @Override
@@ -249,13 +259,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             textSticker.setFontPath("fonts/minijianqi.ttf");
             mTextEditFragment.setWidgetEditTextSticker(textSticker);
             mStickerView.addSticker(textSticker, Sticker.Position.TOP);
-            switchToOneFragment(EditType.EDIT_TEXT);
+            switchToOneFragment(EDIT_TEXT);
         } else if (resId == R.id.tv_sticker) {
-            switchToOneFragment(EditType.EDIT_STICKER);
+            switchToOneFragment(EDIT_STICKER);
         } else if (resId == R.id.tv_shape) {
-            switchToOneFragment(EditType.EDIT_SHAPE);
+            switchToOneFragment(EDIT_SHAPE);
         } else if (resId == R.id.tv_progress) {
-            switchToOneFragment(EditType.EDIT_PROGRESS);
+            switchToOneFragment(EDIT_PROGRESS);
         } else if (resId == R.id.iv_back) {
             MessageDialog.show(this, "提示", "确定要退出编辑吗？")
                     .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
@@ -316,6 +326,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onStickerDeleted(@NonNull Sticker sticker) {
                 mStickerList.delete(sticker.getId());
+                if(sticker instanceof TextSticker){
+                    if (mEditPaneShowing) {
+                        setEditBodySlideOutAnimation();
+                        mEditPaneShowing = false;
+                    }
+                    mHandlingSticker = null;
+                }
             }
 
             @Override
@@ -329,13 +346,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 mHandlingSticker = mStickerView.getCurrentSticker();
                 if (sticker instanceof TextSticker) {
                     mTextEditFragment.setWidgetEditTextSticker((TextSticker) sticker);
-                    switchToOneFragment(EditType.EDIT_TEXT);
+                    switchToOneFragment(EDIT_TEXT);
                 } else if (sticker instanceof DrawableSticker) {
                     if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SVG) {
-                        switchToOneFragment(EditType.EDIT_SHAPE);
+                        switchToOneFragment(EDIT_SHAPE);
                         mShapeEditFragment.setWidgetEditShapeSticker((DrawableSticker) sticker);
                     } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.ASSET) {
-                        switchToOneFragment(EditType.EDIT_STICKER);
+                        switchToOneFragment(EDIT_STICKER);
                     }
                 }
             }
@@ -435,16 +452,15 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     }
 
     private void initAllEditFragments() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mTextEditFragment = new WidgetTextEditFragment();
         mStickerEditFragment = new WidgetStickerEditFragment();
         mShapeEditFragment = new WidgetShapeEditFragment();
         mProgressEditFragment = new WidgetProgressEditFragment();
-        transaction.add(R.id.rl_edit_body, mTextEditFragment);
-        transaction.add(R.id.rl_edit_body, mStickerEditFragment);
-        transaction.add(R.id.rl_edit_body, mShapeEditFragment);
-        transaction.add(R.id.rl_edit_body, mProgressEditFragment);
-        transaction.commitAllowingStateLoss();
+//        transaction.add(R.id.rl_edit_body, mTextEditFragment);
+//        transaction.add(R.id.rl_edit_body, mStickerEditFragment);
+//        transaction.add(R.id.rl_edit_body, mShapeEditFragment);
+//        transaction.add(R.id.rl_edit_body, mProgressEditFragment);
+//        transaction.commitAllowingStateLoss();
         mTextEditFragment.setWidgetEditTextCallback(new WidgetEditTextCallback() {
             @Override
             public void onAddSticker() {
@@ -536,7 +552,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mRLEditBody.startAnimation(ctrlAnimation);
     }
 
-    private void switchToOneFragment(EditType editType) {
+    private void switchToOneFragment(@EditType int editType) {
+
         if (!mEditPaneShowing) {
             setEditBodySlideInAnimation();
         }
@@ -545,35 +562,95 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (editType) {
             case EDIT_TEXT: {
-                transaction.hide(mStickerEditFragment);
-                transaction.hide(mShapeEditFragment);
-                transaction.hide(mProgressEditFragment);
-                transaction.show(mTextEditFragment);
-                transaction.commitAllowingStateLoss();
+                if(!mFragments.containsKey(EDIT_TEXT)){
+                    mFragments.put(EDIT_TEXT,mTextEditFragment);
+                    transaction.add(R.id.rl_edit_body, mTextEditFragment);
+                    transaction.commitAllowingStateLoss();
+                }
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                for (int i = 0; i < mFragments.size(); i++) {
+                    long key = mFragments.keyAt(i);
+                    Fragment fragment = mFragments.get(key);
+                    if(fragment == mTextEditFragment){
+                        transaction1.show(fragment);
+                    }else {
+                        transaction1.hide(fragment);
+                    }
+                }
+//                transaction.hide(mStickerEditFragment);
+//                transaction.hide(mShapeEditFragment);
+//                transaction.hide(mProgressEditFragment);
+//                transaction.show(mTextEditFragment);
+                transaction1.commitAllowingStateLoss();
                 break;
             }
             case EDIT_STICKER: {
-                transaction.hide(mTextEditFragment);
-                transaction.hide(mShapeEditFragment);
-                transaction.hide(mProgressEditFragment);
-                transaction.show(mStickerEditFragment);
-                transaction.commitAllowingStateLoss();
+                if(!mFragments.containsKey(EDIT_STICKER)){
+                    mFragments.put(EDIT_STICKER,mStickerEditFragment);
+                    transaction.add(R.id.rl_edit_body, mStickerEditFragment);
+                    transaction.commitAllowingStateLoss();
+                }
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                for (int i = 0; i < mFragments.size(); i++) {
+                    long key = mFragments.keyAt(i);
+                    Fragment fragment = mFragments.get(key);
+                    if(fragment == mStickerEditFragment){
+                        transaction1.show(fragment);
+                    }else {
+                        transaction1.hide(fragment);
+                    }
+                }
+//                transaction.hide(mTextEditFragment);
+//                transaction.hide(mShapeEditFragment);
+//                transaction.hide(mProgressEditFragment);
+//                transaction.show(mStickerEditFragment);
+                transaction1.commitAllowingStateLoss();
                 break;
             }
             case EDIT_SHAPE: {
-                transaction.hide(mTextEditFragment);
-                transaction.hide(mStickerEditFragment);
-                transaction.hide(mProgressEditFragment);
-                transaction.show(mShapeEditFragment);
-                transaction.commitAllowingStateLoss();
+                if(!mFragments.containsKey(EDIT_SHAPE)){
+                    mFragments.put(EDIT_SHAPE,mShapeEditFragment);
+                    transaction.add(R.id.rl_edit_body, mShapeEditFragment);
+                    transaction.commitAllowingStateLoss();
+                }
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                for (int i = 0; i < mFragments.size(); i++) {
+                    long key = mFragments.keyAt(i);
+                    Fragment fragment = mFragments.get(key);
+                    if(fragment == mShapeEditFragment){
+                        transaction1.show(fragment);
+                    }else {
+                        transaction1.hide(fragment);
+                    }
+                }
+//                transaction.hide(mTextEditFragment);
+//                transaction.hide(mStickerEditFragment);
+//                transaction.hide(mProgressEditFragment);
+//                transaction.show(mShapeEditFragment);
+                transaction1.commitAllowingStateLoss();
                 break;
             }
             case EDIT_PROGRESS: {
-                transaction.hide(mTextEditFragment);
-                transaction.hide(mStickerEditFragment);
-                transaction.hide(mShapeEditFragment);
-                transaction.show(mProgressEditFragment);
-                transaction.commitAllowingStateLoss();
+                if(!mFragments.containsKey(EDIT_PROGRESS)){
+                    mFragments.put(EDIT_PROGRESS,mProgressEditFragment);
+                    transaction.add(R.id.rl_edit_body, mProgressEditFragment);
+                    transaction.commitAllowingStateLoss();
+                }
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                for (int i = 0; i < mFragments.size(); i++) {
+                    long key = mFragments.keyAt(i);
+                    Fragment fragment = mFragments.get(key);
+                    if(fragment == mProgressEditFragment){
+                        transaction1.show(fragment);
+                    }else {
+                        transaction1.hide(fragment);
+                    }
+                }
+//                transaction.hide(mTextEditFragment);
+//                transaction.hide(mStickerEditFragment);
+//                transaction.hide(mShapeEditFragment);
+//                transaction.show(mProgressEditFragment);
+                transaction1.commitAllowingStateLoss();
                 break;
             }
         }

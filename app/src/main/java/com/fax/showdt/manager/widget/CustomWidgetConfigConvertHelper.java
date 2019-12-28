@@ -14,7 +14,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.text.Layout;
 import android.util.Log;
-import android.util.LongSparseArray;
+
+import androidx.collection.LongSparseArray;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.BasePlugBean;
@@ -36,6 +37,7 @@ import com.fax.showdt.view.sticker.StickerView;
 import com.fax.showdt.view.sticker.TextSticker;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class CustomWidgetConfigConvertHelper {
      * @return
      */
     public CustomWidgetConfig saveConfig(CustomWidgetConfig originConfig, LongSparseArray<Sticker> mStickerList) {
-        Log.i("test_widget_config1:",originConfig.toJSONString());
+        Log.i("test_widget_config1:", originConfig.toJSONString());
         CustomWidgetConfig newConfig = originConfig;
         List<TextPlugBean> mTextList = new ArrayList<>();
         List<LinePlugBean> mLineList = new ArrayList<>();
@@ -80,6 +82,7 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setAppIconPath(sticker.getAppIconPath());
                 textPlugBean.setAppName(sticker.getAppName());
                 textPlugBean.setFontPath(((TextSticker) sticker).getFontPath());
+                textPlugBean.setAngle(sticker.getCurrentAngle());
                 RectF rectF = sticker.getMappedRectF();
                 textPlugBean.setLeft(rectF.left);
                 textPlugBean.setRight(rectF.right);
@@ -90,7 +93,7 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setAlignment(((TextSticker) sticker).getAlignment());
                 PointF point = sticker.getMappedCenterPoint();
                 textPlugBean.setLocation(new PlugLocation(point.x, point.y));
-                Log.i("test_text_sticker:",textPlugBean.toJSONString());
+                Log.i("test_text_sticker:", textPlugBean.toJSONString());
                 mTextList.add(textPlugBean);
             } else if (sticker instanceof LineSticker) {
                 LinePlugBean linePlugBean = new LinePlugBean();
@@ -104,6 +107,7 @@ public class CustomWidgetConfigConvertHelper {
                 linePlugBean.setJumpAppPath(sticker.getJumpAppPath());
                 linePlugBean.setScaleRatio(((LineSticker) sticker).getLineScale());
                 linePlugBean.setAppIconPath(sticker.getAppIconPath());
+                linePlugBean.setAngle(sticker.getCurrentAngle());
                 RectF rectF = sticker.getMappedRectF();
                 linePlugBean.setLeft(rectF.left);
                 linePlugBean.setRight(rectF.right);
@@ -123,6 +127,7 @@ public class CustomWidgetConfigConvertHelper {
                 progressPlugBean.setStartTime(((ProgressSticker) sticker).getStartDateTimeMillis());
                 progressPlugBean.setTargetTime(((ProgressSticker) sticker).getTargetDateTimeMillis());
                 progressPlugBean.setScaleRatio(((ProgressSticker) sticker).getProgressScale());
+                progressPlugBean.setAngle(sticker.getCurrentAngle());
                 RectF rectF = sticker.getMappedRectF();
                 progressPlugBean.setLeft(rectF.left);
                 progressPlugBean.setRight(rectF.right);
@@ -137,6 +142,7 @@ public class CustomWidgetConfigConvertHelper {
                 DrawablePlugBean drawablePlugBean = new DrawablePlugBean();
                 drawablePlugBean.setId(String.valueOf(key));
                 drawablePlugBean.setDrawablePath(path);
+                drawablePlugBean.setAngle(sticker.getCurrentAngle());
                 RectF rectF = sticker.getMappedRectF();
                 drawablePlugBean.setLeft(rectF.left);
                 drawablePlugBean.setRight(rectF.right);
@@ -194,7 +200,7 @@ public class CustomWidgetConfigConvertHelper {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             bean.setId(String.valueOf(i));
         }
-        Log.i("test_widget_config2:",originConfig.toJSONString());
+        Log.i("test_widget_config2:", originConfig.toJSONString());
         return newConfig;
     }
 
@@ -258,24 +264,39 @@ public class CustomWidgetConfigConvertHelper {
      * @param mCustomWidgetConfig
      * @param canvas
      */
-    public void drawOnBitmapFromConfig(CustomWidgetConfig mCustomWidgetConfig, Canvas canvas) {
+    public void drawDynamicOnBitmapFromConfig(CustomWidgetConfig mCustomWidgetConfig, Canvas canvas) {
         List<TextPlugBean> mTextList = mCustomWidgetConfig.getTextPlugList();
-        List<LinePlugBean> mLineList = mCustomWidgetConfig.getLinePlugList();
         List<ProgressPlugBean> mProgressList = mCustomWidgetConfig.getProgressPlugList();
-        List<DrawablePlugBean> mDrawableList = mCustomWidgetConfig.getDrawablePlugList();
         HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
         for (int i = 0; i < mTextList.size(); i++) {
             TextPlugBean bean = mTextList.get(i);
             long key = Long.valueOf(bean.getId());
             mStickerBeanList.put(key, bean);
         }
-        for (int i = 0; i < mLineList.size(); i++) {
-            LinePlugBean bean = mLineList.get(i);
+        for (int i = 0; i < mProgressList.size(); i++) {
+            ProgressPlugBean bean = mProgressList.get(i);
             long key = Long.valueOf(bean.getId());
             mStickerBeanList.put(key, bean);
         }
-        for (int i = 0; i < mProgressList.size(); i++) {
-            ProgressPlugBean bean = mProgressList.get(i);
+
+        Object[] key = mStickerBeanList.keySet().toArray();
+        Arrays.sort(key);
+        for (int i = 0; i < mStickerBeanList.size(); i++) {
+            BasePlugBean bean = mStickerBeanList.get(key[i]);
+            if (bean instanceof TextPlugBean) {
+                drawTextSticker(canvas, (TextPlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
+            } else if (bean instanceof ProgressPlugBean) {
+                drawProgressSticker(canvas, (ProgressPlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
+            }
+        }
+    }
+
+    public void drawStaticOnBitmapFromConfig(CustomWidgetConfig mCustomWidgetConfig, Canvas canvas) {
+        List<LinePlugBean> mLineList = mCustomWidgetConfig.getLinePlugList();
+        List<DrawablePlugBean> mDrawableList = mCustomWidgetConfig.getDrawablePlugList();
+        HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
+        for (int i = 0; i < mLineList.size(); i++) {
+            LinePlugBean bean = mLineList.get(i);
             long key = Long.valueOf(bean.getId());
             mStickerBeanList.put(key, bean);
         }
@@ -286,20 +307,10 @@ public class CustomWidgetConfigConvertHelper {
         }
         Object[] key = mStickerBeanList.keySet().toArray();
         Arrays.sort(key);
-        if(mCustomWidgetConfig.isDrawWithBg()) {
-            Bitmap bgBitmap = BitmapUtils.decodeFile(new File(mCustomWidgetConfig.getBgPath()));
-            if (bgBitmap != null) {
-                canvas.drawBitmap(bgBitmap, 0, 0, new Paint());
-            }
-        }
         for (int i = 0; i < mStickerBeanList.size(); i++) {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
-            if (bean instanceof TextPlugBean) {
-                drawTextSticker(canvas, (TextPlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
-            } else if (bean instanceof LinePlugBean) {
+            if (bean instanceof LinePlugBean) {
                 drawLineSticker(canvas, (LinePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
-            } else if (bean instanceof ProgressPlugBean) {
-                drawProgressSticker(canvas, (ProgressPlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
             } else if (bean instanceof DrawablePlugBean) {
                 drawDrawableSticker(canvas, (DrawablePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
             }
@@ -329,6 +340,7 @@ public class CustomWidgetConfigConvertHelper {
         float offsetX = 0;
         if (bean.getAlignment() == null) {
             offsetX = targetPoint.x - textSticker.getWidth() / 2f;
+            Log.i("test_offestX:","targetPoint.x:"+targetPoint.x+" textSticker.getWidth() / 2f:"+textSticker.getWidth() / 2f);
         } else {
             if (bean.getAlignment() == Layout.Alignment.ALIGN_NORMAL) {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
@@ -338,9 +350,11 @@ public class CustomWidgetConfigConvertHelper {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getRight() - rectF.right);
             }
         }
+        Log.i("test_offestX:",offsetX+"");
         float startY = textSticker.getHeight() / 2f;
         float offsetY = targetPoint.y - startY;
         textSticker.getMatrix().postTranslate(offsetX, offsetY);
+        textSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         return textSticker;
     }
 
@@ -371,6 +385,7 @@ public class CustomWidgetConfigConvertHelper {
         view.addSticker(lineSticker, Sticker.Position.INITIAL);
         lineSticker.setStickerConfig(bean);
         lineSticker.getMatrix().postTranslate(offsetX, offsetY);
+        lineSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         return lineSticker;
 
     }
@@ -400,6 +415,7 @@ public class CustomWidgetConfigConvertHelper {
         view.addSticker(progressSticker, Sticker.Position.INITIAL);
         progressSticker.setStickerConfig(bean);
         progressSticker.getMatrix().postTranslate(offsetX, offsetY);
+        progressSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         return progressSticker;
     }
 
@@ -414,18 +430,18 @@ public class CustomWidgetConfigConvertHelper {
      */
     private DrawableSticker initDrawableSticker(StickerView view, DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
         Drawable drawable = null;
-        if(bean.getmPicType() == DrawableSticker.SVG){
+        if (bean.getmPicType() == DrawableSticker.SVG) {
             try {
                 SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor(bean.getSvgColor()), PorterDuff.Mode.SRC_IN))
                         .readFromAsset(AppContext.get().getAssets(), bean.getDrawablePath()).build();
                 drawable = svg.getDrawable();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else if(bean.getmPicType() == DrawableSticker.SDCARD) {
+        } else if (bean.getmPicType() == DrawableSticker.SDCARD) {
             drawable = new BitmapDrawable(AppContext.get().getResources(), bean.getDrawablePath());
-        }else {
-            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(),bean.getDrawablePath());
+        } else {
+            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(), bean.getDrawablePath());
             drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
         }
         if (drawable != null) {
@@ -445,6 +461,7 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setScale(bean.getScale() * adaptRatio);
             view.addSticker(drawableSticker, Sticker.Position.INITIAL);
             drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
+            drawableSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
             return drawableSticker;
         } else {
             return null;
@@ -474,7 +491,7 @@ public class CustomWidgetConfigConvertHelper {
         RectF rectF = textSticker.getMappedRectF();
         float offsetX = 0;
         if (bean.getAlignment() == null) {
-            offsetX = targetPoint.x - textSticker.getWidth() / 2f;
+            offsetX = targetPoint.x - bean.getWidth() / 2f;
         } else {
             if (bean.getAlignment() == Layout.Alignment.ALIGN_NORMAL) {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
@@ -484,9 +501,12 @@ public class CustomWidgetConfigConvertHelper {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getRight() - rectF.right);
             }
         }
+        Log.i("test_offestX:","targetPoint.x:"+targetPoint.x+" textSticker.getWidth() / 2f:"+textSticker.getWidth() / 2f);
+        Log.i("test_offestX:",offsetX+"");
         float startY = textSticker.getHeight() / 2f;
         float offsetY = targetPoint.y - startY;
         textSticker.getMatrix().postTranslate(offsetX, offsetY);
+        textSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         textSticker.draw(canvas, -1, false);
     }
 
@@ -516,6 +536,7 @@ public class CustomWidgetConfigConvertHelper {
         float offsetY = targetPoint.y - startY;
         lineSticker.setStickerConfig(bean);
         lineSticker.getMatrix().postTranslate(offsetX, offsetY);
+        lineSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         lineSticker.draw(canvas, -1, false);
     }
 
@@ -544,6 +565,7 @@ public class CustomWidgetConfigConvertHelper {
         float offsetY = targetPoint.y - startY;
         progressSticker.setStickerConfig(bean);
         progressSticker.getMatrix().postTranslate(offsetX, offsetY);
+        progressSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         progressSticker.draw(canvas, -1, false);
     }
 
@@ -557,24 +579,24 @@ public class CustomWidgetConfigConvertHelper {
      */
     private void drawDrawableSticker(Canvas canvas, DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
         Drawable drawable = null;
-        Log.i("test_draw_drawable:",bean.toJSONString());
-        if(bean.getmPicType() == DrawableSticker.SVG){
+        Log.i("test_draw_drawable:", bean.toJSONString());
+        if (bean.getmPicType() == DrawableSticker.SVG) {
             try {
                 SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(Color.parseColor(bean.getSvgColor()), PorterDuff.Mode.SRC_IN))
                         .readFromAsset(AppContext.get().getAssets(), bean.getDrawablePath()).build();
                 drawable = svg.getDrawable();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else if(bean.getmPicType() == DrawableSticker.SDCARD) {
+        } else if (bean.getmPicType() == DrawableSticker.SDCARD) {
             drawable = new BitmapDrawable(AppContext.get().getResources(), bean.getDrawablePath());
-            Log.i("test_draw_drawable:",drawable.toString());
+            Log.i("test_draw_drawable:", drawable.toString());
 
-        }else {
-            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(),bean.getDrawablePath());
+        } else {
+            Bitmap bitmap = BitmapUtils.decodeFromAssest(AppContext.get(), bean.getDrawablePath());
             drawable = new BitmapDrawable(AppContext.get().getResources(), bitmap);
         }
-        if(drawable == null){
+        if (drawable == null) {
             return;
         }
         DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
@@ -592,6 +614,7 @@ public class CustomWidgetConfigConvertHelper {
         float adaptRatio = getWidthRatio(baseOnWidth);
         drawableSticker.setScale(bean.getScale() * adaptRatio);
         drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
+        drawableSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         drawableSticker.draw(canvas, -1, false);
 
     }

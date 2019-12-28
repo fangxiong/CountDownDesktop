@@ -9,16 +9,21 @@ import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.OkHttpClientHelper;
+import com.simple.spiderman.SpiderMan;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDex;
+
+import org.xml.sax.ErrorHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
 import es.dmoral.toasty.Toasty;
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 
 public class AppContext extends Application {
     private static Application mContext;
@@ -30,6 +35,7 @@ public class AppContext extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        SpiderMan.init(this);
         Environment.init(mContext);
         ConfigManager.init(mContext);
         String processName = getProcessName();
@@ -48,6 +54,12 @@ public class AppContext extends Application {
                     .allowQueue(false)
                     .apply();
         }
+        //全局处理Rxjava异常导致的崩溃
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+            }
+        });
 
     }
     @Override

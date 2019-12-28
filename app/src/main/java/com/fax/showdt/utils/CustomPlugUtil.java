@@ -15,9 +15,13 @@ import android.text.TextUtils;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
+import com.fax.showdt.bean.CustomWidgetConfig;
+import com.fax.showdt.bean.ProgressPlugBean;
+import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
+import com.fax.showdt.service.WidgetUpdateService;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.BATTERY_SERVICE;
@@ -954,11 +959,11 @@ public class CustomPlugUtil {
         }
     }
 
-    public static boolean isContainLrcPlug(String text) {
+    public static boolean isContainMusicPlug(String text) {
         if (TextUtils.isEmpty(text)) {
             return false;
         }
-        return StringUtils.contains(text, "[L00]");
+        return StringUtils.contains(text, "[L0");
     }
 
     /**
@@ -1098,6 +1103,29 @@ public class CustomPlugUtil {
         }
         return result;
     }
+
+
+    public static @WidgetUpdateService.RefreshGap int getWidgetRefreshGap(CustomWidgetConfig config){
+        if(config == null){
+            return WidgetUpdateService.REFRESH_WITH_ONE_SECOND;
+        }
+        List<ProgressPlugBean> progressPlugBeanList= config.getProgressPlugList();
+        List<TextPlugBean> textPlugBeanList= config.getTextPlugList();
+        if(progressPlugBeanList.isEmpty()&&textPlugBeanList.isEmpty()){
+            return WidgetUpdateService.REFRESH_WITH_JUST_ONCE;
+        }else{
+            if(!textPlugBeanList.isEmpty()){
+                for(TextPlugBean bean:textPlugBeanList){
+                    //包含歌词插件和天时分秒的倒计时插件则按每秒更新
+                    if(isContainMusicPlug(bean.getText()) || checkContainSpecialTimerCode(bean.getText())){
+                        return WidgetUpdateService.REFRESH_WITH_ONE_SECOND;
+                    }
+                }
+            }
+            return WidgetUpdateService.REFRESH_WITH_SIXTY_SECOND;
+        }
+    }
+
 }
 
 

@@ -23,7 +23,7 @@ import java.util.HashMap;
  */
 public class WidgetContext {
     private CustomWidgetConfig mCustomWidgetConfig;
-    private HashMap<String,CustomWidgetConfig> map = new HashMap<>();
+    private HashMap<String, CustomWidgetConfig> map = new HashMap<>();
 
     public WidgetContext() {
     }
@@ -36,20 +36,22 @@ public class WidgetContext {
         map.clear();
     }
 
+    public HashMap<String,CustomWidgetConfig>  getCustomWidgetConfig() {
+        return map;
+    }
+
+
     /**
      * 获取桌面小部件的实时bitmap图
      *
      * @return
      */
     public Bitmap getViewBitmap(String widgetId) {
-        if(map.containsKey(widgetId)){
+        mCustomWidgetConfig = null;
+        if (map.containsKey(widgetId)) {
             mCustomWidgetConfig = map.get(widgetId);
-        }else {
-            String json = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
-            if (!TextUtils.isEmpty(json)) {
-                mCustomWidgetConfig = GsonUtils.parseJsonWithGson(json,CustomWidgetConfig.class);
-                map.put(widgetId,mCustomWidgetConfig);
-            }
+        } else {
+            mCustomWidgetConfig= WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
         }
         if (mCustomWidgetConfig != null) {
             int width = mCustomWidgetConfig.getBaseOnWidthPx();
@@ -64,7 +66,8 @@ public class WidgetContext {
             }
             Canvas canvas = new Canvas(bm);
             CustomWidgetConfigConvertHelper helper = new CustomWidgetConfigConvertHelper();
-            helper.drawOnBitmapFromConfig(mCustomWidgetConfig, canvas);
+            helper.drawStaticOnBitmapFromConfig(mCustomWidgetConfig,canvas);
+            helper.drawDynamicOnBitmapFromConfig(mCustomWidgetConfig, canvas);
             return bm;
         }
         return null;

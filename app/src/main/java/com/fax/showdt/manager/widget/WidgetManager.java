@@ -9,11 +9,17 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.fax.showdt.AppContext;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.activity.WidgetSelectedActivity;
+import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.provider.WidgetProvider4x4;
+import com.fax.showdt.service.WidgetUpdateService;
+import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.WidgetDataHandlerUtils;
+
 import java.util.HashMap;
 
 
@@ -26,7 +32,7 @@ import java.util.HashMap;
 public class WidgetManager {
     public final static String WIDGET_CLICK_ACTION = "widget_click_action";
     private static WidgetContext mWidgetContext;
-    public static WidgetManager mInstance;
+    private static WidgetManager mInstance;
     private static final Object SLOCK = new Object();
     private RemoteViews views;
     private Bitmap mBitmap;
@@ -44,7 +50,7 @@ public class WidgetManager {
                 }
             }
         }
-        if(mWidgetContext == null) {
+        if (mWidgetContext == null) {
             mWidgetContext = new WidgetContext();
         }
         return mInstance;
@@ -55,6 +61,19 @@ public class WidgetManager {
      */
     public void changeWidgetInfo() {
         mWidgetContext.changeWidgetInfo();
+    }
+
+    /**
+     * 刷新所有的widget
+     */
+    public void refreshAllWidgetIds(Context context) {
+        Intent intent =new Intent();
+        intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
+        context.sendBroadcast(intent);
+    }
+
+    public HashMap<String, CustomWidgetConfig> getCustomWidgetConfig() {
+        return mWidgetContext.getCustomWidgetConfig();
     }
 
     /**
@@ -78,7 +97,7 @@ public class WidgetManager {
      *
      * @param context
      */
-    public void updateAppWidget(final Context context) {
+    public void updateAppWidget(final Context context, final String widgetId) {
         try {
             if (isPause) {
                 return;
@@ -90,35 +109,34 @@ public class WidgetManager {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        int[] allWidgets = getAllProviderWidgetIds(context);
-                        HashMap<String, String> map = getAllBindDataWidgetIds();
-                        for (int i = 0; i < allWidgets.length; i++) {
-                            String widgetId = String.valueOf(allWidgets[i]);
-                            if (map.containsKey(widgetId)) {
-                                //刷新已经绑定过widget data的插件
-                                mBitmap = mWidgetContext.getViewBitmap(widgetId);
-                                if (mBitmap != null) {
-                                    views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
-                                    views.setImageViewBitmap(R.id.content, mBitmap);
-                                    Intent configIntent1 = new Intent();
-                                    configIntent1.setClass(context, WidgetSelectedActivity.class);
-                                    configIntent1.setAction(WIDGET_CLICK_ACTION);
-                                    configIntent1.putExtra(ConstantString.widget_id,widgetId);
-                                    PendingIntent pendingIntent1 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent1, PendingIntent.FLAG_UPDATE_CURRENT);
-                                    views.setOnClickPendingIntent(R.id.content, pendingIntent1);
-                                    AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
-                                }
-                            } else {
-                                //刷新没有绑定过widget data的插件
-                                views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
-                                Intent configIntent2 = new Intent();
-                                configIntent2.setClass(context, WidgetSelectedActivity.class);
-                                configIntent2.setAction(WIDGET_CLICK_ACTION);
-                                configIntent2.putExtra(ConstantString.widget_id, widgetId);
-                                PendingIntent pendingIntent2 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
-                                views.setOnClickPendingIntent(R.id.rl_body, pendingIntent2);
-                                AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
+                        //刷新已经绑定过widget data的插件
+                        mBitmap = mWidgetContext.getViewBitmap(widgetId);
+                        if (mBitmap != null) {
+                            Log.i("test_draw_bitmap:","已经绑定："+widgetId);
+                            views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
+                            views.setImageViewBitmap(R.id.content, mBitmap);
+                            CustomWidgetConfig config = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
+                            if(config!= null) {
+                                WidgetUtils.initTouchContainer(config, views);
                             }
+                            Intent configIntent1 = new Intent();
+                            configIntent1.setClass(context, WidgetSelectedActivity.class);
+                            configIntent1.setAction(WIDGET_CLICK_ACTION);
+                            configIntent1.putExtra(ConstantString.widget_id, widgetId);
+                            PendingIntent pendingIntent1 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                            views.setOnClickPendingIntent(R.id.content, pendingIntent1);
+                            AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
+                        } else {
+                            //刷新没有绑定过widget data的插件
+                            Log.i("test_draw_bitmap:","没有绑定："+widgetId);
+                            views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
+                            Intent configIntent2 = new Intent();
+                            configIntent2.setClass(context, WidgetSelectedActivity.class);
+                            configIntent2.setAction(WIDGET_CLICK_ACTION);
+                            configIntent2.putExtra(ConstantString.widget_id, widgetId);
+                            PendingIntent pendingIntent2 = PendingIntent.getActivity(context, Integer.valueOf(widgetId), configIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
+                            views.setOnClickPendingIntent(R.id.rl_body, pendingIntent2);
+                            AppWidgetManager.getInstance(context).updateAppWidget(Integer.valueOf(widgetId), views);
                         }
                     }
                 });
@@ -134,7 +152,7 @@ public class WidgetManager {
         return appWidgetManager.getAppWidgetIds(new ComponentName(mContext, WidgetProvider4x4.class));
     }
 
-    public static HashMap<String, String> getAllBindDataWidgetIds() {
+    public  HashMap<String, String> getAllBindDataWidgetIds() {
         return WidgetDataHandlerUtils.getHashMapData(ConstantString.widget_map_data_key);
     }
 
