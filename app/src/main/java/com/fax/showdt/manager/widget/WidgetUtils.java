@@ -60,9 +60,6 @@ public class WidgetUtils {
             int paddingBottom = (height - childHeight - paddingTop);
             RemoteViews remoteViews2 = new RemoteViews(AppContext.get().getPackageName(), R.layout.widget_touch_area);
             remoteViews2.setViewPadding(R.id.touch_padding, paddingLeft, paddingTop, paddingEnd, paddingBottom);
-            Log.i("test_padding:",paddingLeft+" "+paddingEnd+" "+paddingTop+" "+paddingBottom);
-            Log.i("test_padding:",bean.getJumpAppPath());
-//            Log.i("test_padding:",bean.getJumpContent());
             PendingIntent pendingIntent = null;
             switch (bean.getJumpAppPath()) {
                 case WidgetClickType.CLICK_APPLICATION: {
@@ -81,8 +78,8 @@ public class WidgetUtils {
             }
             if (pendingIntent != null) {
                 remoteViews2.setOnClickPendingIntent(R.id.touch_area, pendingIntent);
-                remoteViews.addView(R.id.touch_container, remoteViews2);
             }
+            remoteViews.addView(R.id.touch_container, remoteViews2);
         }
 
     }

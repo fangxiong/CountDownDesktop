@@ -114,6 +114,7 @@ public class WidgetManager {
                         if (mBitmap != null) {
                             Log.i("test_draw_bitmap:","已经绑定："+widgetId);
                             views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
+                            views.removeAllViews(R.id.touch_container);
                             views.setImageViewBitmap(R.id.content, mBitmap);
                             CustomWidgetConfig config = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
                             if(config!= null) {
