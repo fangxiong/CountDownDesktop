@@ -34,6 +34,7 @@ public class WidgetManager {
     private static WidgetContext mWidgetContext;
     private static WidgetManager mInstance;
     private static final Object SLOCK = new Object();
+    private RemoteViews views;
     private Bitmap mBitmap;
     private boolean isPause = false;
     private Handler mHandler;
@@ -99,7 +100,6 @@ public class WidgetManager {
     public void updateAppWidget(final Context context, final String widgetId) {
         try {
             if (isPause) {
-                Log.i("test_draw_bitmap:","暂停刷新：");
                 return;
             }
             if (mWidgetContext != null) {
@@ -113,8 +113,7 @@ public class WidgetManager {
                         mBitmap = mWidgetContext.getViewBitmap(widgetId);
                         if (mBitmap != null) {
                             Log.i("test_draw_bitmap:","已经绑定："+widgetId);
-                            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
-                            views.removeAllViews(Integer.valueOf(widgetId));
+                            views = new RemoteViews(context.getPackageName(), R.layout.widget_content);
                             views.setImageViewBitmap(R.id.content, mBitmap);
                             CustomWidgetConfig config = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
                             if(config!= null) {
@@ -130,7 +129,7 @@ public class WidgetManager {
                         } else {
                             //刷新没有绑定过widget data的插件
                             Log.i("test_draw_bitmap:","没有绑定："+widgetId);
-                            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
+                            views = new RemoteViews(context.getPackageName(), R.layout.widget_initial_layout);
                             Intent configIntent2 = new Intent();
                             configIntent2.setClass(context, WidgetSelectedActivity.class);
                             configIntent2.setAction(WIDGET_CLICK_ACTION);
