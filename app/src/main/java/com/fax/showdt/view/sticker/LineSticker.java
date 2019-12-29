@@ -155,7 +155,7 @@ public class LineSticker extends Sticker {
     public void setStickerConfig(LinePlugBean bean) {
         setId(Long.valueOf(bean.getId()));
         setColor(bean.getColor());
-        setAppIconPath(bean.getAppIconPath());
+        setJumpContent(bean.getJumpContent());
         setLineId(bean.getLineId());
         LineOrientation mLineOrientation = bean.getStyle() == 1 ? LineOrientation.VERTICAL : LineOrientation.HORIZATIONAL;
         if (mLineOrientation == LineOrientation.VERTICAL) {

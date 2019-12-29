@@ -3,7 +3,6 @@ package com.fax.showdt.manager.widget;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -11,7 +10,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
 import android.text.Layout;
 import android.util.Log;
 
@@ -25,7 +23,6 @@ import com.fax.showdt.bean.LinePlugBean;
 import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
-import com.fax.showdt.bean.ThemeFontBean;
 import com.fax.showdt.utils.BitmapUtils;
 import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.ViewUtils;
@@ -38,7 +35,6 @@ import com.fax.showdt.view.sticker.TextSticker;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +75,7 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setWidth(sticker.getWidth());
                 textPlugBean.setJumpAppPath(sticker.getJumpAppPath());
                 textPlugBean.setScale(((TextSticker) sticker).getScaleParam());
-                textPlugBean.setAppIconPath(sticker.getAppIconPath());
+                textPlugBean.setJumpContent(sticker.getJumpContent());
                 textPlugBean.setAppName(sticker.getAppName());
                 textPlugBean.setFontPath(((TextSticker) sticker).getFontPath());
                 textPlugBean.setAngle(sticker.getCurrentAngle());
@@ -106,7 +102,7 @@ public class CustomWidgetConfigConvertHelper {
                 linePlugBean.setLineId(((LineSticker) sticker).getLineId());
                 linePlugBean.setJumpAppPath(sticker.getJumpAppPath());
                 linePlugBean.setScaleRatio(((LineSticker) sticker).getLineScale());
-                linePlugBean.setAppIconPath(sticker.getAppIconPath());
+                linePlugBean.setJumpContent(sticker.getJumpContent());
                 linePlugBean.setAngle(sticker.getCurrentAngle());
                 RectF rectF = sticker.getMappedRectF();
                 linePlugBean.setLeft(rectF.left);
@@ -152,7 +148,7 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setWidth(sticker.getWidth());
                 drawablePlugBean.setHeight(sticker.getHeight());
                 drawablePlugBean.setJumpAppPath(sticker.getJumpAppPath());
-                drawablePlugBean.setAppIconPath(sticker.getAppIconPath());
+                drawablePlugBean.setJumpContent(sticker.getJumpContent());
                 drawablePlugBean.setAppName(appName);
                 drawablePlugBean.setSvgName(((DrawableSticker) sticker).getSvgName());
                 drawablePlugBean.setSvgColor(((DrawableSticker) sticker).getSvgColor());
@@ -327,7 +323,7 @@ public class CustomWidgetConfigConvertHelper {
     private TextSticker initTextSticker(StickerView view, TextPlugBean bean, int baseOnWidth, int baseOnHeight) {
         TextSticker textSticker = new TextSticker(Long.valueOf(bean.getId()));
         textSticker.setText(CustomPlugUtil.adaptOldVersionTimer(bean.getText()));
-        textSticker.setAppIconPath(bean.getAppIconPath());
+        textSticker.setJumpContent(bean.getJumpContent());
         textSticker.setJumpAppPath(bean.getJumpAppPath());
         textSticker.setFontPath(bean.getFontPath());
         textSticker.resizeText();
@@ -455,8 +451,10 @@ public class CustomWidgetConfigConvertHelper {
             float offsetX = targetPoint.x - startX;
             float offsetY = targetPoint.y - startY;
             drawableSticker.setDrawablePath(bean.getDrawablePath());
-            drawableSticker.setAppIconPath(bean.getAppIconPath());
+            drawableSticker.setJumpContent(bean.getJumpContent());
             drawableSticker.setJumpAppPath(bean.getJumpAppPath());
+            drawableSticker.setmPicType(bean.getmPicType());
+            drawableSticker.setSvgColor(bean.getSvgColor());
             float adaptRatio = getWidthRatio(baseOnWidth);
             drawableSticker.setScale(bean.getScale() * adaptRatio);
             view.addSticker(drawableSticker, Sticker.Position.INITIAL);
@@ -480,7 +478,7 @@ public class CustomWidgetConfigConvertHelper {
         String text = "";
         text = CustomPlugUtil.adaptOldVersionTimer(bean.getText());
         textSticker.setText(text);
-        textSticker.setAppIconPath(bean.getAppIconPath());
+        textSticker.setJumpContent(bean.getJumpContent());
         textSticker.setJumpAppPath(bean.getJumpAppPath());
         textSticker.setFontPath(bean.getFontPath());
         textSticker.resizeText();
@@ -609,7 +607,7 @@ public class CustomWidgetConfigConvertHelper {
         float offsetX = targetPoint.x - startX;
         float offsetY = targetPoint.y - startY;
         drawableSticker.setDrawablePath(bean.getDrawablePath());
-        drawableSticker.setAppIconPath(bean.getAppIconPath());
+        drawableSticker.setJumpContent(bean.getJumpContent());
         drawableSticker.setJumpAppPath(bean.getJumpAppPath());
         float adaptRatio = getWidthRatio(baseOnWidth);
         drawableSticker.setScale(bean.getScale() * adaptRatio);

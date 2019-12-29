@@ -17,5 +17,5 @@
         android:id="@+id/touch_container"
         android:layout_gravity="center"
         android:layout_width="@dimen/margin_320"
-        android:layout_height="@dimen/margin_479" />
+        android:layout_height="@dimen/margin_320" />
 </FrameLayout>

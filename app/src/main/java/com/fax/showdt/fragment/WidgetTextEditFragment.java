@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
+import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditTextCallback;
 import com.fax.showdt.callback.WidgetEditTextElementSelectedCallback;
 import com.fax.showdt.callback.WidgetEditTextFontSelectedCallback;
@@ -39,14 +40,15 @@ import java.util.List;
 
 public class WidgetTextEditFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd,mConsume;
+    private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd,mTouch,mConsume;
     private WidgetEditTextCallback mWidgetEditTextCallback;
     private TextSticker mTextSticker;
     private WidgetTextElementEditFragment mElementEditFragment;
     private WidgetTextFontEditFragment mFontEditFragment;
+    private WidgetClickSettingFragment mTouchEditFragment;
     private List<View> mViews = new ArrayList<>();
     enum EditTextType {
-        ELEMENT, FONT, COLOR
+        ELEMENT, FONT, TOUCH
     }
 
     public WidgetTextEditFragment(){}
@@ -62,15 +64,17 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         mColor = view.findViewById(R.id.iv_color);
         mAdd = view.findViewById(R.id.iv_add);
         mConsume = view.findViewById(R.id.iv_consume);
+        mTouch = view.findViewById(R.id.iv_touch);
         mIvKeyboard.setOnClickListener(this);
         mElement.setOnClickListener(this);
         mFont.setOnClickListener(this);
         mColor.setOnClickListener(this);
         mAdd.setOnClickListener(this);
         mConsume.setOnClickListener(this);
+        mTouch.setOnClickListener(this);
         mViews.add(mElement);
         mViews.add(mFont);
-        mViews.add(mColor);
+        mViews.add(mTouch);
         initAllEditFragments();
         refreshSelectedViewStatus(mElement);
         switchToOneFragment(EditTextType.ELEMENT);
@@ -148,7 +152,11 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             if(mTextSticker != null) {
                 showColorPickDialog(mTextSticker.getTextColor());
             }
-        }else if(resId == R.id.iv_consume){
+        }else if(resId == R.id.iv_touch){
+            refreshSelectedViewStatus(mTouch);
+            switchToOneFragment(EditTextType.TOUCH);
+        }
+        else if(resId == R.id.iv_consume){
             if(mWidgetEditTextCallback != null){
                 mWidgetEditTextCallback.closePanel();
             }
@@ -196,9 +204,11 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         mElementEditFragment = new WidgetTextElementEditFragment();
         mFontEditFragment = new WidgetTextFontEditFragment();
+        mTouchEditFragment = new WidgetClickSettingFragment();
 //        mColorEditFragment = new WidgetTextColorEditFragment();
         transaction.add(R.id.fl_text_edit_body, mFontEditFragment);
         transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
+        transaction.add(R.id.fl_text_edit_body,mTouchEditFragment);
 //        transaction.add(R.id.fl_text_edit_body, mColorEditFragment);
         mElementEditFragment.setWidgetEditTextElementSelectedCallback(new WidgetEditTextElementSelectedCallback() {
             @Override
@@ -222,6 +232,22 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 }
             }
         });
+        mTouchEditFragment.setEditClickCallback(new WidgetEditClickCallback() {
+            @Override
+            public void onActionType(String actionType) {
+                if(mTextSticker != null){
+                    mTextSticker.setJumpAppPath(actionType);
+                }
+            }
+
+            @Override
+            public void onActionContent(String actionContent) {
+                if(mTextSticker != null){
+                    mTextSticker.setJumpContent(actionContent);
+                }
+            }
+        });
+
         transaction.commitAllowingStateLoss();
     }
 
@@ -257,14 +283,14 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         switch (editTextType) {
             case ELEMENT: {
                 transaction.hide(mFontEditFragment);
-//                transaction.hide(mColorEditFragment);
+                transaction.hide(mTouchEditFragment);
                 transaction.show(mElementEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
             case FONT: {
                 transaction.hide(mElementEditFragment);
-//                transaction.hide(mColorEditFragment);
+                transaction.hide(mTouchEditFragment);
                 transaction.show(mFontEditFragment);
                 if(mTextSticker != null) {
                     mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
@@ -272,13 +298,15 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 transaction.commitAllowingStateLoss();
                 break;
             }
-//            case COLOR: {
-//                transaction.hide(mElementEditFragment);
-//                transaction.hide(mFontEditFragment);
-//                transaction.show(mColorEditFragment);
-//                transaction.commitAllowingStateLoss();
-//                break;
-//            }
+            case TOUCH:{
+                transaction.hide(mElementEditFragment);
+                transaction.hide(mFontEditFragment);
+                transaction.show(mTouchEditFragment);
+                if(mTextSticker != null){
+                    mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent());
+                }
+                transaction.commitAllowingStateLoss();
+            }
 
         }
 

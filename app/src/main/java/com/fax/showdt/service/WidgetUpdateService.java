@@ -144,6 +144,7 @@ public class WidgetUpdateService extends Service {
         //当服务开启后通知 通知监听器刷新歌曲信息
         Intent update_intent = new Intent();
         update_intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
+        isAllowRefreshAllWidget = true;
         sendBroadcast(update_intent);
     }
 

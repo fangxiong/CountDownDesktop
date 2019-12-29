@@ -2,6 +2,7 @@ package com.fax.showdt;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,6 +25,9 @@ import java.io.FileReader;
 import es.dmoral.toasty.Toasty;
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
+import jp.wasabeef.takt.Audience;
+import jp.wasabeef.takt.Seat;
+import jp.wasabeef.takt.Takt;
 
 public class AppContext extends Application {
     private static Application mContext;
@@ -38,6 +42,7 @@ public class AppContext extends Application {
         SpiderMan.init(this);
         Environment.init(mContext);
         ConfigManager.init(mContext);
+        initTakt();
         String processName = getProcessName();
         if (!TextUtils.isEmpty(processName) &&processName.equals(this.getPackageName())) {
             Log.i("test_init_application:","初始化主进程");
@@ -60,6 +65,24 @@ public class AppContext extends Application {
             public void accept(Throwable throwable) throws Exception {
             }
         });
+
+    }
+
+    /**
+     * 初始化Takt 检测FPS
+     */
+    private void initTakt(){
+        Takt.stock(this)
+                .seat(Seat.BOTTOM_RIGHT)
+                .interval(250)
+                .color(Color.YELLOW)
+                .size(14f)
+                .listener(new Audience() {
+                    @Override
+                    public void heartbeat(double fps) {
+                        Log.d("Excellent!", fps+ " fps");
+                    }
+                });
 
     }
     @Override

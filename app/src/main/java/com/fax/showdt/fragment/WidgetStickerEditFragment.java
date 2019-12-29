@@ -8,18 +8,26 @@ import android.widget.ImageView;
 
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
+import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
 import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
-    private ImageView mIvLocal, mAdd,mConsume;
+    private ImageView mIvLocal, mAdd, mConsume;
     private WidgetEditStickerCallback mCallback;
     private WidgetShapeElementEditFragment mStickerElementEditFragment;
+    private WidgetClickSettingFragment mTouchEditFragment;
 
-    public WidgetStickerEditFragment(){}
+    enum EditStickerType {
+        ELEMENT, TOUCH
+    }
+
+    public WidgetStickerEditFragment() {
+    }
 
     @Nullable
     @Override
@@ -43,27 +51,45 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
             if (mCallback != null) {
                 mCallback.closePanel();
             }
-        }else if(resId == R.id.iv_add){
-            if(mCallback != null){
+        } else if (resId == R.id.iv_add) {
+            if (mCallback != null) {
                 mCallback.onPickPhoto();
             }
         }
     }
 
     private void initFragment() {
-//        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
-//        transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
-//        transaction.commitAllowingStateLoss();
-//        mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditStickerElementSelectedCallback() {
-//            @Override
-//            public void selectSticker(String path) {
-//                mCallback.onAddSticker(path);
-//            }
-//        });
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
+        mTouchEditFragment = new WidgetClickSettingFragment();
+        transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
+        transaction.add(R.id.fl_sticker_edit_body, mTouchEditFragment);
+        transaction.commitAllowingStateLoss();
+
     }
 
-    public void setWidgetEditStickerCallback(WidgetEditStickerCallback callback){
+    private void switchToOneFragment(WidgetTextEditFragment.EditTextType editTextType) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        switch (editTextType) {
+            case ELEMENT: {
+                transaction.hide(mTouchEditFragment);
+                transaction.show(mStickerElementEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+            case TOUCH: {
+                transaction.hide(mStickerElementEditFragment);
+                transaction.show(mTouchEditFragment);
+                transaction.commitAllowingStateLoss();
+                break;
+            }
+        }
+
+        transaction.commitAllowingStateLoss();
+    }
+
+
+    public void setWidgetEditStickerCallback(WidgetEditStickerCallback callback) {
         this.mCallback = callback;
     }
 }

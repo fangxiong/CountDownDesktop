@@ -19,21 +19,9 @@
             android:background="@drawable/widget_text_edit_tab_selected_bg"
             android:src="@drawable/widget_text_edit_keyboard_btn"/>
 
-
-        <ImageView
-            android:id="@+id/iv_properties"
-            android:layout_toEndOf="@id/iv_keyboard"
-            android:layout_marginStart="@dimen/margin_10"
-            android:layout_width="@dimen/margin_35"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
-            android:background="@drawable/widget_text_edit_tab_selected_bg"
-            android:src="@drawable/widget_properties_btn"/>
-
         <ImageView
             android:id="@+id/iv_element"
-            android:layout_toEndOf="@id/iv_properties"
+            android:layout_toEndOf="@id/iv_keyboard"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"
@@ -64,9 +52,22 @@
             android:background="@drawable/widget_text_edit_tab_selected_bg"
             android:src="@drawable/widget_text_edit_color_btn"/>
 
+
+        <ImageView
+            android:id="@+id/iv_touch"
+            android:layout_toEndOf="@id/iv_color"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_width="@dimen/margin_35"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/widget_text_edit_tab_selected_bg"
+            android:src="@drawable/widget_touch_btn"/>
+
+
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_toEndOf="@id/iv_color"
+            android:layout_toEndOf="@id/iv_touch"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"

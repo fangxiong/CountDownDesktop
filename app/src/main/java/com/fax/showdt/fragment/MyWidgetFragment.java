@@ -173,6 +173,7 @@ public class MyWidgetFragment extends Fragment {
 
                                         }
                                     });
+                            break;
                         }
                         case 2:{
                             ShareUtils.shareImg(getActivity(),"我用《插件秀》做的插件，很好用哦，推荐给你...",config.getCoverUrl());

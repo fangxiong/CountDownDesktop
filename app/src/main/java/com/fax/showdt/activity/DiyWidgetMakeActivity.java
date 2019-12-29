@@ -326,13 +326,11 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onStickerDeleted(@NonNull Sticker sticker) {
                 mStickerList.delete(sticker.getId());
-                if(sticker instanceof TextSticker){
                     if (mEditPaneShowing) {
                         setEditBodySlideOutAnimation();
                         mEditPaneShowing = false;
                     }
                     mHandlingSticker = null;
-                }
             }
 
             @Override

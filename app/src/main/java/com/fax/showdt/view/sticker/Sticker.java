@@ -48,7 +48,7 @@ public abstract class Sticker {
     private boolean isFlippedHorizontally;
     private boolean isFlippedVertically;
     private String mJumpAppPath;
-    private String mAppIconPath;
+    private String mJumpContent;
     private String appName;
     private final float minLineLength = ViewUtils.dp2px(50);
 
@@ -265,12 +265,12 @@ public abstract class Sticker {
         mJumpAppPath = jumpAppPath;
     }
 
-    public String getAppIconPath() {
-        return mAppIconPath;
+    public void setJumpContent(String mJumpContent) {
+        this.mJumpContent = mJumpContent;
     }
 
-    public void setAppIconPath(String appIconPath) {
-        mAppIconPath = appIconPath;
+    public String getJumpContent() {
+        return mJumpContent;
     }
 
     public String getAppName() {

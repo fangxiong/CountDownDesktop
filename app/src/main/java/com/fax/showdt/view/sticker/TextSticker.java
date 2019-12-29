@@ -14,7 +14,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
@@ -411,7 +410,7 @@ public class TextSticker extends Sticker {
         setId(Long.valueOf(bean.getId()));
         setTextColor(bean.getColor());
         setScaleParam((int) bean.getScale());
-        setAppIconPath(bean.getAppIconPath());
+        setJumpContent(bean.getJumpContent());
         setShimmerColor(bean.getShimmerColor());
         setShimmerText(bean.isShimmerText());
         setAlignment(bean.getAlignment());

@@ -92,7 +92,7 @@ public class DialogSettings {
     public static int tipBackgroundResId = 0;
     
     //输入对话框，是否自动弹出输入键盘
-    public static boolean autoShowInputKeyboard = false;
+    public static boolean autoShowInputKeyboard = true;
     
     //检查Renderscript支持性
     public static boolean checkRenderscriptSupport(Context context) {

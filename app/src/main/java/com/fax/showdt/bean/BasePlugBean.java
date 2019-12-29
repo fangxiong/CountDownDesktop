@@ -11,7 +11,7 @@ public class BasePlugBean extends Bean {
     private int width;
     private int height;
     private String jumpAppPath;
-    private String appIconPath;
+    private String mJumpContent;
     private String appName;
     private float left;
     private float top;
@@ -106,12 +106,12 @@ public class BasePlugBean extends Bean {
         this.bottom = bottom;
     }
 
-    public String getAppIconPath() {
-        return appIconPath;
+    public String getJumpContent() {
+        return mJumpContent;
     }
 
-    public void setAppIconPath(String appIconPath) {
-        this.appIconPath = appIconPath;
+    public void setJumpContent(String mJumpContent) {
+        this.mJumpContent = mJumpContent;
     }
 
     public String getAppName() {
