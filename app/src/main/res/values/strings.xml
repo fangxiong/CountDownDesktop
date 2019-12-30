@@ -43,5 +43,7 @@
     <string name="widget_click_url">网址</string>
     <string name="widget_click_music">音乐</string>
     <string name="widget_click_application">应用</string>
+    <string name="widget_click_dialog_select_app">选择应用</string>
+    <string name="widget_click_dialog_loading">数据拉取中...</string>
 
 </resources>

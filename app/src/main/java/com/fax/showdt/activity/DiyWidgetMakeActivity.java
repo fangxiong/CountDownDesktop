@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.fax.showdt.dialog.ios.util.DialogSettings;
 import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
+import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.fragment.WidgetProgressEditFragment;
 import com.fax.showdt.fragment.WidgetShapeEditFragment;
 import com.fax.showdt.fragment.WidgetStickerEditFragment;
@@ -781,7 +783,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     @Override
                     public void accept(Disposable disposable) throws Exception {
                         DialogSettings.tipTheme = DialogSettings.THEME.LIGHT;
-                       mWaitDialog =  TipDialog.showWait(DiyWidgetMakeActivity.this,"加工数据中...");
+                        WaitDialog.show(DiyWidgetMakeActivity.this,"加工数据中...");
                     }
                 })
                 .subscribe(new Observer<Boolean>() {
@@ -792,8 +794,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
                     @Override
                     public void onNext(Boolean aBoolean) {
-                        mWaitDialog.setTip(TipDialog.TYPE.SUCCESS);
-                        mWaitDialog.setMessage("保存成功");
+                        TipDialog.show(DiyWidgetMakeActivity.this, "保存成功！", TipDialog.TYPE.SUCCESS);
                         sendConfigChangedBroadcast();
                         Log.i("test_config:", GsonUtils.toJsonWithSerializeNulls(customWidgetConfig));
                         Log.i("test_config:", "保存成功");
@@ -801,10 +802,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
                     @Override
                     public void onError(Throwable e) {
+                        TipDialog.show(DiyWidgetMakeActivity.this, "保存失败！", TipDialog.TYPE.ERROR);
                         e.printStackTrace();
                         Log.i("test_config:", e.getMessage());
-                        mWaitDialog.setTip(TipDialog.TYPE.ERROR);
-                        mWaitDialog.setMessage("保存失败");
                     }
 
                     @Override

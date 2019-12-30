@@ -1,6 +1,7 @@
 package com.fax.showdt.fragment;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -12,23 +13,47 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.fax.showdt.R;
+import com.fax.showdt.adapter.CommonAdapter;
+import com.fax.showdt.adapter.MultiItemTypeAdapter;
+import com.fax.showdt.adapter.ViewHolder;
+import com.fax.showdt.bean.AppInfo;
 import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.dialog.ios.interfaces.OnInputDialogButtonClickListener;
+import com.fax.showdt.dialog.ios.interfaces.OnShowListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
 import com.fax.showdt.dialog.ios.util.InputInfo;
 import com.fax.showdt.dialog.ios.util.TextInfo;
 import com.fax.showdt.dialog.ios.v3.CustomDialog;
+import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
 import com.fax.showdt.dialog.ios.v3.InputDialog;
 import com.fax.showdt.manager.widget.WidgetClickType;
 import com.fax.showdt.manager.widget.WidgetMusicActionType;
+import com.fax.showdt.utils.AppIconUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.fax.showdt.dialog.ios.v3.TipDialog.dismiss;
 
 /**
  * Author: fax
@@ -44,8 +69,14 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
     private String[] actionTypes = {"应用", "音乐", "网址"};
     private String[] musicActions = {"播放/暂停", "下一首", "上一首", "音量+", "音量-", "打开播放器"};
     private CustomDialog clickActionDialog, musicControlDialog;
+    private FullScreenDialog appIconDialog;
     private WidgetEditClickCallback editClickCallback;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
+    private List<AppInfo> appInfoList = new ArrayList<>();
+    private ImageView mIvClose;
+    private CommonAdapter<AppInfo> adapter;
+    private RecyclerView mRecyclerView;
 
     public WidgetClickSettingFragment() {
     }
@@ -65,12 +96,19 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCompositeDisposable.dispose();
+    }
+
+    @Override
     public void onClick(View v) {
         if (v == mTvClickAction) {
             showClickActionDialog();
         } else if (v == mTvClickTypeContent) {
             if (actions[1].equals(mTvClickAction.getText().toString())) {
-
+                getAppTask(getActivity());
+                showAppSelectDialog();
             } else if (actions[2].equals(mTvClickAction.getText().toString())) {
                 showMusicActionDialog();
             } else if (actions[3].equals(mTvClickAction.getText().toString())) {
@@ -143,22 +181,26 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
             if (editClickCallback != null) {
                 editClickCallback.onActionContent(WidgetMusicActionType.OPEN_APP);
             }
+        } else if (v.getId() == R.id.iv_close) {
+            appIconDialog.doDismiss();
         }
     }
 
     public void initActionUI(String actionType, String actionContent) {
-        if(TextUtils.isEmpty(actionType)){
+        if (TextUtils.isEmpty(actionType)) {
             mTvClickAction.setText(actions[0]);
             return;
         }
         switch (actionType) {
             case WidgetClickType.CLICK_NONE: {
                 mTvClickAction.setText(actions[0]);
+                llClickContent.setVisibility(View.GONE);
                 break;
             }
             case WidgetClickType.CLICK_APPLICATION: {
                 mTvClickAction.setText(actions[1]);
                 mTvClickTypeTitle.setText(actionTypes[0]);
+
                 break;
             }
             case WidgetClickType.CLICK_MUSIC: {
@@ -173,9 +215,9 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 break;
             }
         }
-        if(!TextUtils.isEmpty(actionContent)){
+        if (!TextUtils.isEmpty(actionContent)) {
             llClickContent.setVisibility(View.VISIBLE);
-            if(WidgetClickType.CLICK_MUSIC.equals(actionType)) {
+            if (WidgetClickType.CLICK_MUSIC.equals(actionType)) {
                 switch (actionContent) {
                     case WidgetMusicActionType.PLAY_OR_PAUSE: {
                         mTvClickTypeContent.setText(musicActions[0]);
@@ -202,10 +244,10 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                         break;
                     }
                 }
-            }else if(WidgetClickType.CLICK_APPLICATION.equals(actionType)){
-                mTvClickTypeContent.setText("");
+            } else if (WidgetClickType.CLICK_APPLICATION.equals(actionType)) {
+                mTvClickTypeContent.setText(AppIconUtils.getAppName(getActivity(),actionContent));
             }
-        }else{
+        } else {
             llClickContent.setVisibility(View.GONE);
         }
 
@@ -294,5 +336,100 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 )
                 .setCancelable(false)
                 .show();
+    }
+
+    private void getAppTask(final Context mContext) {
+        mCompositeDisposable.add(Observable.create(new ObservableOnSubscribe<List<AppInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<AppInfo>> e) throws Exception {
+                List<AppInfo> list = AppIconUtils.getInstallApps(mContext);
+                e.onNext(list);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<AppInfo>>() {
+                    @Override
+                    public void accept(List<AppInfo> appInfos) throws Exception {
+                        if (adapter != null) {
+                            appInfoList.clear();
+                            appInfoList.addAll(appInfos);
+                            adapter.notifyDataSetChanged();
+                        }
+                        if(mRecyclerView!= null){
+                            mRecyclerView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }));
+
+    }
+
+    private void showAppSelectDialog() {
+        appIconDialog = FullScreenDialog.show(((AppCompatActivity) getActivity()), R.layout.widget_click_app_list_dialog, new FullScreenDialog.OnBindView() {
+            @Override
+            public void onBind(final FullScreenDialog dialog, View rootView) {
+                mIvClose = rootView.findViewById(R.id.iv_close);
+                mIvClose.setOnClickListener(WidgetClickSettingFragment.this);
+                mRecyclerView = rootView.findViewById(R.id.recyclerView);
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+
+                adapter = new CommonAdapter<AppInfo>(getContext(), R.layout.diy_shortcut_icon_item, appInfoList) {
+                    @Override
+                    protected void convert(ViewHolder holder, AppInfo appInfo, final int position) {
+                        final ImageView ivIcon = holder.getView(R.id.iv_icon);
+                        TextView tvName = holder.getView(R.id.tv_name);
+                        TextView line = holder.getView(R.id.tv_line);
+                        tvName.setText(appInfo.getName());
+                        if (TextUtils.isEmpty(appInfo.getDrawablePath())) {
+                            ivIcon.setImageDrawable(appInfo.icon);
+                        } else {
+                            Glide.with(getActivity())
+                                    .load(appInfo.getDrawablePath())
+                                    .into(new CustomTarget<Drawable>() {
+                                        @Override
+                                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                            ivIcon.setImageDrawable(resource);
+//                                            appInfoList.get(position).setIcon(resource);
+                                        }
+
+                                        @Override
+                                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                        }
+                                    });
+
+                        }
+                        if ((appInfoList.size() / 5) * 5 <= position) {
+                            line.setVisibility(View.GONE);
+                        } else {
+                            line.setVisibility(View.VISIBLE);
+                        }
+                    }
+                };
+
+                adapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
+                        AppInfo appInfo = appInfoList.get(position);
+                        mTvClickTypeContent.setText(appInfo.getName());
+                        if (editClickCallback != null) {
+                            editClickCallback.onActionContent(appInfo.getPackageName());
+                        }
+                        appIconDialog.doDismiss();
+                    }
+
+                    @Override
+                    public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                        return false;
+                    }
+                });
+
+                mRecyclerView.setAdapter(adapter);
+            }
+        }).setOnShowListener(new OnShowListener() {
+            @Override
+            public void onShow(BaseDialog dialog) {
+
+            }
+        });
     }
 }

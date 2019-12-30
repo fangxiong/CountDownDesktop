@@ -1,5 +1,6 @@
 package com.fax.showdt.fragment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -69,8 +70,14 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
     }
 
     @Override
-    public void onAttachFragment(@NonNull Fragment childFragment) {
-        super.onAttachFragment(childFragment);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         switchToOneFragment(EditShapeType.ELEMENT);
     }
 
