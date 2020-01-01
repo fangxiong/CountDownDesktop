@@ -21,10 +21,12 @@ import com.fax.showdt.permission.Permission;
 import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
 import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
+import com.meituan.android.walle.WalleChannelReader;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -65,7 +67,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         pagerAdapter = new CommonViewPagerAdapter(getSupportFragmentManager(), fragments);
         mTabLayout.setupWithViewPager(viewPager, false);
         viewPager.setAdapter(pagerAdapter);
-
         for (int i = 0; i < titles.length; i++) {
             mTabLayout.getTabAt(i).setText(titles[i]);
         }
