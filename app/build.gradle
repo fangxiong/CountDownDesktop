@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.aliyun.ams.emas-services'
-apply from: '../module_apkbuilder/buildAll.gradle'
+apply from: "reinforce.gradle"
 
 
 def cfg = rootProject.ext.android
@@ -24,7 +24,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('keystore\\keystore.jks')
+            storeFile file('keystore.jks')
             storePassword '15850451266'
             keyAlias 'fax'
             keyPassword '15850451266'
