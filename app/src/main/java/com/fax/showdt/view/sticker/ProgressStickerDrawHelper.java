@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.ProgressBarDrawConfig;
 import com.fax.showdt.utils.ViewUtils;
 
@@ -15,9 +17,9 @@ import com.fax.showdt.utils.ViewUtils;
 public class ProgressStickerDrawHelper {
 
     public static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    public static float LINE_DEFAULT_HEIGHT = ViewUtils.dp2px(5f);
+    public static float LINE_DEFAULT_HEIGHT = ViewUtils.dpToPx(5f, AppContext.get());
     public static final float LINE_DEFAULT_WIDTH = 3f;
-    public static final float LINE_GAP = ViewUtils.dp2px(2f);
+    public static final float LINE_GAP = ViewUtils.dpToPx(2f,AppContext.get());
     public static int TOTAL_LINE_COUNT;
     public static final int TOTAL_CIRCLE_DEGREE_COUNT = 100;
     public static final int CIRCLE_PROGRESS_START_ANGLE = -90;

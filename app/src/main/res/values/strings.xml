@@ -46,4 +46,15 @@
     <string name="widget_click_dialog_select_app">选择应用</string>
     <string name="widget_click_dialog_loading">数据拉取中...</string>
 
+    <string name="widget_progress_type">风格</string>
+    <string name="widget_progress_mode">模式</string>
+    <string name="widget_progress_fore_color">前景色</string>
+    <string name="widget_progress_bg_color">背景色</string>
+    <string name="widget_progress_height">高度</string>
+    <string name="widget_progress_horizontal">线性</string>
+    <string name="widget_progress_circle">圆形</string>
+    <string name="widget_progress_solid">平滑</string>
+    <string name="widget_progress_degree">刻度</string>
+
+
 </resources>

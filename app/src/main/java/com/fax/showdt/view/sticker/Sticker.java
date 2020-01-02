@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.utils.ViewUtils;
 
 import java.lang.annotation.Retention;
@@ -50,7 +51,7 @@ public abstract class Sticker {
     private String mJumpAppPath;
     private String mJumpContent;
     private String appName;
-    private final float minLineLength = ViewUtils.dp2px(50);
+    private final float minLineLength = ViewUtils.dpToPx(50f, AppContext.get());
 
     public boolean isFlippedHorizontally() {
         return isFlippedHorizontally;

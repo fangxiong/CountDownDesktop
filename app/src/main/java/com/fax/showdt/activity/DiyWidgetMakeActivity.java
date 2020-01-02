@@ -269,12 +269,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             switchToOneFragment(EDIT_SHAPE);
         } else if (resId == R.id.tv_progress) {
             ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
-            progressSticker.resize(ViewUtils.dp2px(200),ViewUtils.dp2px(200));
+            progressSticker.resize(ViewUtils.dpToPx(150f,this),ViewUtils.dpToPx(10f,this));
             progressSticker.setPercent(0.7f);
-            progressSticker.setProgressType(ProgressSticker.CIRCLE);
-            progressSticker.setDrawType(ProgressSticker.DEGREE);
+            progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
+            progressSticker.setDrawType(ProgressSticker.SOLID);
             mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
             switchToOneFragment(EDIT_PROGRESS);
+            mProgressEditFragment.setProgressSticker(progressSticker);
         } else if (resId == R.id.iv_back) {
             MessageDialog.show(this, "提示", "确定要退出编辑吗？")
                     .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
@@ -361,6 +362,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.ASSET) {
                         switchToOneFragment(EDIT_STICKER);
                     }
+                }else if(sticker instanceof  ProgressSticker){
+                    mProgressEditFragment.setProgressSticker((ProgressSticker) sticker);
+                    switchToOneFragment(EDIT_PROGRESS);
                 }
             }
 
@@ -422,7 +426,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             Log.i("test_size:", "height:" + bitmap.getHeight() + " width:" + bitmap.getWidth());
             int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
             int x = (int) ((w - cropWidth) * 1.0f / 2);
-            int marginTop = ViewUtils.dp2px(60);
+            int marginTop = ViewUtils.dpToPx(60f,this);
             if ((w < h || w == h) && w > h - marginTop) {
                 marginTop = (int) (h - w);
             }else if(w > h){

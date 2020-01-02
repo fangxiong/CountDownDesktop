@@ -92,9 +92,9 @@ public class TextSticker extends Sticker {
 
         textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
         text = "双击修改文字";
-        minTextSizePixels = ViewUtils.dp2px(6);
-        maxTextSizePixels = ViewUtils.dp2px(50);
-        textPaint.setTextSize(ViewUtils.dp2px(textSize));
+        minTextSizePixels = ViewUtils.dpToPx(6,context);
+        maxTextSizePixels = ViewUtils.dpToPx(50,context);
+        textPaint.setTextSize(ViewUtils.dpToPx(textSize,context));
         initRect();
     }
 
@@ -298,7 +298,7 @@ public class TextSticker extends Sticker {
 
     @NonNull
     public TextSticker setMaxTextSize(@Dimension(unit = Dimension.SP) float size) {
-        textPaint.setTextSize(ViewUtils.dp2px(size));
+        textPaint.setTextSize(ViewUtils.dpToPx(size,context));
         maxTextSizePixels = textPaint.getTextSize();
         return this;
     }
@@ -311,7 +311,7 @@ public class TextSticker extends Sticker {
      */
     @NonNull
     public TextSticker setMinTextSize(float minTextSizeScaledPixels) {
-        minTextSizePixels = ViewUtils.dp2px(minTextSizeScaledPixels);
+        minTextSizePixels = ViewUtils.dpToPx(minTextSizeScaledPixels,context);
         return this;
     }
 

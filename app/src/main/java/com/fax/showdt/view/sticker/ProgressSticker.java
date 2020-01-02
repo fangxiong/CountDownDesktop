@@ -41,10 +41,10 @@ public class ProgressSticker extends Sticker {
     @ProgressDrawType
     private String drawType = SOLID;
     @ProgressType
-    private String progressType=HORIZONTAL;
-    private int width = ViewUtils.dp2px(200);
-    private int height =ViewUtils.dp2px(20);
-    private int progressHeight =ViewUtils.dp2px(20);
+    private String progressType = HORIZONTAL;
+    private int width = ViewUtils.dpToPx(150, AppContext.get());
+    private int height = ViewUtils.dpToPx(10, AppContext.get());
+    private int progressHeight = ViewUtils.dpToPx(10, AppContext.get());
 
 
     @StringDef({CIRCLE, HORIZONTAL})
@@ -160,10 +160,13 @@ public class ProgressSticker extends Sticker {
         this.progressType = progressType;
     }
 
-    public void resize(int width,int height){
-        this.width = width;
+    public void resize(int width, int height) {
+        if (width < ViewUtils.dpToPx(10, AppContext.get())) {
+            this.width = ViewUtils.dpToPx(10, AppContext.get());
+        } else {
+            this.width = width;
+        }
         this.height = height;
-
     }
 
     public void setStickerConfig(ProgressPlugBean bean) {

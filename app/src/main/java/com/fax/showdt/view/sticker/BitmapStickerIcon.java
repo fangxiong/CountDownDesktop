@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.utils.ViewUtils;
 
 import java.lang.annotation.Retention;
@@ -41,12 +42,12 @@ public class BitmapStickerIcon extends DrawableSticker implements StickerIconEve
 
 
     public BitmapStickerIcon(Drawable drawable, @Gravity int gravity) {
-        super(drawable, 0, ViewUtils.dp2px(20));
+        super(drawable, 0, ViewUtils.dpToPx(20, AppContext.get()));
         this.position = gravity;
     }
 
     public void draw(Canvas canvas, Paint paint) {
-        canvas.drawCircle(x, y, ViewUtils.dp2px(12), paint);
+        canvas.drawCircle(x, y, ViewUtils.dpToPx(12,AppContext.get()), paint);
         super.draw(canvas, 0, false);
     }
 

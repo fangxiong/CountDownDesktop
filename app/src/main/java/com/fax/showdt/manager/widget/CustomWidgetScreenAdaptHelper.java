@@ -3,6 +3,7 @@ package com.fax.showdt.manager.widget;
 import android.content.Context;
 import android.graphics.Point;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.bean.PlugLocation;
@@ -44,7 +45,7 @@ public class CustomWidgetScreenAdaptHelper {
         mResultConfig.setTitle(config.getTitle());
         mResultConfig.setBaseOnWidthPx(mAdaptWidth);
         mResultConfig.setBaseOnHeightPx(mAdaptHeight);
-        mResultConfig.setTextSize(ViewUtils.dp2px(TextSticker.DEFAULT_TEXT_SIZE));
+        mResultConfig.setTextSize(ViewUtils.dpToPx(TextSticker.DEFAULT_TEXT_SIZE, AppContext.get()));
         mResultConfig.setDefaultScale(TextSticker.DEFAULT_TEXT_SIZE);
         mResultConfig.setCreatedTime(System.currentTimeMillis());
         mResultConfig.setDesc(config.getDesc());

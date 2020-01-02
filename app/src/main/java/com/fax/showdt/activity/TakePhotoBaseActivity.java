@@ -66,7 +66,7 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
                 .maxSelectable(1)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
-                        ViewUtils.dp2px(120))
+                        ViewUtils.dpToPx(120,this))
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 .thumbnailScale(0.85f)
                 .imageEngine(new GlideEngine())

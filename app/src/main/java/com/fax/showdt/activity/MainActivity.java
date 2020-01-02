@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initNavigationView() {
-        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.white), ViewUtils.dp2px(0.5f));
+        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.white), ViewUtils.dpToPx(0.5f,this));
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

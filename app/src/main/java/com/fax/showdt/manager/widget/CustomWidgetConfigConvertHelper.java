@@ -138,7 +138,7 @@ public class CustomWidgetConfigConvertHelper {
             }
 
         }
-        newConfig.setTextSize(ViewUtils.dp2px(TextSticker.DEFAULT_TEXT_SIZE));
+        newConfig.setTextSize(ViewUtils.dpToPx(TextSticker.DEFAULT_TEXT_SIZE,AppContext.get()));
         newConfig.setDefaultScale(TextSticker.DEFAULT_TEXT_SIZE);
         newConfig.setProgressPlugList(mProgressList);
         newConfig.setTextPlugList(mTextList);

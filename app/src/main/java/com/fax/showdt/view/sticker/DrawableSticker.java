@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
@@ -36,7 +37,7 @@ public class DrawableSticker extends Sticker {
     private String mSvgName;
     private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
     private boolean mShowFrame;
-    private int mFrame = ViewUtils.dp2px(6);
+    private int mFrame = ViewUtils.dpToPx(6, AppContext.get());
     private float mRatio = 1;
     private String svgColor="#FFFFFF";
     public static final int ASSET = 0;
@@ -67,7 +68,7 @@ public class DrawableSticker extends Sticker {
     }
 
     public DrawableSticker(Drawable drawable, long id) {
-        this(drawable, id, ViewUtils.dp2px(100));
+        this(drawable, id, ViewUtils.dpToPx(100,AppContext.get()));
     }
 
     @NonNull

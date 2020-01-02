@@ -456,18 +456,40 @@ public class ViewUtils {
     }
 
 
+    /**
+     * @param dpValue 标注上的dp值
+     * @param context 传Activity或者Application
+     * @return
+     */
     //今日头条适配后的计算方式(以后统一使用这种计算方式)
-    public static int dp2px(final float dpValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
+    public static int dpToPx(final float dpValue,Context context) {
+        final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
-    //今日头条适配后的计算方式(以后统一使用这种计算方式)
-    public static int sp2px(final float spValue) {
-        final float fontScale = Resources.getSystem().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
+    /**
+     * px 转 dp 方法
+     *
+     * @param pxValue px 值
+     * @param context 传 Activity 或者 Application
+     * @return px 转 dp 值
+     */
+    // 今日头条适配后的计算方式(以后统一使用这种计算方式)
+    public static int pxToDp(final float pxValue, Context context) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) ((pxValue - 0.5f) / scale);
     }
 
+    /**
+     * @param spValue 标注上的sp值
+     * @param context 传Activity或者Application
+     * @return
+     */
+    //今日头条适配后的计算方式(以后统一使用这种计算方式)
+    public static int sp2px(final float spValue,Context context) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
 
     public static int getSizeByScreenWidth(int screenWidth ,int size){
         return (int)(screenWidth * ((float)size/720));

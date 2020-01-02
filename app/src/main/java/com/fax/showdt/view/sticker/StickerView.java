@@ -50,8 +50,8 @@ public class StickerView extends FrameLayout {
     private final float CENTER_GAP = 3F;
     private final boolean bringToFrontCurrentSticker;
     private boolean showNumber = false;
-    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dp2px(10);
-    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dp2px(20);
+    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f,AppContext.get());
+    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f,AppContext.get());
 
     @IntDef({
             ActionMode.NONE, ActionMode.DRAG, ActionMode.ZOOM_WITH_TWO_FINGER, ActionMode.ICON,
@@ -207,7 +207,7 @@ public class StickerView extends FrameLayout {
     private void drawGrid(Canvas canvas) {
 
         linePaint.setColor(Color.parseColor("#FFFFFF"));
-        linePaint.setStrokeWidth(ViewUtils.dp2px(0.3f));
+        linePaint.setStrokeWidth(ViewUtils.dpToPx(0.3f,getContext()));
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
         linePaint.setPathEffect(null);
@@ -343,8 +343,8 @@ public class StickerView extends FrameLayout {
         icon.setX(x);
         icon.setY(y);
         icon.getMatrix().reset();
-        if (icon.getWidth() > ViewUtils.dp2px(24)) {
-            float ratio = ViewUtils.dp2px(24) * 1.0f / icon.getWidth();
+        if (icon.getWidth() > ViewUtils.dpToPx(24f,getContext())) {
+            float ratio = ViewUtils.dpToPx(24,getContext()) * 1.0f / icon.getWidth();
             PointF pointF = new PointF();
             icon.getCenterPoint(pointF);
             icon.getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);

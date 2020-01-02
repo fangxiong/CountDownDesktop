@@ -1063,7 +1063,7 @@ public class CustomPlugUtil {
     public static Bitmap getBitmapFromText(String code, Context context) {
         String str = "[" + code + "]";
         Paint paint = new Paint();
-        paint.setTextSize(ViewUtils.sp2px(16));
+        paint.setTextSize(ViewUtils.sp2px(16,context));
         paint.setTextAlign(Paint.Align.LEFT);
         paint.setColor(context.getResources().getColor(R.color.c_FCF43C));
         paint.setAntiAlias(true);
