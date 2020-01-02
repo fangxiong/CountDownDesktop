@@ -19,7 +19,6 @@ import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.BasePlugBean;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.DrawablePlugBean;
-import com.fax.showdt.bean.LinePlugBean;
 import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
@@ -27,7 +26,6 @@ import com.fax.showdt.utils.BitmapUtils;
 import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.DrawableSticker;
-import com.fax.showdt.view.sticker.LineSticker;
 import com.fax.showdt.view.sticker.ProgressSticker;
 import com.fax.showdt.view.sticker.Sticker;
 import com.fax.showdt.view.sticker.StickerView;
@@ -60,7 +58,6 @@ public class CustomWidgetConfigConvertHelper {
         Log.i("test_widget_config1:", originConfig.toJSONString());
         CustomWidgetConfig newConfig = originConfig;
         List<TextPlugBean> mTextList = new ArrayList<>();
-        List<LinePlugBean> mLineList = new ArrayList<>();
         List<ProgressPlugBean> mProgressList = new ArrayList<>();
         List<DrawablePlugBean> mDrawableList = new ArrayList<>();
         for (int i = 0; i < mStickerList.size(); i++) {
@@ -91,39 +88,19 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setLocation(new PlugLocation(point.x, point.y));
                 Log.i("test_text_sticker:", textPlugBean.toJSONString());
                 mTextList.add(textPlugBean);
-            } else if (sticker instanceof LineSticker) {
-                LinePlugBean linePlugBean = new LinePlugBean();
-                linePlugBean.setId(String.valueOf(key));
-                linePlugBean.setSize(((LineSticker) sticker).getLineLength());
-                linePlugBean.setStyle(((LineSticker) sticker).getLineOrientation() == LineSticker.LineOrientation.VERTICAL ? 1 : 2);
-                linePlugBean.setColor(((LineSticker) sticker).getColor());
-                linePlugBean.setHeight(sticker.getHeight());
-                linePlugBean.setWidth(sticker.getWidth());
-                linePlugBean.setLineId(((LineSticker) sticker).getLineId());
-                linePlugBean.setJumpAppPath(sticker.getJumpAppPath());
-                linePlugBean.setScaleRatio(((LineSticker) sticker).getLineScale());
-                linePlugBean.setJumpContent(sticker.getJumpContent());
-                linePlugBean.setAngle(sticker.getCurrentAngle());
-                RectF rectF = sticker.getMappedRectF();
-                linePlugBean.setLeft(rectF.left);
-                linePlugBean.setRight(rectF.right);
-                linePlugBean.setTop(rectF.top);
-                linePlugBean.setBottom(rectF.bottom);
-                PointF point = sticker.getMappedCenterPoint();
-                linePlugBean.setLocation(new PlugLocation(point.x, point.y));
-                mLineList.add(linePlugBean);
             } else if (sticker instanceof ProgressSticker) {
                 ProgressPlugBean progressPlugBean = new ProgressPlugBean();
                 progressPlugBean.setId(String.valueOf(key));
-                progressPlugBean.setSize(((ProgressSticker) sticker).getProgressLength());
                 progressPlugBean.setWidth(sticker.getWidth());
                 progressPlugBean.setHeight(sticker.getHeight());
-                progressPlugBean.setColor(((ProgressSticker) sticker).getColor());
-                progressPlugBean.setProgressId(((ProgressSticker) sticker).getProgressId());
-                progressPlugBean.setStartTime(((ProgressSticker) sticker).getStartDateTimeMillis());
-                progressPlugBean.setTargetTime(((ProgressSticker) sticker).getTargetDateTimeMillis());
-                progressPlugBean.setScaleRatio(((ProgressSticker) sticker).getProgressScale());
+                progressPlugBean.setBgColor(((ProgressSticker) sticker).getBgColor());
+                progressPlugBean.setForeColor(((ProgressSticker) sticker).getForeColor());
+                progressPlugBean.setDrawType(((ProgressSticker) sticker).getDrawType());
+                progressPlugBean.setProgressType(((ProgressSticker) sticker).getProgressType());
+                progressPlugBean.setPercent(((ProgressSticker) sticker).getPercent());
+                progressPlugBean.setProgressHeight(((ProgressSticker) sticker).getProgressHeight());
                 progressPlugBean.setAngle(sticker.getCurrentAngle());
+                progressPlugBean.setScale(sticker.getCurrentScale());
                 RectF rectF = sticker.getMappedRectF();
                 progressPlugBean.setLeft(rectF.left);
                 progressPlugBean.setRight(rectF.right);
@@ -163,7 +140,6 @@ public class CustomWidgetConfigConvertHelper {
         }
         newConfig.setTextSize(ViewUtils.dp2px(TextSticker.DEFAULT_TEXT_SIZE));
         newConfig.setDefaultScale(TextSticker.DEFAULT_TEXT_SIZE);
-        newConfig.setLinePlugList(mLineList);
         newConfig.setProgressPlugList(mProgressList);
         newConfig.setTextPlugList(mTextList);
         newConfig.setDrawablePlugList(mDrawableList);
@@ -172,11 +148,6 @@ public class CustomWidgetConfigConvertHelper {
 
         for (int i = 0; i < mTextList.size(); i++) {
             TextPlugBean bean = mTextList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
-        for (int i = 0; i < mLineList.size(); i++) {
-            LinePlugBean bean = mLineList.get(i);
             long key = Long.valueOf(bean.getId());
             mStickerBeanList.put(key, bean);
         }
@@ -209,7 +180,6 @@ public class CustomWidgetConfigConvertHelper {
      */
     public void initAllStickerPlugs(StickerView view, CustomWidgetConfig mThemeConfig, LongSparseArray<Sticker> mStickerList) {
         List<TextPlugBean> mTextList = mThemeConfig.getTextPlugList();
-        List<LinePlugBean> mLineList = mThemeConfig.getLinePlugList();
         List<ProgressPlugBean> mProgressList = mThemeConfig.getProgressPlugList();
         List<DrawablePlugBean> mDrawableList = mThemeConfig.getDrawablePlugList();
         HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
@@ -219,11 +189,7 @@ public class CustomWidgetConfigConvertHelper {
             long key = Long.valueOf(bean.getId());
             mStickerBeanList.put(key, bean);
         }
-        for (int i = 0; i < mLineList.size(); i++) {
-            LinePlugBean bean = mLineList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
+
         for (int i = 0; i < mProgressList.size(); i++) {
             ProgressPlugBean bean = mProgressList.get(i);
             long key = Long.valueOf(bean.getId());
@@ -241,9 +207,7 @@ public class CustomWidgetConfigConvertHelper {
             Sticker sticker = null;
             if (bean instanceof TextPlugBean) {
                 sticker = initTextSticker(view, (TextPlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
-            } else if (bean instanceof LinePlugBean) {
-                sticker = initLineSticker(view, (LinePlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
-            } else if (bean instanceof ProgressPlugBean) {
+            }  else if (bean instanceof ProgressPlugBean) {
                 sticker = initProgressSticker(view, (ProgressPlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
             } else if (bean instanceof DrawablePlugBean) {
                 sticker = initDrawableSticker(view, (DrawablePlugBean) bean, mThemeConfig.getBaseOnWidthPx(), mThemeConfig.getBaseOnHeightPx());
@@ -288,14 +252,9 @@ public class CustomWidgetConfigConvertHelper {
     }
 
     public void drawStaticOnBitmapFromConfig(CustomWidgetConfig mCustomWidgetConfig, Canvas canvas) {
-        List<LinePlugBean> mLineList = mCustomWidgetConfig.getLinePlugList();
         List<DrawablePlugBean> mDrawableList = mCustomWidgetConfig.getDrawablePlugList();
         HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
-        for (int i = 0; i < mLineList.size(); i++) {
-            LinePlugBean bean = mLineList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
+
         for (int i = 0; i < mDrawableList.size(); i++) {
             DrawablePlugBean bean = mDrawableList.get(i);
             long key = Long.valueOf(bean.getId());
@@ -305,9 +264,7 @@ public class CustomWidgetConfigConvertHelper {
         Arrays.sort(key);
         for (int i = 0; i < mStickerBeanList.size(); i++) {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
-            if (bean instanceof LinePlugBean) {
-                drawLineSticker(canvas, (LinePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
-            } else if (bean instanceof DrawablePlugBean) {
+           if (bean instanceof DrawablePlugBean) {
                 drawDrawableSticker(canvas, (DrawablePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
             }
         }
@@ -355,38 +312,6 @@ public class CustomWidgetConfigConvertHelper {
     }
 
     /**
-     * 初始化线条插件
-     *
-     * @param bean
-     * @param baseOnWidth
-     * @param baseOnHeight
-     */
-    private LineSticker initLineSticker(StickerView view, LinePlugBean bean, int baseOnWidth, int baseOnHeight) {
-        LineSticker lineSticker = new LineSticker(Long.valueOf(bean.getId()));
-        float targetLength;
-        if (bean.getStyle() == 2) {
-            float ratioWidth = getWidthRatio(baseOnWidth);
-            targetLength = bean.getWidth() * bean.getScaleRatio() * ratioWidth;
-        } else {
-            float heightRatio = getHeightRatio(baseOnHeight);
-            targetLength = bean.getWidth() * bean.getScaleRatio() * heightRatio;
-        }
-        lineSticker.setLineLength(targetLength);
-        PlugLocation plugLocation = bean.getLocation();
-        Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
-        float startX = lineSticker.getWidth() / 2f;
-        float startY = lineSticker.getHeight() / 2f;
-        float offsetX = targetPoint.x - startX;
-        float offsetY = targetPoint.y - startY;
-        view.addSticker(lineSticker, Sticker.Position.INITIAL);
-        lineSticker.setStickerConfig(bean);
-        lineSticker.getMatrix().postTranslate(offsetX, offsetY);
-        lineSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
-        return lineSticker;
-
-    }
-
-    /**
      * 初始化进度条插件
      *
      * @param view         sticker 父布局
@@ -398,10 +323,7 @@ public class CustomWidgetConfigConvertHelper {
     private Sticker initProgressSticker(StickerView view, ProgressPlugBean bean, int baseOnWidth, int baseOnHeight) {
         ProgressSticker progressSticker = new ProgressSticker(Long.valueOf(bean.getId()));
         float ratioWidth = getWidthRatio(baseOnWidth);
-        float targetLength = bean.getWidth() * bean.getScaleRatio() * ratioWidth;
-        progressSticker.setProgressLength(targetLength);
-        progressSticker.setStartDateTimeMillis(bean.getStartTime());
-        progressSticker.setTargetDateTimeMillis(bean.getTargetTime());
+        progressSticker.resize((int)(bean.getWidth()*ratioWidth),(int)(bean.getHeight()*ratioWidth));
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
         float startX = progressSticker.getWidth() / 2f;
@@ -509,36 +431,6 @@ public class CustomWidgetConfigConvertHelper {
     }
 
     /**
-     * 绘制线条插件到画布上
-     *
-     * @param bean
-     * @param baseOnWidth
-     * @param baseOnHeight
-     */
-    private void drawLineSticker(Canvas canvas, LinePlugBean bean, int baseOnWidth, int baseOnHeight) {
-        LineSticker lineSticker = new LineSticker(Long.valueOf(bean.getId()));
-        float targetLength;
-        if (bean.getStyle() == 2) {
-            float ratioWidth = getWidthRatio(baseOnWidth);
-            targetLength = bean.getWidth() * ratioWidth;
-        } else {
-            float heightRatio = getHeightRatio(baseOnHeight);
-            targetLength = bean.getWidth() * heightRatio;
-        }
-        lineSticker.setLineLength(targetLength);
-        PlugLocation plugLocation = bean.getLocation();
-        Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
-        float startX = lineSticker.getWidth() / 2f;
-        float startY = lineSticker.getHeight() / 2f;
-        float offsetX = targetPoint.x - startX;
-        float offsetY = targetPoint.y - startY;
-        lineSticker.setStickerConfig(bean);
-        lineSticker.getMatrix().postTranslate(offsetX, offsetY);
-        lineSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
-        lineSticker.draw(canvas, -1, false);
-    }
-
-    /**
      * 绘制进度条插件到画布上
      *
      * @param canvas       画布
@@ -549,12 +441,7 @@ public class CustomWidgetConfigConvertHelper {
     private void drawProgressSticker(Canvas canvas, ProgressPlugBean bean, int baseOnWidth, int baseOnHeight) {
         ProgressSticker progressSticker = new ProgressSticker(Long.valueOf(bean.getId()));
         float ratioWidth = getWidthRatio(baseOnWidth);
-        float targetLength = bean.getWidth() * ratioWidth;
-
-        progressSticker.setProgressLength(targetLength);
-        progressSticker.setStartDateTimeMillis(bean.getStartTime());
-        progressSticker.setTargetDateTimeMillis(bean.getTargetTime());
-
+        progressSticker.resize((int)(bean.getWidth()*ratioWidth),(int)(bean.getHeight()*ratioWidth));
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
         float startX = progressSticker.getWidth() / 2f;
@@ -562,6 +449,7 @@ public class CustomWidgetConfigConvertHelper {
         float offsetX = targetPoint.x - startX;
         float offsetY = targetPoint.y - startY;
         progressSticker.setStickerConfig(bean);
+        progressSticker.setScale(bean.getScale());
         progressSticker.getMatrix().postTranslate(offsetX, offsetY);
         progressSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         progressSticker.draw(canvas, -1, false);

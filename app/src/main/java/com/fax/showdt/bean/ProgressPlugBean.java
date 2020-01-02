@@ -1,26 +1,66 @@
 package com.fax.showdt.bean;
 
 
-/**
- * Created by showzeng on 2019-09-02.
- * email: kingstageshow@gmail.com
- *
- * description: 进度条配置实体类
- */
+import com.fax.showdt.view.sticker.ProgressSticker;
+
 public class ProgressPlugBean extends BasePlugBean {
 
-    private float size;
     private int progressId;
-    private float scaleRatio;
-    private long startTime;
-    private long targetTime;
+    private float percent;
+    private int progressHeight;
+    private String foreColor;
+    private String bgColor;
+    @ProgressSticker.ProgressDrawType
+    private String drawType;
+    @ProgressSticker.ProgressType
+    private String progressType;
 
-    public float getSize() {
-        return size;
+    public float getPercent() {
+        return percent;
     }
 
-    public void setSize(float size) {
-        this.size = size;
+    public void setPercent(float percent) {
+        this.percent = percent;
+    }
+
+    public int getProgressHeight() {
+        return progressHeight;
+    }
+
+    public void setProgressHeight(int progressHeight) {
+        this.progressHeight = progressHeight;
+    }
+
+    public String getForeColor() {
+        return foreColor;
+    }
+
+    public void setForeColor(String foreColor) {
+        this.foreColor = foreColor;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public String getDrawType() {
+        return drawType;
+    }
+
+    public void setDrawType(String drawType) {
+        this.drawType = drawType;
+    }
+
+    public String getProgressType() {
+        return progressType;
+    }
+
+    public void setProgressType(String progressType) {
+        this.progressType = progressType;
     }
 
     public int getProgressId() {
@@ -31,28 +71,5 @@ public class ProgressPlugBean extends BasePlugBean {
         this.progressId = progressId;
     }
 
-    public float getScaleRatio() {
-        return scaleRatio;
-    }
-
-    public void setScaleRatio(float scaleRatio) {
-        this.scaleRatio = scaleRatio;
-    }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
-    }
-
-    public long getTargetTime() {
-        return targetTime;
-    }
-
-    public void setTargetTime(long targetTime) {
-        this.targetTime = targetTime;
-    }
 
 }

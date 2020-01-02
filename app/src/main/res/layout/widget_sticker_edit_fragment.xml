@@ -12,7 +12,7 @@
         <ImageView
             android:id="@+id/iv_local"
             android:layout_marginStart="@dimen/margin_10"
-            android:layout_width="@dimen/margin_50"
+            android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
@@ -33,7 +33,7 @@
             android:id="@+id/iv_add"
             android:layout_toEndOf="@id/iv_touch"
             android:layout_marginStart="@dimen/margin_10"
-            android:layout_width="@dimen/margin_50"
+            android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"

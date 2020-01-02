@@ -1,6 +1,7 @@
 package com.fax.showdt.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
-    private ImageView mIvLocal, mAdd, mConsume;
+    private ImageView mIvLocal, mAdd, mTouch, mConsume;
     private WidgetEditStickerCallback mCallback;
     private WidgetShapeElementEditFragment mStickerElementEditFragment;
     private WidgetClickSettingFragment mTouchEditFragment;
+    private List<View> mViews = new ArrayList<>();
 
     enum EditStickerType {
         ELEMENT, TOUCH
@@ -36,12 +41,23 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
         mIvLocal = view.findViewById(R.id.iv_local);
         mAdd = view.findViewById(R.id.iv_add);
         mConsume = view.findViewById(R.id.iv_consume);
+        mTouch = view.findViewById(R.id.iv_touch);
         mIvLocal.setOnClickListener(this);
         mAdd.setOnClickListener(this);
         mIvLocal.setOnClickListener(this);
         mConsume.setOnClickListener(this);
+        mTouch.setOnClickListener(this);
+        mViews.add(mIvLocal);
+        mViews.add(mTouch);
         initFragment();
+        refreshSelectedViewStatus(mIvLocal);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        switchToOneFragment(EditStickerType.ELEMENT);
     }
 
     @Override
@@ -51,11 +67,27 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
             if (mCallback != null) {
                 mCallback.closePanel();
             }
+        } else if (resId == R.id.iv_local) {
+            switchToOneFragment(EditStickerType.ELEMENT);
+            refreshSelectedViewStatus(mIvLocal);
+        } else if (resId == R.id.iv_touch) {
+            switchToOneFragment(EditStickerType.TOUCH);
+            refreshSelectedViewStatus(mTouch);
+
         } else if (resId == R.id.iv_add) {
             if (mCallback != null) {
                 mCallback.onPickPhoto();
             }
         }
+    }
+
+    private void refreshSelectedViewStatus(View view) {
+
+        for (View views : mViews) {
+            views.setSelected(false);
+            Log.i("test_select:", "unselected");
+        }
+        view.setSelected(true);
     }
 
     private void initFragment() {
@@ -68,7 +100,7 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
 
     }
 
-    private void switchToOneFragment(WidgetTextEditFragment.EditTextType editTextType) {
+    private void switchToOneFragment(EditStickerType editTextType) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         switch (editTextType) {
             case ELEMENT: {
@@ -85,7 +117,6 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
             }
         }
 
-        transaction.commitAllowingStateLoss();
     }
 
 

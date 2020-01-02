@@ -585,30 +585,10 @@ public class StickerView extends FrameLayout {
                             return;
                         }
                         handlingSticker.setMatrix(moveMatrix);
-                    } else if (handlingSticker instanceof LineSticker) {
-                        if (supportLineZoom) {
-                            if (initalLineLength == 0) {
-                                initalLineLength = ((LineSticker) handlingSticker).getLineLength();
-                            }
-                            float currentLength = scale * initalLineLength;
-                            DisplayMetrics dm = AppContext.get().getResources().getDisplayMetrics();
-                            int screenHeight = dm.heightPixels;
-                            if (currentLength > MIN_LINE_WIDTH_OR_HEIGHT && currentLength < screenHeight) {
-                                ((LineSticker) handlingSticker).setLineLength(scale * initalLineLength);
-                            }
-
-                        }
-                    } else if (handlingSticker instanceof ProgressSticker) {
-                        // 进度条的双指缩放逻辑
-                        if (initalProgressLength == 0) {
-                            initalProgressLength = ((ProgressSticker) handlingSticker).getProgressLength();
-                        }
-                        float currentLength = scale * initalProgressLength;
-                        DisplayMetrics dm = AppContext.get().getResources().getDisplayMetrics();
-                        int screenWidth = dm.widthPixels;
-                        if (currentLength > MIN_LINE_WIDTH_OR_HEIGHT && currentLength < screenWidth) {
-                            ((ProgressSticker) handlingSticker).setProgressLength(scale * initalProgressLength);
-                        }
+                    }else if (handlingSticker instanceof ProgressSticker) {
+                        moveMatrix.postScale(scale, scale, midPoint.x,
+                                midPoint.y);
+                        handlingSticker.setMatrix(moveMatrix);
                     } else if (handlingSticker instanceof TextSticker) {
                         moveMatrix.postScale(scale, scale, midPoint.x,
                                 midPoint.y);

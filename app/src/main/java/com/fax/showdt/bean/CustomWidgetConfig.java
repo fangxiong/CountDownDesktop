@@ -18,9 +18,6 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
     @TypeConverters({DIYConverters.TextPlugListConverters.class})
     private List<TextPlugBean> textPlugList;
 
-    @TypeConverters({DIYConverters.LinePlugListConverters.class})
-    private List<LinePlugBean> linePlugList;
-
     @TypeConverters({DIYConverters.ProgressPlugListConverters.class})
     private List<ProgressPlugBean> progressPlugList;
 
@@ -60,17 +57,6 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     public void setTextPlugList(List<TextPlugBean> textPlugList) {
         this.textPlugList = textPlugList;
-    }
-
-    public List<LinePlugBean> getLinePlugList() {
-        if (linePlugList == null) {
-            return new ArrayList<>();
-        }
-        return linePlugList;
-    }
-
-    public void setLinePlugList(List<LinePlugBean> linePlugList) {
-        this.linePlugList = linePlugList;
     }
 
     public List<ProgressPlugBean> getProgressPlugList() {

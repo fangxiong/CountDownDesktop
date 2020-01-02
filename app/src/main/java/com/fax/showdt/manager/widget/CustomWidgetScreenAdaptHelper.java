@@ -5,7 +5,6 @@ import android.graphics.Point;
 
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.DrawablePlugBean;
-import com.fax.showdt.bean.LinePlugBean;
 import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
@@ -38,7 +37,6 @@ public class CustomWidgetScreenAdaptHelper {
 
         mResultConfig = new CustomWidgetConfig();
         List<TextPlugBean> mTextList;
-        List<LinePlugBean> mLineList;
         List<DrawablePlugBean> mDrawableList;
         List<ProgressPlugBean> mProgressList;
         mResultConfig.setId(config.getId());
@@ -53,16 +51,11 @@ public class CustomWidgetScreenAdaptHelper {
         mResultConfig.setBgPath(config.getBgPath());
         mResultConfig.setVersion(config.getVersion());
         mTextList = config.getTextPlugList();
-        mLineList = config.getLinePlugList();
         mDrawableList = config.getDrawablePlugList();
         mProgressList = config.getProgressPlugList();
         for (int i = 0; i < mTextList.size(); i++) {
             TextPlugBean bean = mTextList.get(i);
             initTextSticker(bean, config.getBaseOnWidthPx(), config.getBaseOnHeightPx());
-        }
-        for (int i = 0; i < mLineList.size(); i++) {
-            LinePlugBean bean = mLineList.get(i);
-            initLineSticker(bean, config.getBaseOnWidthPx(), config.getBaseOnHeightPx());
         }
         for (int i = 0; i < mDrawableList.size(); i++) {
             DrawablePlugBean bean = mDrawableList.get(i);
@@ -72,7 +65,6 @@ public class CustomWidgetScreenAdaptHelper {
             ProgressPlugBean bean = mProgressList.get(i);
             initProgressSticker(bean,config.getBaseOnWidthPx(),config.getBaseOnHeightPx());
         }
-        mResultConfig.setLinePlugList(mLineList);
         mResultConfig.setTextPlugList(mTextList);
         mResultConfig.setDrawablePlugList(mDrawableList);
         mResultConfig.setProgressPlugList(mProgressList);
@@ -105,38 +97,6 @@ public class CustomWidgetScreenAdaptHelper {
         bean.setAlignment(null);
     }
 
-    /**
-     * 初始化线条插件
-     *
-     * @param bean
-     * @param baseOnWidth
-     * @param baseOnHeight
-     */
-    private void initLineSticker(LinePlugBean bean, int baseOnWidth, int baseOnHeight) {
-        float ratio, targetLength;
-        if (bean.getStyle() == 2) {
-            float ratioWidth = getWidthRatio(baseOnWidth);
-            targetLength = bean.getWidth() * ratioWidth;
-        } else {
-            float heightRatio = getHeightRatio(baseOnHeight);
-            targetLength = bean.getWidth() * heightRatio;
-        }
-        ratio = targetLength * 1.0f / mAdaptWidth;
-        PlugLocation plugLocation = bean.getLocation();
-        Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
-        plugLocation.setX(targetPoint.x);
-        plugLocation.setY(targetPoint.y);
-        bean.setLocation(plugLocation);
-        bean.setScale(ratio);
-        bean.setSize(targetLength);
-        bean.setWidth((int) targetLength);
-        bean.setLeft(plugLocation.getX() - bean.getWidth() / 2f);
-        bean.setRight(plugLocation.getX() + bean.getWidth() / 2f);
-        bean.setTop(plugLocation.getY() - bean.getHeight() / 2f);
-        bean.setBottom(plugLocation.getY() + bean.getHeight() / 2f);
-
-    }
-
     private void initDrawableSticker(DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
@@ -152,18 +112,14 @@ public class CustomWidgetScreenAdaptHelper {
     }
 
     private void initProgressSticker(ProgressPlugBean bean, int baseOnWidth, int baseOnHeight) {
-        float ratio, targetLength;
-        float ratioWidth = getWidthRatio(baseOnWidth);
-        targetLength = bean.getWidth() * ratioWidth;
-        ratio = targetLength * 1.0f / mAdaptWidth;
+        float ratio = getWidthRatio(baseOnWidth);
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
         plugLocation.setX(targetPoint.x);
         plugLocation.setY(targetPoint.y);
         bean.setLocation(plugLocation);
-        bean.setScale(ratio);
-        bean.setSize(targetLength);
-        bean.setWidth((int) targetLength);
+        bean.setWidth((int) (bean.getWidth() * ratio));
+        bean.setHeight((int)(bean.getHeight() * ratio));
         bean.setLeft(plugLocation.getX() - bean.getWidth() / 2f);
         bean.setRight(plugLocation.getX() + bean.getWidth() / 2f);
         bean.setTop(plugLocation.getY() - bean.getHeight() / 2f);

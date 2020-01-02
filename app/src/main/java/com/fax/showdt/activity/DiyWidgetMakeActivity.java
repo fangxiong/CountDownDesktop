@@ -73,6 +73,7 @@ import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.BitmapStickerIcon;
 import com.fax.showdt.view.sticker.DeleteIconEvent;
 import com.fax.showdt.view.sticker.DrawableSticker;
+import com.fax.showdt.view.sticker.ProgressSticker;
 import com.fax.showdt.view.sticker.Sticker;
 import com.fax.showdt.view.sticker.StickerView;
 import com.fax.showdt.view.sticker.TextSticker;
@@ -267,6 +268,12 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         } else if (resId == R.id.tv_shape) {
             switchToOneFragment(EDIT_SHAPE);
         } else if (resId == R.id.tv_progress) {
+            ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
+            progressSticker.resize(ViewUtils.dp2px(200),ViewUtils.dp2px(200));
+            progressSticker.setPercent(0.7f);
+            progressSticker.setProgressType(ProgressSticker.CIRCLE);
+            progressSticker.setDrawType(ProgressSticker.DEGREE);
+            mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
             switchToOneFragment(EDIT_PROGRESS);
         } else if (resId == R.id.iv_back) {
             MessageDialog.show(this, "提示", "确定要退出编辑吗？")

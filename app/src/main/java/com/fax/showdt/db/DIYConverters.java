@@ -4,7 +4,6 @@ package com.fax.showdt.db;
 import android.util.Log;
 
 import com.fax.showdt.bean.DrawablePlugBean;
-import com.fax.showdt.bean.LinePlugBean;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.ShortcutIconBean;
 import com.fax.showdt.bean.TextPlugBean;
@@ -29,17 +28,6 @@ public class DIYConverters {
         }
     }
 
-    public static class LinePlugListConverters {
-        @TypeConverter
-        public static List<LinePlugBean> fromLinePlugList(String str){
-            return GsonUtils.parseJsonArrayWithGson(str, LinePlugBean.class);
-        }
-
-        @TypeConverter
-        public static String LinePlugListToString(List<LinePlugBean> list){
-            return GsonUtils.toJsonArrayWithSerializeNulls(list);
-        }
-    }
 
     public static class ProgressPlugListConverters {
         @TypeConverter

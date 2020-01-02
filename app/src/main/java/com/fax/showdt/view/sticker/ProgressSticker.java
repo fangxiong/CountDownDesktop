@@ -3,8 +3,10 @@ package com.fax.showdt.view.sticker;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.text.StaticLayout;
 import android.util.DisplayMetrics;
 
 import com.fax.showdt.AppContext;
@@ -13,141 +15,77 @@ import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.utils.TimeUtils;
 import com.fax.showdt.utils.ViewUtils;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringDef;
 import androidx.core.content.ContextCompat;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-/**
- * Created by showzeng on 2019-09-02.
- * email: kingstageshow@gmail.com
- *
- * description: 进度条 sticker
- */
 public class ProgressSticker extends Sticker {
 
-    private String color = "#5990FF";
-    private float progressLength;
-    private final int defaultRectHeight = ViewUtils.dp2px(20);
-    private float mScreenHeight;
-    private float mProgressRatio = 0.25f;
-    private float mProgressScale = 1.0f;
-    private float progress;
-    private long startDateTimeMillis;
-    private long targetDateTimeMillis;
-
-    private Paint mPaint;
-
+    //圆形进度条
+    public static final String CIRCLE = "circle";
+    //水平进度条
+    public static final String HORIZONTAL = "horizontal";
+    //实心进度条
+    public static final String SOLID = "solid";
+    //刻度进度条
+    public static final String DEGREE = "degree";
     private Drawable mDrawable;
-    private StickerDrawHelper mStickerDrawHelper;
 
-    private int mProgressId = 0;
+    private float percent = 0.5f;
+    private String foreColor = "#80FF0000";
+    private String bgColor = "#90FFFFFF";
+    @ProgressDrawType
+    private String drawType = SOLID;
+    @ProgressType
+    private String progressType=HORIZONTAL;
+    private int width = ViewUtils.dp2px(200);
+    private int height =ViewUtils.dp2px(20);
+    private int progressHeight =ViewUtils.dp2px(20);
+
+
+    @StringDef({CIRCLE, HORIZONTAL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ProgressType {
+    }
+
+    @StringDef({SOLID, DEGREE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ProgressDrawType {
+    }
 
     public ProgressSticker(long id) {
         super(id);
-        mPaint = new Paint();
-        mStickerDrawHelper = new StickerDrawHelper();
 
         if (mDrawable == null) {
             this.mDrawable = ContextCompat.getDrawable(
-                AppContext.get(),
-                R.drawable.sticker_transparent_background
+                    AppContext.get(),
+                    R.drawable.sticker_transparent_background
             );
         }
-
-        DisplayMetrics dm = AppContext.get().getResources().getDisplayMetrics();
-        mScreenHeight = dm.heightPixels;
-        progressLength = mScreenHeight * mProgressRatio;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(@NonNull String color) {
-        this.color = color;
-    }
-
-    public int getProgressId() {
-        return mProgressId;
-    }
-
-    public void setProgressId(int progressId) {
-        mProgressId = progressId;
-    }
-
-    public float getProgressLength() {
-        return progressLength;
-    }
-
-    public void setProgressLength(float progressLength) {
-        this.progressLength = progressLength;
-    }
-
-    public float getProgressRatio() {
-        return mProgressRatio;
-    }
-
-    public void setProgressRatio(float progressRatio) {
-        mProgressRatio = progressRatio;
-    }
-
-    public float getProgressScale() {
-        return mProgressScale;
-    }
-
-    public float getProgress() {
-        return progress;
-    }
-
-    public void setProgress(float progress) {
-        this.progress = progress;
-    }
-
-    public long getStartDateTimeMillis() {
-        return startDateTimeMillis;
-    }
-
-    public void setStartDateTimeMillis(long startDateTimeMillis) {
-        this.startDateTimeMillis = startDateTimeMillis;
-    }
-
-    public long getTargetDateTimeMillis() {
-        return targetDateTimeMillis;
-    }
-
-    public void setTargetDateTimeMillis(long targetDateTimeMillis) {
-        this.targetDateTimeMillis = targetDateTimeMillis;
     }
 
     @Override
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
-        mPaint.setColor(Color.parseColor(color));
-        mPaint.setStrokeWidth(ViewUtils.dp2px(0.5f));
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setAntiAlias(true);
         canvas.save();
         canvas.concat(getMatrix());
-
-        if (mDrawable != null) {
-            Rect realBounds = new Rect(0, 0, (int) getProgressLength(), defaultRectHeight);
-            mDrawable.setBounds(realBounds);
-            mDrawable.draw(canvas);
-        }
-
-        progress = ((float) System.currentTimeMillis() - (float) TimeUtils.getYearStartTime())
-            / ((float) targetDateTimeMillis - (float) TimeUtils.getYearStartTime());
-        mStickerDrawHelper.drawProgress(mProgressId, canvas, mPaint, defaultRectHeight, (int) getProgressLength(), progress);
+        ProgressStickerDrawHelper.Builder builder = new ProgressStickerDrawHelper.Builder();
+        builder.setWidth(width).setHeight(height).setProgressHeight(progressHeight).setDrawType(drawType).setProgressType(progressType).setPercent(percent).setProgressBgColor(bgColor).setProgressForeColor(foreColor).build();
+        ProgressStickerDrawHelper.drawProgressBar(builder, canvas);
         canvas.restore();
     }
 
     @Override
     public int getWidth() {
-        return (int) progressLength;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return defaultRectHeight;
+        return height;
     }
 
     @Override
@@ -168,12 +106,74 @@ public class ProgressSticker extends Sticker {
         return this;
     }
 
+    public void setScale(float scale) {
+        getMatrix().reset();
+        PointF pointF = this.getMappedCenterPoint();
+        getMatrix().postScale(scale, scale, pointF.x, pointF.y);
+    }
+
+    public float getPercent() {
+        return percent;
+    }
+
+    public void setPercent(float percent) {
+        this.percent = percent;
+    }
+
+    public String getForeColor() {
+        return foreColor;
+    }
+
+    public void setForeColor(String foreColor) {
+        this.foreColor = foreColor;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public void setProgressHeight(int progressHeight) {
+        this.progressHeight = progressHeight;
+    }
+
+    public int getProgressHeight() {
+        return progressHeight;
+    }
+
+    public String getDrawType() {
+        return drawType;
+    }
+
+    public void setDrawType(String drawType) {
+        this.drawType = drawType;
+    }
+
+    public String getProgressType() {
+        return progressType;
+    }
+
+    public void setProgressType(String progressType) {
+        this.progressType = progressType;
+    }
+
+    public void resize(int width,int height){
+        this.width = width;
+        this.height = height;
+
+    }
+
     public void setStickerConfig(ProgressPlugBean bean) {
         setId(Long.valueOf(bean.getId()));
-        setColor(bean.getColor());
-        setProgressId(bean.getProgressId());
-        setStartDateTimeMillis(bean.getStartTime());
-        setTargetDateTimeMillis(bean.getTargetTime());
+        setProgressHeight(bean.getProgressHeight());
+        setBgColor(bean.getBgColor());
+        setForeColor(bean.getForeColor());
+        setDrawType(bean.getDrawType());
+        setProgressType(bean.getProgressType());
+        setPercent(bean.getPercent());
     }
 
 
