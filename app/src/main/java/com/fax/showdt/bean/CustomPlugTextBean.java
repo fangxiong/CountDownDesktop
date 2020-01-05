@@ -7,6 +7,7 @@ package com.fax.showdt.bean;
 public class CustomPlugTextBean extends Bean {
     private int id;
     private String tag;
+    private String hint;
     private boolean isHead;
     private boolean singleLine;
     private boolean doubleLine;
@@ -26,6 +27,14 @@ public class CustomPlugTextBean extends Bean {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    public String getHint() {
+        return hint;
     }
 
     public boolean isHead() {

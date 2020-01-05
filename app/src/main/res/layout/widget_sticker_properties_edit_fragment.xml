@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_click_setting_action" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_sticker_clip_shape"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <TextView
+            android:id="@+id/tv_clip_shape"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:background="@color/c_F7F6F6"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_16" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_color_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_progress_color_icon" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_5"
+                android:gravity="center"
+                android:text="@string/widget_sticker_stroke_color"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_15" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_30"
+                android:background="@color/c_F7F6F6"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/tv_stroke_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:onClick="onClick"
+                    android:layout_margin="@dimen/margin_2" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_5"
+                android:gravity="center"
+                android:text="@string/widget_sticker_stroke_switch"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_15" />
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/switch_btn"
+                android:layout_width="@dimen/margin_60"
+                android:layout_height="@dimen/margin_28"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_gravity="center_vertical"
+                app:kswThumbColor="@color/c_FCF43C"
+                app:kswBackColor="@color/c_F7F6F6" />
+        </LinearLayout>
+    </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

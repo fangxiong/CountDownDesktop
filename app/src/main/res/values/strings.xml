@@ -46,6 +46,7 @@
     <string name="widget_click_dialog_select_app">选择应用</string>
     <string name="widget_click_dialog_loading">数据拉取中...</string>
 
+    <string name="widget_progress">进度</string>
     <string name="widget_progress_type">风格</string>
     <string name="widget_progress_mode">模式</string>
     <string name="widget_progress_fore_color">前景色</string>
@@ -55,6 +56,21 @@
     <string name="widget_progress_circle">圆形</string>
     <string name="widget_progress_solid">平滑</string>
     <string name="widget_progress_degree">刻度</string>
+    <string name="widget_progress_battery">手机电量</string>
+    <string name="widget_progress_music">音乐时长</string>
+    <string name="widget_progress_month">一个月</string>
+    <string name="widget_progress_week">一周</string>
+    <string name="widget_progress_day">一天</string>
+    <string name="widget_progress_hour">一小时</string>
+    <string name="widget_sticker_clip_shape">形状</string>
+    <string name="widget_sticker_stroke_color">描边颜色</string>
+    <string name="widget_sticker_stroke_switch">描边开关</string>
+    <string name="widget_clip_circle">圆形</string>
+    <string name="widget_clip_round">圆角矩形</string>
+    <string name="widget_clip_love">心形</string>
+    <string name="widget_clip_rect">正方形</string>
+    <string name="widget_clip_pentagon">五边形</string>
+
 
 
 </resources>

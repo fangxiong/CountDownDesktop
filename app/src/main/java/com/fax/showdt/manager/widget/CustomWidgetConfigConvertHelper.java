@@ -97,6 +97,7 @@ public class CustomWidgetConfigConvertHelper {
                 progressPlugBean.setForeColor(((ProgressSticker) sticker).getForeColor());
                 progressPlugBean.setDrawType(((ProgressSticker) sticker).getDrawType());
                 progressPlugBean.setProgressType(((ProgressSticker) sticker).getProgressType());
+                progressPlugBean.setProgress(((ProgressSticker) sticker).getProgress());
                 progressPlugBean.setPercent(((ProgressSticker) sticker).getPercent());
                 progressPlugBean.setProgressHeight(((ProgressSticker) sticker).getProgressHeight());
                 progressPlugBean.setAngle(sticker.getCurrentAngle());
@@ -127,7 +128,8 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setJumpAppPath(sticker.getJumpAppPath());
                 drawablePlugBean.setJumpContent(sticker.getJumpContent());
                 drawablePlugBean.setAppName(appName);
-                drawablePlugBean.setSvgName(((DrawableSticker) sticker).getSvgName());
+                drawablePlugBean.setClipType(((DrawableSticker) sticker).getClipType());
+                drawablePlugBean.setStrokeColor(((DrawableSticker) sticker).getStrokeColor());
                 drawablePlugBean.setSvgColor(((DrawableSticker) sticker).getSvgColor());
                 drawablePlugBean.setShowFrame(((DrawableSticker) sticker).isShowFrame());
                 drawablePlugBean.setmPicType(((DrawableSticker) sticker).getmPicType());
@@ -144,29 +146,6 @@ public class CustomWidgetConfigConvertHelper {
         newConfig.setTextPlugList(mTextList);
         newConfig.setDrawablePlugList(mDrawableList);
         newConfig.setCreatedTime(System.currentTimeMillis());
-        HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
-
-        for (int i = 0; i < mTextList.size(); i++) {
-            TextPlugBean bean = mTextList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
-        for (int i = 0; i < mProgressList.size(); i++) {
-            ProgressPlugBean bean = mProgressList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
-        for (int i = 0; i < mDrawableList.size(); i++) {
-            DrawablePlugBean bean = mDrawableList.get(i);
-            long key = Long.valueOf(bean.getId());
-            mStickerBeanList.put(key, bean);
-        }
-        Object[] key = mStickerBeanList.keySet().toArray();
-        Arrays.sort(key);
-        for (int i = 0; i < mStickerBeanList.size(); i++) {
-            BasePlugBean bean = mStickerBeanList.get(key[i]);
-            bean.setId(String.valueOf(i));
-        }
         Log.i("test_widget_config2:", originConfig.toJSONString());
         return newConfig;
     }
@@ -364,7 +343,6 @@ public class CustomWidgetConfigConvertHelper {
         }
         if (drawable != null) {
             DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
-            drawableSticker.addMaskBitmap(AppContext.get(), bean.getSvgName());
             drawableSticker.setShowFrame(bean.isShowFrame());
             PlugLocation plugLocation = bean.getLocation();
             Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
@@ -376,7 +354,9 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setJumpContent(bean.getJumpContent());
             drawableSticker.setJumpAppPath(bean.getJumpAppPath());
             drawableSticker.setmPicType(bean.getmPicType());
+            drawableSticker.setStrokeColor(bean.getStrokeColor());
             drawableSticker.setSvgColor(bean.getSvgColor());
+            drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
             float adaptRatio = getWidthRatio(baseOnWidth);
             drawableSticker.setScale(bean.getScale() * adaptRatio);
             view.addSticker(drawableSticker, Sticker.Position.INITIAL);
@@ -486,7 +466,6 @@ public class CustomWidgetConfigConvertHelper {
             return;
         }
         DrawableSticker drawableSticker = new DrawableSticker(drawable, Long.valueOf(bean.getId()));
-        drawableSticker.addMaskBitmap(AppContext.get(), bean.getSvgName());
         drawableSticker.setShowFrame(bean.isShowFrame());
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
@@ -497,6 +476,10 @@ public class CustomWidgetConfigConvertHelper {
         drawableSticker.setDrawablePath(bean.getDrawablePath());
         drawableSticker.setJumpContent(bean.getJumpContent());
         drawableSticker.setJumpAppPath(bean.getJumpAppPath());
+        drawableSticker.setSvgColor(bean.getSvgColor());
+        drawableSticker.setStrokeColor(bean.getStrokeColor());
+        drawableSticker.setClipType(bean.getClipType());
+        drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
         float adaptRatio = getWidthRatio(baseOnWidth);
         drawableSticker.setScale(bean.getScale() * adaptRatio);
         drawableSticker.getMatrix().postTranslate(offsetX, offsetY);

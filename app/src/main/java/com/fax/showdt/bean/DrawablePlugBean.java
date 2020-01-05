@@ -10,10 +10,11 @@ import com.fax.showdt.view.sticker.DrawableSticker;
 public class DrawablePlugBean extends BasePlugBean {
     private String drawablePath;
     private String name;
-    private String svgName;
+    private String clipType;
     private boolean isShowFrame;
     @DrawableSticker.PicType
     private int mPicType;
+    private String strokeColor ="#FFFFFF";
     private String svgColor ="#FFFFFF";
 
     public String getDrawablePath() {
@@ -32,12 +33,12 @@ public class DrawablePlugBean extends BasePlugBean {
         this.name = name;
     }
 
-    public String getSvgName() {
-        return svgName == null ? "" : svgName;
+    public void setClipType(String clipType) {
+        this.clipType = clipType;
     }
 
-    public void setSvgName(String svgName) {
-        this.svgName = svgName;
+    public String getClipType() {
+        return clipType == null ? " ": clipType;
     }
 
     public boolean isShowFrame() {
@@ -54,6 +55,14 @@ public class DrawablePlugBean extends BasePlugBean {
 
     public int getmPicType() {
         return mPicType;
+    }
+
+    public String getStrokeColor() {
+        return strokeColor;
+    }
+
+    public void setStrokeColor(String strokeColor) {
+        this.strokeColor = strokeColor;
     }
 
     public String getSvgColor() {

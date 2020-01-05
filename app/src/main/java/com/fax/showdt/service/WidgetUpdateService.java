@@ -214,9 +214,11 @@ public class WidgetUpdateService extends Service {
         List<String> result =new ArrayList<>();
         HashMap<String, String> map = WidgetManager.getInstance().getAllBindDataWidgetIds();
         Iterator map1it = map.entrySet().iterator();
-        Log.i("test_draw_bitmap:", "秒刷新map:" + map.size());
+        Log.i("test_draw_bitmap:", "秒刷新map size:" + map.size());
         while (map1it.hasNext()) {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) map1it.next();
+            Log.i("test_draw_bitmap:", "widgetId:" + entry.getKey());
+
             CustomWidgetConfig config = GsonUtils.parseJsonWithGson(entry.getValue(), CustomWidgetConfig.class);
             if(isAllowRefreshAllWidget){
                 result.add(entry.getKey());
@@ -233,9 +235,11 @@ public class WidgetUpdateService extends Service {
     private void updateWidgetRefreshWithSixtySec(){
         HashMap<String, CustomWidgetConfig> map = WidgetManager.getInstance().getCustomWidgetConfig();
         Iterator map1it = map.entrySet().iterator();
+        Log.i("test_draw_bitmap:", "map size::"+ map.size());
         while (map1it.hasNext()) {
             Map.Entry<String, CustomWidgetConfig> entry = (Map.Entry<String, CustomWidgetConfig>) map1it.next();
             mCurrentRefreshGap = CustomPlugUtil.getWidgetRefreshGap(entry.getValue());
+            Log.i("test_draw_bitmap:", "刷新Gap:"+mCurrentRefreshGap);
             if (mCurrentRefreshGap == REFRESH_WITH_SIXTY_SECOND) {
                 Log.i("test_draw_bitmap:", "分钟刷新");
                 updateWidget(entry.getKey());

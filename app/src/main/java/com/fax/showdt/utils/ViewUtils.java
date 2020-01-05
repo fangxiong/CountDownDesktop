@@ -464,7 +464,7 @@ public class ViewUtils {
     //今日头条适配后的计算方式(以后统一使用这种计算方式)
     public static int dpToPx(final float dpValue,Context context) {
         final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+        return (int) (dpValue * scale);
     }
 
     /**
@@ -477,7 +477,7 @@ public class ViewUtils {
     // 今日头条适配后的计算方式(以后统一使用这种计算方式)
     public static int pxToDp(final float pxValue, Context context) {
         final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) ((pxValue - 0.5f) / scale);
+        return (int) ((pxValue) / scale);
     }
 
     /**

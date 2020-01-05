@@ -53,7 +53,7 @@ public class CustomTextPlugItemAdapter extends RecyclerView.Adapter<RecyclerView
 //            holder.mTvTag.setText(bean.getTag());
         } else {
             CustomTextPlugContentHolder holder = (CustomTextPlugContentHolder) viewHolder;
-            holder.mTvContent.setText(CustomPlugUtil.getPlugTextFromSigns(bean.getTag()));
+            holder.mTvContent.setText(CustomPlugUtil.getPlugTextFromSigns(bean.getHint()));
             if (bean.isSingleLine()) {
                 holder.mTopLine.setVisibility(View.GONE);
                 holder.mRightLine.setVisibility(View.VISIBLE);

@@ -11,6 +11,8 @@ import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
 import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
+import com.fax.showdt.fragment.widgetStickerEdit.WidgetStickerPropertiesEditFragment;
+import com.fax.showdt.view.sticker.DrawableSticker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,9 +25,10 @@ import java.util.List;
 public class WidgetStickerEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mAdd, mTouch, mConsume;
     private WidgetEditStickerCallback mCallback;
-    private WidgetShapeElementEditFragment mStickerElementEditFragment;
+    private WidgetStickerPropertiesEditFragment propertiesEditFragment;
     private WidgetClickSettingFragment mTouchEditFragment;
     private List<View> mViews = new ArrayList<>();
+    private DrawableSticker drawableSticker;
 
     enum EditStickerType {
         ELEMENT, TOUCH
@@ -92,9 +95,10 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
 
     private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
+        propertiesEditFragment = new WidgetStickerPropertiesEditFragment();
         mTouchEditFragment = new WidgetClickSettingFragment();
-        transaction.add(R.id.fl_sticker_edit_body, mStickerElementEditFragment);
+        propertiesEditFragment.setSticker(drawableSticker);
+        transaction.add(R.id.fl_sticker_edit_body, propertiesEditFragment);
         transaction.add(R.id.fl_sticker_edit_body, mTouchEditFragment);
         transaction.commitAllowingStateLoss();
 
@@ -105,12 +109,12 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
         switch (editTextType) {
             case ELEMENT: {
                 transaction.hide(mTouchEditFragment);
-                transaction.show(mStickerElementEditFragment);
+                transaction.show(propertiesEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
             case TOUCH: {
-                transaction.hide(mStickerElementEditFragment);
+                transaction.hide(propertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
@@ -119,6 +123,12 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
 
     }
 
+    public void setDrawableSticker(DrawableSticker drawableSticker) {
+        this.drawableSticker = drawableSticker;
+        if(propertiesEditFragment != null){
+            propertiesEditFragment.setSticker(drawableSticker);
+        }
+    }
 
     public void setWidgetEditStickerCallback(WidgetEditStickerCallback callback) {
         this.mCallback = callback;

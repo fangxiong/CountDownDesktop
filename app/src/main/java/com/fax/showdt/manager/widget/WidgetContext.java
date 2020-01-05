@@ -52,6 +52,7 @@ public class WidgetContext {
             mCustomWidgetConfig = map.get(widgetId);
         } else {
             mCustomWidgetConfig= WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
+            map.put(widgetId,mCustomWidgetConfig);
         }
         if (mCustomWidgetConfig != null) {
             int width = mCustomWidgetConfig.getBaseOnWidthPx();

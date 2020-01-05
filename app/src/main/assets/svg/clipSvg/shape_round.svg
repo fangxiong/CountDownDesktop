@@ -1,0 +1,10 @@
+<svg id="图层_1" data-name="图层 1"
+    xmlns="http://www.w3.org/2000/svg"
+    width="56"
+    height="56"
+    viewBox="0 0 56 56">
+    <title>圆角3</title>
+    <path
+        d="M4,2.38A8,8,0,0,1,9.16.47h40a8,8,0,0,1,8,8v40a8,8,0,0,1-8,8h-40a8,8,0,0,1-8-8v-40A8,8,0,0,1,4,2.38Z"
+        transform="translate(-1.16 -0.47)"/>
+</svg>

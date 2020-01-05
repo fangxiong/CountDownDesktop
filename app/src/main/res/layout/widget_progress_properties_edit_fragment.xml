@@ -1,8 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_progress_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_progress"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:background="@color/c_F7F6F6"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_16" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -112,20 +153,20 @@
                     android:text="@string/widget_progress_fore_color"
                     android:textColor="@color/c_A0A0A0"
                     android:textSize="@dimen/textSize_15" />
-
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/margin_30"
+                    android:background="@color/c_F7F6F6"
+                    android:layout_marginStart="@dimen/margin_15"
+                    android:layout_marginEnd="@dimen/margin_15"
+                    android:gravity="center">
                 <TextView
                     android:id="@+id/tv_foreColor"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/margin_30"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/margin_15"
-                    android:layout_marginEnd="@dimen/margin_15"
-                    android:background="@color/c_F7F6F6"
-                    android:gravity="center"
+                    android:layout_height="match_parent"
                     android:onClick="onClick"
-                    android:padding="@dimen/margin_1"
-                    android:textColor="@color/c_A0A0A0"
-                    android:textSize="@dimen/textSize_16" />
+                    android:layout_margin="@dimen/margin_2" />
+                </FrameLayout>
 
             </LinearLayout>
 
@@ -145,20 +186,21 @@
                     android:textColor="@color/c_A0A0A0"
                     android:textSize="@dimen/textSize_15" />
 
-                <TextView
-                    android:id="@+id/tv_bgColor"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/margin_30"
+                    android:background="@color/c_F7F6F6"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_15"
                     android:layout_marginEnd="@dimen/margin_15"
-                    android:background="@color/c_F7F6F6"
-                    android:gravity="center"
+                    android:gravity="center">
+                <TextView
+                    android:id="@+id/tv_bgColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:onClick="onClick"
-                    android:padding="@dimen/margin_1"
-                    android:textColor="@color/c_A0A0A0"
-                    android:textSize="@dimen/textSize_16" />
-
+                    android:layout_margin="@dimen/margin_2" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -168,6 +210,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_5"
+        android:layout_marginBottom="@dimen/margin_5"
         android:orientation="horizontal">
 
         <ImageView
@@ -195,9 +238,10 @@
             android:layout_marginStart="@dimen/margin_15"
             android:layout_marginEnd="@dimen/margin_15"
             android:gravity="center"
-            android:max="150"
+            android:max="75"
             android:onClick="onClick" />
 
     </LinearLayout>
 
 </LinearLayout>
+</ScrollView>

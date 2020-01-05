@@ -38,6 +38,7 @@ import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.WidgetShapeBean;
+import com.fax.showdt.callback.WidgetEditProgressCallback;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditTextCallback;
@@ -203,7 +204,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        switchToOneFragment(EDIT_TEXT);
+        setEditBodySlideOutAnimation();
     }
 
     @Override
@@ -259,7 +260,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         if (resId == R.id.tv_text) {
             TextSticker textSticker = new TextSticker(System.currentTimeMillis());
             textSticker.setTextColor("#FFFFFF");
-            textSticker.setFontPath("fonts/minijianqi.ttf");
+            textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
             mTextEditFragment.setWidgetEditTextSticker(textSticker);
             mStickerView.addSticker(textSticker, Sticker.Position.TOP);
             switchToOneFragment(EDIT_TEXT);
@@ -359,8 +360,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SVG) {
                         switchToOneFragment(EDIT_SHAPE);
                         mShapeEditFragment.setWidgetEditShapeSticker((DrawableSticker) sticker);
-                    } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.ASSET) {
+                    } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SDCARD) {
                         switchToOneFragment(EDIT_STICKER);
+                        mStickerEditFragment.setDrawableSticker((DrawableSticker)sticker);
                     }
                 }else if(sticker instanceof  ProgressSticker){
                     mProgressEditFragment.setProgressSticker((ProgressSticker) sticker);
@@ -477,9 +479,10 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             public void onAddSticker() {
                 TextSticker textSticker = new TextSticker(System.currentTimeMillis());
                 textSticker.setTextColor("#FFFFFF");
-                textSticker.setFontPath("fonts/minijianqi.ttf");
+                textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
                 mTextEditFragment.setWidgetEditTextSticker(textSticker);
                 mStickerView.addSticker(textSticker, Sticker.Position.TOP);
+
             }
 
             @Override
@@ -526,6 +529,26 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
                 }
 
+            }
+
+            @Override
+            public void closePanel() {
+                setEditBodySlideOutAnimation();
+                mStickerView.clearCurrentSticker();
+            }
+        });
+
+        mProgressEditFragment.setWidgetEditProgressCallback(new WidgetEditProgressCallback() {
+            @Override
+            public void onAddProgressSticker() {
+                ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
+                progressSticker.resize(ViewUtils.dpToPx(150f,DiyWidgetMakeActivity.this),ViewUtils.dpToPx(10f,DiyWidgetMakeActivity.this));
+                progressSticker.setPercent(0.7f);
+                progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
+                progressSticker.setDrawType(ProgressSticker.SOLID);
+                mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
+                switchToOneFragment(EDIT_PROGRESS);
+                mProgressEditFragment.setProgressSticker(progressSticker);
             }
 
             @Override
@@ -848,6 +871,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         drawableSticker.setmPicType(DrawableSticker.SDCARD);
         drawableSticker.setDrawablePath(path);
         mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+        if(mStickerEditFragment != null){
+            mStickerEditFragment.setDrawableSticker(drawableSticker);
+        }
     }
 
     @Override

@@ -37,6 +37,7 @@
             android:background="@color/c_F7F6F6"
             android:gravity="center"
             android:onClick="onClick"
+            android:text="@string/widget_click_none"
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_16" />
     </LinearLayout>

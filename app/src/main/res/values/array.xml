@@ -14,7 +14,12 @@
         <item>W02</item>
         <item>W03</item>
         <item>W04</item>
-        <item>B00</item>
+        <item>B00</item>//手机电量进度
+        <item>B01</item>//音乐进度
+        <item>B02</item>//一个月进度
+        <item>B03</item>//一周进度
+        <item>B04</item>//一天进度
+        <item>B05</item>//一小时进度
         <item>C00</item>
         <item>C01</item>
         <item>L00</item>//歌词

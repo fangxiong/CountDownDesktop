@@ -26,19 +26,26 @@ import java.lang.annotation.RetentionPolicy;
 import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringDef;
 
 public class DrawableSticker extends Sticker {
 
+    public static final String CIRCLE = "circle";
+    public static final String ROUND = "round";
+    public static final String RECT = "rect";
+    public static final String LOVE = "love";
+    public static final String PENTAGON = "pentagon";
     private Drawable drawable;
     private Rect realBounds;
     private String drawablePath;
     private float scale;
     private Bitmap mMaskBitmap;
-    private String mSvgName;
+    private String clipType = RECT;
     private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
     private boolean mShowFrame;
     private int mFrame = ViewUtils.dpToPx(6, AppContext.get());
     private float mRatio = 1;
+    private String strokeColor="#FFFFFF";
     private String svgColor="#FFFFFF";
     public static final int ASSET = 0;
     public static final int SVG = 1;
@@ -50,6 +57,11 @@ public class DrawableSticker extends Sticker {
     @IntDef({ASSET, SVG,SDCARD})
     @Retention(RetentionPolicy.SOURCE)
     public @interface PicType {
+    }
+
+    @StringDef({CIRCLE, ROUND,RECT,LOVE,PENTAGON})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PicClip {
     }
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
@@ -108,35 +120,36 @@ public class DrawableSticker extends Sticker {
         canvas.save();
         canvas.concat(getMatrix());
         if (mMaskBitmap != null) {
-            int width = drawable.getIntrinsicWidth();
-            int height = drawable.getIntrinsicHeight();
-            Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            Canvas drawCanvas = new Canvas(newBitmap);
-            drawable.setBounds(realBounds);
-            drawable.draw(drawCanvas);
-
-            Paint paint = new Paint();
-            paint.reset();
-            paint.setXfermode(xfermode);
-            drawCanvas.drawBitmap(mMaskBitmap, 0, 0, paint);
-            paint.setXfermode(null);
-
-            if (mShowFrame) {
-                Bitmap alphaBitmap = getAlphaBitmap(mMaskBitmap);
-                Paint alphaPaint = new Paint();
-                alphaPaint.setAntiAlias(true);
-                alphaPaint.setFilterBitmap(true);
-
-                canvas.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
-                int frame = (int) (mFrame / mRatio);
-                int newWidth = width - frame;
-                int newHeight = height - frame;
-                int offSet = frame / 2;
-                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap, newWidth, newHeight, true);
-                canvas.drawBitmap(zoomBitmap, offSet, offSet, null);
-            } else {
-                canvas.drawBitmap(newBitmap, 0, 0, null);
-            }
+//            int width = drawable.getIntrinsicWidth();
+//            int height = drawable.getIntrinsicHeight();
+//            Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//            Canvas drawCanvas = new Canvas(newBitmap);
+//            drawable.setBounds(realBounds);
+//            drawable.draw(drawCanvas);
+//
+//            Paint paint = new Paint();
+//            paint.reset();
+//            paint.setXfermode(xfermode);
+//            drawCanvas.drawBitmap(mMaskBitmap, 0, 0, paint);
+//            paint.setXfermode(null);
+//
+//            if (mShowFrame) {
+//                Bitmap alphaBitmap = getAlphaBitmap(mMaskBitmap);
+//                Paint alphaPaint = new Paint();
+//                alphaPaint.setAntiAlias(true);
+//                alphaPaint.setFilterBitmap(true);
+//
+//                canvas.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
+//                int frame = (int) (mFrame / mRatio);
+//                int newWidth = width - frame;
+//                int newHeight = height - frame;
+//                int offSet = frame / 2;
+//                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap, newWidth, newHeight, true);
+//                canvas.drawBitmap(zoomBitmap, offSet, offSet, null);
+//            } else {
+//                canvas.drawBitmap(newBitmap, 0, 0, null);
+//            }
+            canvas.drawBitmap(mMaskBitmap,0,0,null);
 
         } else {
             drawable.setBounds(realBounds);
@@ -170,11 +183,37 @@ public class DrawableSticker extends Sticker {
         }
     }
 
-    public void addMaskBitmap(Context context, String svgName) {
-        this.mSvgName = svgName;
-        String svgFolderName = "svg";
-        String svgPath = svgFolderName + File.separator + mSvgName;
-        if (TextUtils.isEmpty(mSvgName)) {
+    private String getClipSvgPath(String clipType){
+        switch (clipType){
+            case CIRCLE:{
+                return "shape_circle.svg";
+            }
+            case ROUND:{
+                return "shape_round.svg";
+            }
+            case RECT:{
+                return "shape_rect.svg";
+            }
+            case LOVE:{
+                return "shape_love.svg";
+            }
+            case PENTAGON:{
+                return "shape_pentagon.svg";
+            }
+            default:
+                return "shape_rect.svg";
+        }
+    }
+    public void addMaskBitmap(Context context, String clipType) {
+        if(SDCARD != mPicType){
+            mMaskBitmap = null;
+            return;
+        }
+        Bitmap result = null;
+        setClipType(clipType);
+        String svgFolderName = "svg/clipSvg";
+        String svgPath = svgFolderName + File.separator + getClipSvgPath(clipType);
+        if (TextUtils.isEmpty(getClipSvgPath(clipType))) {
             return;
         }
         int width = drawable.getIntrinsicWidth();
@@ -192,8 +231,42 @@ public class DrawableSticker extends Sticker {
         }
         if (svg != null) {
             canvas.drawPicture(svg.getPicture(), rectF);
-            mMaskBitmap = bitmap;
+            result = bitmap;
         }
+        if(result != null){
+            int w = drawable.getIntrinsicWidth();
+            int h = drawable.getIntrinsicHeight();
+            Bitmap newBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas drawCanvas = new Canvas(newBitmap);
+            drawable.setBounds(realBounds);
+            drawable.draw(drawCanvas);
+
+            Paint paint = new Paint();
+            paint.reset();
+            paint.setXfermode(xfermode);
+            drawCanvas.drawBitmap(result, 0, 0, paint);
+            paint.setXfermode(null);
+
+            if (mShowFrame) {
+                Bitmap alphaBitmap = getAlphaBitmap(result);
+                Paint alphaPaint = new Paint();
+                alphaPaint.setAntiAlias(true);
+                alphaPaint.setFilterBitmap(true);
+                Canvas canvas1 = new Canvas(alphaBitmap);
+//                canvas1.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
+                int frame = (int) (mFrame / mRatio);
+                int newWidth = width - frame;
+                int newHeight = height - frame;
+                int offSet = frame / 2;
+                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap, newWidth, newHeight, true);
+                canvas1.drawBitmap(zoomBitmap, offSet, offSet, null);
+                mMaskBitmap = alphaBitmap;
+            } else {
+                mMaskBitmap = newBitmap;
+            }
+
+        }
+
     }
 
     public Bitmap getAlphaBitmap(Bitmap bitmap) {
@@ -209,7 +282,7 @@ public class DrawableSticker extends Sticker {
 
         Paint mPaint = new Paint();
 
-        mPaint.setColor(Color.WHITE);
+        mPaint.setColor(Color.parseColor(strokeColor));
 
         Bitmap alphaBitmap = bitmap.extractAlpha();
 
@@ -226,8 +299,28 @@ public class DrawableSticker extends Sticker {
         return mShowFrame;
     }
 
-    public String getSvgName() {
-        return mSvgName == null ? "" : mSvgName;
+    public void setSvgColor(String svgColor) {
+        this.svgColor = svgColor;
+    }
+
+    public String getSvgColor() {
+        return svgColor;
+    }
+
+    public void setClipType(String clipType) {
+        this.clipType = clipType;
+    }
+
+    public String getClipType() {
+        return clipType;
+    }
+
+    public String getStrokeColor() {
+        return strokeColor;
+    }
+
+    public void setStrokeColor(String strokeColor) {
+        this.strokeColor = strokeColor;
     }
 
     public int getmPicType() {
@@ -238,11 +331,5 @@ public class DrawableSticker extends Sticker {
         this.mPicType = mPicType;
     }
 
-    public String getSvgColor() {
-        return svgColor;
-    }
 
-    public void setSvgColor(String svgColor) {
-        this.svgColor = svgColor;
-    }
 }

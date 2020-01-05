@@ -1,7 +1,9 @@
 package com.fax.showdt.fragment.widgetProgressEdit;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
 import com.fax.showdt.dialog.ios.v3.CustomDialog;
+import com.fax.showdt.manager.widget.WidgetProgress;
 import com.fax.showdt.manager.widget.WidgetProgressMode;
 import com.fax.showdt.manager.widget.WidgetProgressStyle;
 import com.fax.showdt.utils.CommonUtils;
@@ -26,27 +29,29 @@ import androidx.fragment.app.Fragment;
 
 public class WidgetProgressPropertiesEditFragment extends Fragment implements View.OnClickListener {
 
-    private TextView mTvStyle, mTvMode, mTvForeColor, mTvBgColor;
-    private CustomDialog progressStyleDialog, progressModeDialog;
+    private TextView mTvProgress, mTvStyle, mTvMode, mTvForeColor, mTvBgColor;
+    private CustomDialog progressdialog, progressStyleDialog, progressModeDialog;
     private SeekBar seekBar;
     private ProgressSticker progressSticker;
-    private boolean isInitSuced = false;
+    private boolean isInitSuccessed = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.widget_progress_properties_edit_fragment, container, false);
+        mTvProgress = view.findViewById(R.id.tv_progress);
         mTvStyle = view.findViewById(R.id.tv_progress_type);
         mTvMode = view.findViewById(R.id.tv_progress_style);
         mTvForeColor = view.findViewById(R.id.tv_foreColor);
         mTvBgColor = view.findViewById(R.id.tv_bgColor);
         seekBar = view.findViewById(R.id.seekbar);
+        mTvProgress.setOnClickListener(this);
         mTvStyle.setOnClickListener(this);
         mTvMode.setOnClickListener(this);
         mTvForeColor.setOnClickListener(this);
         mTvBgColor.setOnClickListener(this);
         initSeekBar();
-        isInitSuced = true;
+        isInitSuccessed = true;
         initActionUI();
         return view;
     }
@@ -54,7 +59,9 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
 
     @Override
     public void onClick(View v) {
-        if (v == mTvStyle) {
+        if (v == mTvProgress) {
+            showProgressDialog();
+        } else if (v == mTvStyle) {
             showProgressStyleDialog();
         } else if (v == mTvMode) {
             showProgressModeDialog();
@@ -70,14 +77,14 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
             if (progressSticker != null) {
                 progressSticker.setProgressType(WidgetProgressStyle.HORIZONTAL);
                 progressStyleDialog.doDismiss();
-                progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()),progressSticker.getProgressHeight());
+                progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), progressSticker.getProgressHeight());
                 initActionUI();
             }
         } else if (v.getId() == R.id.tv_circle) {
             if (progressSticker != null) {
                 progressSticker.setProgressType(WidgetProgressStyle.CIRCLE);
                 progressStyleDialog.doDismiss();
-                progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()),ViewUtils.dpToPx(150,AppContext.get()));
+                progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), ViewUtils.dpToPx(150, AppContext.get()));
                 initActionUI();
             }
         } else if (v.getId() == R.id.tv_solid) {
@@ -92,6 +99,42 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                 progressModeDialog.doDismiss();
                 initActionUI();
             }
+        } else if (v.getId() == R.id.tv_battery) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.BATTERY);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
+        } else if (v.getId() == R.id.tv_music) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.MUSIC);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
+        } else if (v.getId() == R.id.tv_month) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.MONTH);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
+        } else if (v.getId() == R.id.tv_week) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.WEEK);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
+        } else if (v.getId() == R.id.tv_day) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.DAY);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
+        } else if (v.getId() == R.id.tv_hour) {
+            if (progressSticker != null) {
+                progressSticker.setProgress(WidgetProgress.HOUR);
+                progressdialog.doDismiss();
+                initActionUI();
+            }
         }
     }
 
@@ -100,7 +143,15 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (progressSticker != null) {
-                    progressSticker.setProgressHeight(ViewUtils.dpToPx(progress, getActivity()));
+                    if(progressSticker.getProgressType() .equals(WidgetProgressStyle.HORIZONTAL)) {
+                        progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), progressSticker.getProgressHeight());
+                        progressSticker.setProgressHeight(ViewUtils.dpToPx(progress, getActivity()));
+                    }else {
+                        progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), ViewUtils.dpToPx(150, AppContext.get()));
+                        progressSticker.setProgressHeight(ViewUtils.dpToPx(progress, getActivity()));
+                    }
+                    Log.i("test_seek:","dp:"+progress+"");
+                    Log.i("test_seek:","px"+ViewUtils.dpToPx(progress, getActivity())+"");
                 }
             }
 
@@ -114,6 +165,33 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
 
             }
         });
+    }
+
+    private void showProgressDialog() {
+        progressdialog = CustomDialog.build(((AppCompatActivity) getActivity()), R.layout.widget_progress_select_dialog, new CustomDialog.OnBindView() {
+            @Override
+            public void onBind(CustomDialog dialog, View v) {
+                TextView tvBattery = v.findViewById(R.id.tv_battery);
+                TextView tvMusic = v.findViewById(R.id.tv_music);
+                TextView tvMonth = v.findViewById(R.id.tv_month);
+                TextView tvWeek = v.findViewById(R.id.tv_week);
+                TextView tvDay = v.findViewById(R.id.tv_day);
+                TextView tvHour = v.findViewById(R.id.tv_hour);
+                tvBattery.setText(getResources().getString(R.string.widget_progress_battery));
+                tvMusic.setText(getResources().getString(R.string.widget_progress_music));
+                tvMonth.setText(getResources().getString(R.string.widget_progress_month));
+                tvWeek.setText(getResources().getString(R.string.widget_progress_week));
+                tvDay.setText(getResources().getString(R.string.widget_progress_day));
+                tvHour.setText(getResources().getString(R.string.widget_progress_hour));
+                tvBattery.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+                tvMusic.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+                tvMonth.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+                tvWeek.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+                tvDay.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+                tvHour.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
+            }
+        });
+        progressdialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
     }
 
     private void showProgressStyleDialog() {
@@ -164,12 +242,12 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                     if (progressSticker != null) {
                         progressSticker.setForeColor(hexCode);
                     }
-                    mTvForeColor.setBackgroundColor(color);
+                    mTvForeColor.setBackground(new ColorDrawable(color));
                 } else {
                     if (progressSticker != null) {
                         progressSticker.setBgColor(hexCode);
                     }
-                    mTvBgColor.setBackgroundColor(color);
+                    mTvBgColor.setBackground(new ColorDrawable(color));
                 }
             }
 
@@ -187,12 +265,40 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
     }
 
     public void initActionUI() {
-        if (progressSticker != null && isInitSuced) {
+        if (progressSticker != null && isInitSuccessed) {
+            switch (progressSticker.getProgress()) {
+                case WidgetProgress.BATTERY: {
+                    mTvProgress.setText("手机电量");
+                    break;
+                }
+                case WidgetProgress.MUSIC: {
+                    mTvProgress.setText("音乐时长");
+                    break;
+                }
+                case WidgetProgress.MONTH: {
+                    mTvProgress.setText("一个月");
+                    break;
+                }
+                case WidgetProgress.WEEK: {
+                    mTvProgress.setText("一周");
+                    break;
+                }
+                case WidgetProgress.DAY: {
+                    mTvProgress.setText("一天");
+                    break;
+                }
+                case WidgetProgress.HOUR: {
+                    mTvProgress.setText("一小时");
+                    break;
+                }
+            }
             mTvStyle.setText(progressSticker.getProgressType().equals(WidgetProgressStyle.HORIZONTAL) ? "线性" : "圆形");
             mTvMode.setText(progressSticker.getDrawType().equals(WidgetProgressMode.SOLID) ? "平滑" : "分割");
             mTvForeColor.setBackgroundColor(Color.parseColor(progressSticker.getForeColor()));
             mTvBgColor.setBackgroundColor(Color.parseColor(progressSticker.getBgColor()));
             seekBar.setProgress(ViewUtils.pxToDp(progressSticker.getProgressHeight(), getActivity()));
+            Log.i("test_seek2:","dp:"+ViewUtils.pxToDp(progressSticker.getProgressHeight(), getActivity())+"");
+            Log.i("test_seek2:","px"+progressSticker.getProgressHeight()+"");
         }
 
     }

@@ -14,10 +14,8 @@ public class ProgressPlugBean extends BasePlugBean {
     private String drawType;
     @ProgressSticker.ProgressType
     private String progressType;
-
-    public float getPercent() {
-        return percent;
-    }
+    @ProgressSticker.Progress
+    private String progress;
 
     public void setPercent(float percent) {
         this.percent = percent;
@@ -61,6 +59,14 @@ public class ProgressPlugBean extends BasePlugBean {
 
     public void setProgressType(String progressType) {
         this.progressType = progressType;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+
+    public String getProgress() {
+        return progress;
     }
 
     public int getProgressId() {

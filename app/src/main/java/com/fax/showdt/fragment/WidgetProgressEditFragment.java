@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
+import com.fax.showdt.callback.WidgetEditProgressCallback;
 import com.fax.showdt.fragment.widgetProgressEdit.WidgetProgressPropertiesEditFragment;
 import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
 import com.fax.showdt.utils.ViewUtils;
@@ -20,9 +21,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetProgressEditFragment extends Fragment implements View.OnClickListener{
 
-    private ImageView mIvLocal,mIvAdd;
+    private ImageView mIvLocal,mIvAdd,mIvConsume;
     private ProgressSticker progressSticker;
-
+    private WidgetEditProgressCallback widgetEditProgressCallback;
     private WidgetProgressPropertiesEditFragment editFragment;
 
     public WidgetProgressEditFragment(){}
@@ -33,8 +34,10 @@ public class WidgetProgressEditFragment extends Fragment implements View.OnClick
         View view = inflater.inflate(R.layout.widget_progress_edit_fragment,container,false);
         mIvLocal = view.findViewById(R.id.iv_local);
         mIvAdd = view.findViewById(R.id.iv_add);
+        mIvConsume = view.findViewById(R.id.iv_consume);
         mIvLocal.setOnClickListener(this);
         mIvAdd.setOnClickListener(this);
+        mIvConsume.setOnClickListener(this);
         initFragment();
         return view;
     }
@@ -55,17 +58,21 @@ public class WidgetProgressEditFragment extends Fragment implements View.OnClick
         }
     }
 
+    public void setWidgetEditProgressCallback(WidgetEditProgressCallback widgetEditProgressCallback) {
+        this.widgetEditProgressCallback = widgetEditProgressCallback;
+    }
+
     @Override
     public void onClick(View view) {
         if(view == mIvAdd){
-//            ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
-//            progressSticker.resize(ViewUtils.dpToPx(200f,getActivity()),ViewUtils.dpToPx(200f,getActivity()));
-//            progressSticker.setPercent(0.7f);
-//            progressSticker.setProgressType(ProgressSticker.CIRCLE);
-//            progressSticker.setDrawType(ProgressSticker.DEGREE);
-//            mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
-//            switchToOneFragment(EDIT_PROGRESS);
-//            mProgressEditFragment.setProgressSticker(progressSticker);
+            if(widgetEditProgressCallback != null){
+                widgetEditProgressCallback.onAddProgressSticker();
+            }
+        }else if(view == mIvConsume){
+            if(widgetEditProgressCallback != null){
+                widgetEditProgressCallback.closePanel();
+            }
         }
+
     }
 }

@@ -1,5 +1,9 @@
 [
   {
+    "fontPath": "fonts/xindixiaowanzi.ttf",
+    "fontIcon": "fontIcon/xiaowanzi.png"
+  },
+  {
     "fontPath": "fonts/minijianqi.ttf",
     "fontIcon": "fontIcon/minijianqi.png"
   },
@@ -26,9 +30,5 @@
   {
     "fontPath": "fonts/wawatijian.ttf",
     "fontIcon": "fontIcon/huakangwawati.png"
-  },
-  {
-    "fontPath": "fonts/xindixiaowanzi.ttf",
-    "fontIcon": "fontIcon/xiaowanzi.png"
   }
 ]

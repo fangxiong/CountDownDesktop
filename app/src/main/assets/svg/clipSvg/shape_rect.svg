@@ -1,0 +1,14 @@
+<svg id="图层_1" data-name="图层 1"
+    width="58px"
+    height="58px"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 58 58">
+    <!--<defs>-->
+        <!--<style>.cls-1{fill:none;stroke:#0a0a0a;stroke-miterlimit:10;stroke-width:2px;}</style>-->
+    <!--</defs>-->
+    <title>矩形</title>
+    <path
+        class="cls-1"
+        d="M58.64,58h-56v-56h56Z"
+        transform="translate(-1.64 -0.83)"/>
+</svg>

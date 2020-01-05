@@ -1,21 +1,16 @@
 package com.fax.showdt.view.sticker;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.text.StaticLayout;
-import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
 import com.fax.showdt.bean.ProgressPlugBean;
-import com.fax.showdt.utils.TimeUtils;
+import com.fax.showdt.manager.widget.WidgetProgressPercentHandler;
 import com.fax.showdt.utils.ViewUtils;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 import androidx.core.content.ContextCompat;
@@ -33,6 +28,16 @@ public class ProgressSticker extends Sticker {
     public static final String SOLID = "solid";
     //刻度进度条
     public static final String DEGREE = "degree";
+
+    public static final String BATTERY = "battery";
+    public static final String MUSIC = "music";
+    public static final String MONTH = "month";
+    public static final String WEEK = "week";
+    public static final String DAY = "day";
+    public static final String HOUR = "hour";
+
+
+
     private Drawable mDrawable;
 
     private float percent = 0.5f;
@@ -42,6 +47,8 @@ public class ProgressSticker extends Sticker {
     private String drawType = SOLID;
     @ProgressType
     private String progressType = HORIZONTAL;
+    @Progress
+    private String progress = BATTERY;
     private int width = ViewUtils.dpToPx(150, AppContext.get());
     private int height = ViewUtils.dpToPx(10, AppContext.get());
     private int progressHeight = ViewUtils.dpToPx(10, AppContext.get());
@@ -57,6 +64,10 @@ public class ProgressSticker extends Sticker {
     public @interface ProgressDrawType {
     }
 
+    @StringDef({BATTERY, MUSIC,MONTH,WEEK,DAY,HOUR})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Progress {
+    }
     public ProgressSticker(long id) {
         super(id);
 
@@ -73,6 +84,8 @@ public class ProgressSticker extends Sticker {
         canvas.save();
         canvas.concat(getMatrix());
         ProgressStickerDrawHelper.Builder builder = new ProgressStickerDrawHelper.Builder();
+        setPercent(WidgetProgressPercentHandler.getProgressPercent(progress));
+        Log.i("test_percent:",getPercent()+"");
         builder.setWidth(width).setHeight(height).setProgressHeight(progressHeight).setDrawType(drawType).setProgressType(progressType).setPercent(percent).setProgressBgColor(bgColor).setProgressForeColor(foreColor).build();
         ProgressStickerDrawHelper.drawProgressBar(builder, canvas);
         canvas.restore();
@@ -160,6 +173,14 @@ public class ProgressSticker extends Sticker {
         this.progressType = progressType;
     }
 
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
     public void resize(int width, int height) {
         if (width < ViewUtils.dpToPx(10, AppContext.get())) {
             this.width = ViewUtils.dpToPx(10, AppContext.get());
@@ -176,7 +197,7 @@ public class ProgressSticker extends Sticker {
         setForeColor(bean.getForeColor());
         setDrawType(bean.getDrawType());
         setProgressType(bean.getProgressType());
-        setPercent(bean.getPercent());
+        setProgress(bean.getProgress());
     }
 
 

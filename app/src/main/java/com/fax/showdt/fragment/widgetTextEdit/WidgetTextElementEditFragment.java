@@ -49,7 +49,7 @@ public class WidgetTextElementEditFragment extends Fragment {
     private CommonAdapter<String> mListAdapter;
     private List<CustomPlugTextBean> mAllTextPlugs, mCurrentTextPlugs;
     private RecyclerView mPlugContentRv,mPlugListRv;
-    private String[] titles = new String[]{"倒计时", "音乐","时间日期","天气信息","电量"};
+    private String[] titles = new String[]{"倒计时", "音乐","时间日期","天气信息","进度"};
     private int mCurrentSelectedPos = 0;
     private WidgetEditTextElementSelectedCallback mWidgetEditTextElementSelectedCallback;
 

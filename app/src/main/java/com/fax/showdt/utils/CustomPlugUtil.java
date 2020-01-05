@@ -21,7 +21,9 @@ import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
+import com.fax.showdt.manager.widget.WidgetProgressPercentHandler;
 import com.fax.showdt.service.WidgetUpdateService;
+import com.fax.showdt.view.sticker.ProgressStickerDrawHelper;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -510,18 +512,38 @@ public class CustomPlugUtil {
      * @return
      */
     public static String getBatteryPlugText(String batteryId) {
-        String batteryStr = "";
+        String progress = "";
         int battery = getBatteryLevel();
         switch (batteryId) {
             case "B00": {
-                batteryStr = String.valueOf(battery);
+                progress = String.valueOf(battery);
+                break;
+            }
+            case "B01":{
+                progress = String.valueOf((int)(WidgetProgressPercentHandler.getMusicDurationPercent()*100));
+                break;
+            }
+            case "B02":{
+                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentMonthPercent()*100));
+                break;
+            }
+            case "B03":{
+                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentWeekPercent()*100));
+                break;
+            }
+            case "B04":{
+                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentDayPercent()*100));
+                break;
+            }
+            case "B05":{
+                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentHourPercent()*100));
                 break;
             }
             default: {
                 break;
             }
         }
-        return batteryStr;
+        return progress;
     }
 
     /**
