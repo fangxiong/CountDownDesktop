@@ -54,8 +54,10 @@ public class WidgetProgressPercentHandler {
      * @return
      */
     public static float getMusicDurationPercent() {
-        long totalDuration = CustomPlugUtil.duration;
-        long currentDuration = CustomPlugUtil.currentDuration;
+        long totalDuration = CustomPlugUtil.getDuration();
+        long currentDuration = CustomPlugUtil.getCurrentDuration();
+        Log.i("test_duration_current:",currentDuration+"");
+        Log.i("test_duration_end:",totalDuration+"");
         if (totalDuration == 0) {
             return 0;
         } else {
@@ -84,6 +86,9 @@ public class WidgetProgressPercentHandler {
     public static float getCurrentWeekPercent() {
         long start = TimeUtils.getTimesWeekmorning().getTime();
         long end = TimeUtils.getTimesWeeknight().getTime();
+        Log.i("test_time_start;",start+"");
+        Log.i("test_time_end;",end+"");
+        Log.i("test_time_current;",TimeUtils.getCurrentTimeStamp()+"");
         return (TimeUtils.getCurrentTimeStamp()*1000-start)*1.0f / (end -start);
     }
 
@@ -95,6 +100,9 @@ public class WidgetProgressPercentHandler {
     public static float getCurrentDayPercent() {
         long start = TimeUtils.getTimesmorning().getTime();
         long end = TimeUtils.getTimesnight().getTime();
+        Log.i("test_time_start;",start+"");
+        Log.i("test_time_end;",end+"");
+        Log.i("test_time_current;",TimeUtils.getCurrentTimeStamp()+"");
         return (TimeUtils.getCurrentTimeStamp()*1000-start)*1.0f / (end -start);
     }
 

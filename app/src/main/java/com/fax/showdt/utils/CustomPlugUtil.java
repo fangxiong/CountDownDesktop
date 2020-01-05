@@ -184,23 +184,23 @@ public class CustomPlugUtil {
         return result;
     }
 
-    public static String getDuration(){
+    public static long getDuration(){
         long result = 0L;
         if (duration == 0L) {
             result = KLWPSongUpdateManager.duration;
         } else {
             result = duration;
         }
-        return TimeUtils.timeParse(result);
+        return result;
     }
-    public static String getCurrentDuration(){
+    public static long getCurrentDuration(){
         long result = 0L;
         if (currentDuration == 0L) {
             result = KLWPSongUpdateManager.currentDuration;
         } else {
             result = currentDuration;
         }
-        return TimeUtils.timeParse(result);
+        return result;
     }
 
     /**
@@ -572,11 +572,11 @@ public class CustomPlugUtil {
                 break;
             }
             case "L04": {
-                result = getDuration();
+                result = TimeUtils.timeParse(getDuration());
                 break;
             }
             case "L05":{
-                result = getCurrentDuration();
+                result = TimeUtils.timeParse(getCurrentDuration());
                 break;
             }
         }

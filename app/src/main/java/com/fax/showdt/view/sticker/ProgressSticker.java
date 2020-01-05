@@ -93,7 +93,7 @@ public class ProgressSticker extends Sticker {
 
     @Override
     public int getWidth() {
-        return width;
+        return width ;
     }
 
     @Override
