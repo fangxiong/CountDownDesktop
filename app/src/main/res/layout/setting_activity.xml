@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/c_222222"
+    android:background="@color/c_121212"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"

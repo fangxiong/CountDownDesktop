@@ -185,7 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected  @ColorRes
     int initStatusBarColor() {
-        return R.color.c_222222;
+        return R.color.c_121212;
     }
 
     /**

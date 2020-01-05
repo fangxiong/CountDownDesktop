@@ -356,6 +356,7 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setmPicType(bean.getmPicType());
             drawableSticker.setStrokeColor(bean.getStrokeColor());
             drawableSticker.setSvgColor(bean.getSvgColor());
+            drawableSticker.setmPicType(bean.getmPicType());
             drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
             float adaptRatio = getWidthRatio(baseOnWidth);
             drawableSticker.setScale(bean.getScale() * adaptRatio);
@@ -479,6 +480,7 @@ public class CustomWidgetConfigConvertHelper {
         drawableSticker.setSvgColor(bean.getSvgColor());
         drawableSticker.setStrokeColor(bean.getStrokeColor());
         drawableSticker.setClipType(bean.getClipType());
+        drawableSticker.setmPicType(bean.getmPicType());
         drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
         float adaptRatio = getWidthRatio(baseOnWidth);
         drawableSticker.setScale(bean.getScale() * adaptRatio);

@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/c_222222">
+    android:background="@color/c_121212">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:id="@+id/titleView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_50"
-            android:background="#222222"
+            android:background="@color/c_121212"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -58,7 +58,7 @@
             android:id="@+id/tablayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_50"
-            android:background="@color/c_222222"
+            android:background="@color/c_121212"
             app:layout_constraintTop_toBottomOf="@id/titleView"
             app:tabSelectedTextColor="@color/white"
             app:tabIndicatorHeight="@dimen/margin_3"
@@ -68,7 +68,7 @@
             android:id="@+id/vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/c_222222"
+            android:background="@color/c_121212"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tablayout">
 
@@ -80,9 +80,11 @@
         android:layout_width="@dimen/margin_220"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@drawable/navigation_bg"
+        android:background="@drawable/home_navigation_sliding_bg"
+        android:alpha="150"
         app:itemTextColor="@color/white"
         app:headerLayout="@layout/main_activity_drawer_header"
-        app:menu="@menu/navigation_drawer_content" />
+        app:menu="@menu/navigation_drawer_content" >
 
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

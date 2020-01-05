@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonViewPagerAdapter;
@@ -21,12 +20,10 @@ import com.fax.showdt.permission.Permission;
 import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
 import com.fax.showdt.utils.CommonUtils;
-import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
-import com.meituan.android.walle.WalleChannelReader;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,7 +35,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import es.dmoral.toasty.Toasty;
 
 import static com.fax.showdt.utils.CommonUtils.START_QQ_TYPE_GROUP_PROFILE;
 
@@ -116,12 +112,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
-
     }
 
     @Override
     protected int initStatusBarColor() {
-        return R.color.c_222222;
+        return R.color.c_121212;
     }
 
     @Override
