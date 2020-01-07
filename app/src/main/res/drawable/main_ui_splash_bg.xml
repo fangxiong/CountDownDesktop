@@ -5,8 +5,8 @@
 
     <item>
         <bitmap
-            android:src="@drawable/log"
-            android:gravity="center">
+            android:src="@drawable/splash_bottom_app_logo"
+            android:gravity="bottom">
         </bitmap>
     </item>
 </layer-list>
