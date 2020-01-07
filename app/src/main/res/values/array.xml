@@ -34,17 +34,31 @@
     </string-array>
 
     <string-array name="widget_edit_bg">
-        <item>widgetBg/template00.png</item>
-        <item>widgetBg/template01.png</item>
-        <item>widgetBg/template02.png</item>
-        <item>widgetBg/template03.png</item>
-        <item>widgetBg/template04.png</item>
-        <item>widgetBg/template05.png</item>
-        <item>widgetBg/template06.png</item>
-        <item>widgetBg/template07.png</item>
-        <item>widgetBg/template08.png</item>
-        <item>widgetBg/template09.png</item>
-        <item>widgetBg/template10.png</item>
+        <item>widgetBg/template00.jpg</item>
+        <item>widgetBg/template01.jpg</item>
+        <item>widgetBg/template02.jpg</item>
+        <item>widgetBg/template03.jpg</item>
+        <item>widgetBg/template04.jpg</item>
+        <item>widgetBg/template05.jpg</item>
+        <item>widgetBg/template06.jpg</item>
+        <item>widgetBg/template07.jpg</item>
+        <item>widgetBg/template08.jpg</item>
+        <item>widgetBg/template09.jpg</item>
+        <item>widgetBg/template10.jpg</item>
+        <item>widgetBg/template11.jpg</item>
+        <item>widgetBg/template12.jpg</item>
+        <item>widgetBg/template13.jpg</item>
+        <item>widgetBg/template14.jpg</item>
+        <item>widgetBg/template15.jpg</item>
+        <item>widgetBg/template16.jpg</item>
+        <item>widgetBg/template17.jpg</item>
+        <item>widgetBg/template18.jpg</item>
+        <item>widgetBg/template19.jpg</item>
+        <item>widgetBg/template20.jpg</item>
+        <item>widgetBg/template21.jpg</item>
+        <item>widgetBg/template22.jpg</item>
+        <item>widgetBg/template23.jpg</item>
+        <item>widgetBg/template24.jpg</item>
     </string-array>
 
 </resources>
