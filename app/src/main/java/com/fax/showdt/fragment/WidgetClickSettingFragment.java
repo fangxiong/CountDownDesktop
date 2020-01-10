@@ -117,30 +117,46 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
         } else if (v.getId() == R.id.tv_none) {
             mTvClickAction.setText(actions[0]);
             llClickContent.setVisibility(View.GONE);
+            mTvClickTypeContent.setText("");
             clickActionDialog.doDismiss();
             if (editClickCallback != null) {
                 editClickCallback.onActionType(WidgetClickType.CLICK_NONE);
             }
         } else if (v.getId() == R.id.tv_application) {
+            if(actions[1].equals(mTvClickAction.getText().toString())){
+                clickActionDialog.doDismiss();
+                return;
+            }
             mTvClickAction.setText(actions[1]);
             mTvClickTypeTitle.setText(actionTypes[0]);
             clickActionDialog.doDismiss();
+            mTvClickTypeContent.setText("");
             llClickContent.setVisibility(View.VISIBLE);
             if (editClickCallback != null) {
                 editClickCallback.onActionType(WidgetClickType.CLICK_APPLICATION);
             }
         } else if (v.getId() == R.id.tv_music_controller) {
+            if(actions[2].equals(mTvClickAction.getText().toString())){
+                clickActionDialog.doDismiss();
+                return;
+            }
             mTvClickAction.setText(actions[2]);
             mTvClickTypeTitle.setText(actionTypes[1]);
             clickActionDialog.doDismiss();
+            mTvClickTypeContent.setText("");
             llClickContent.setVisibility(View.VISIBLE);
             if (editClickCallback != null) {
                 editClickCallback.onActionType(WidgetClickType.CLICK_MUSIC);
             }
         } else if (v.getId() == R.id.tv_open_url) {
+            if(actions[3].equals(mTvClickAction.getText().toString())){
+                clickActionDialog.doDismiss();
+                return;
+            }
             mTvClickAction.setText(actions[3]);
             mTvClickTypeTitle.setText(actionTypes[2]);
             clickActionDialog.doDismiss();
+            mTvClickTypeContent.setText("");
             llClickContent.setVisibility(View.VISIBLE);
             if (editClickCallback != null) {
                 editClickCallback.onActionType(WidgetClickType.CLICK_URL);

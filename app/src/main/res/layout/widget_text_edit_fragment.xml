@@ -42,7 +42,7 @@
             android:src="@drawable/widget_text_edit_font_btn"/>
 
         <ImageView
-            android:id="@+id/iv_color"
+            android:id="@+id/iv_properties"
             android:layout_toEndOf="@id/iv_font"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_width="@dimen/margin_35"
@@ -50,12 +50,12 @@
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
             android:background="@drawable/widget_text_edit_tab_selected_bg"
-            android:src="@drawable/widget_text_edit_color_btn"/>
+            android:src="@drawable/widget_properties_btn"/>
 
 
         <ImageView
             android:id="@+id/iv_touch"
-            android:layout_toEndOf="@id/iv_color"
+            android:layout_toEndOf="@id/iv_properties"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"

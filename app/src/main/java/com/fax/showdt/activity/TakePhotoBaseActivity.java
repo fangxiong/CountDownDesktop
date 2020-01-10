@@ -39,8 +39,8 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final String COMPRESS_DIR = "compress";
     private static final String CROP_IMG_DIR = "crop";
-    private float ratioX = 1;
-    private float ratioY = 1;
+    private static final float ratioX = 1.0f;
+    private static final float ratioY = 1.0f;
 
 
     @Override
@@ -111,9 +111,9 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
             mUCropOption = new UCrop.Options();
             mUCropOption.setHideBottomControls(true);
             mUCropOption.setAllowedGestures(UCropActivity.SCALE, UCropActivity.NONE, UCropActivity.ALL);
-            mUCropOption.setStatusBarColor(getResources().getColor(R.color.c_121212));
-            mUCropOption.setToolbarColor(getResources().getColor(R.color.c_121212));
-            mUCropOption.setCircleDimmedLayer(true);
+            mUCropOption.setStatusBarColor(getResources().getColor(R.color.c_1C1C1D));
+            mUCropOption.setToolbarColor(getResources().getColor(R.color.c_1C1C1D));
+//            mUCropOption.setCircleDimmedLayer(true);
             mUCropOption.setShowCropFrame(false);
             mUCropOption.setShowCropGrid(false);
         }

@@ -21,6 +21,7 @@ import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.ViewUtils;
+import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
@@ -41,6 +42,7 @@ import static com.fax.showdt.utils.CommonUtils.START_QQ_TYPE_GROUP_PROFILE;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private TabLayout mTabLayout;
+    private AlphaTabsIndicator alphaTabsIndicator;
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private DrawerLayout drawerLayout;
@@ -57,17 +59,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mImmersionBar.statusBarColor(initStatusBarColor());
         mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
         mImmersionBar.statusBarDarkFont(false).init();
-        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
+//        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
         fragments.add(new SelectionWidgetFragment());
         fragments.add(new MyWidgetFragment());
         pagerAdapter = new CommonViewPagerAdapter(getSupportFragmentManager(), fragments);
-        mTabLayout.setupWithViewPager(viewPager, false);
+//        mTabLayout.setupWithViewPager(viewPager, false);
         viewPager.setAdapter(pagerAdapter);
-        for (int i = 0; i < titles.length; i++) {
-            mTabLayout.getTabAt(i).setText(titles[i]);
-        }
+        alphaTabsIndicator.setViewPager(viewPager);
+//        for (int i = 0; i < titles.length; i++) {
+//            mTabLayout.getTabAt(i).setText(titles[i]);
+//        }
         initDrawerLayout();
         initNavigationView();
+        initBlurView();
     }
 
     @Override
@@ -75,9 +79,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.initView();
         drawerLayout = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.navigation_view);
-        mTabLayout = findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.vp);
+        alphaTabsIndicator = findViewById(R.id.alphaIndicator);
 
+
+    }
+
+    private void initBlurView(){
+//        BlurView blurView = new BlurView(this, null);
+//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+////        blurView.setOverlayColor(Color.argb(blurAlpha, 255, 255, 255));
+//        blurView.setBlurRadius(0);
+//        navigationView.addView(blurView, 0, params);
     }
 
     private void initDrawerLayout() {
@@ -116,7 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected int initStatusBarColor() {
-        return R.color.c_121212;
+        return R.color.c_1C1C1D;
     }
 
     @Override

@@ -5,8 +5,8 @@ apply from: "reinforce.gradle"
 
 def cfg = rootProject.ext.android
 android {
-    compileSdkVersion cfg.compileSdkVersion
     defaultConfig {
+        compileSdkVersion cfg.compileSdkVersion
         minSdkVersion cfg.minSdkVersion
         targetSdkVersion cfg.targetSdkVersion
         versionCode cfg.versionCode

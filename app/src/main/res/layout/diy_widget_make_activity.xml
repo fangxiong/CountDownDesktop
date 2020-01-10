@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/c_121212">
+    android:background="@color/c_1C1C1D">
 
     <RelativeLayout
         android:id="@+id/titleView"
@@ -119,7 +120,7 @@
             android:drawableTop="@drawable/diy_widget_make_shape_icon"
             android:gravity="center"
             android:onClick="onClick"
-            android:text="形状"
+            android:text="矢量图"
             android:textColor="@color/c_7C7C7C"
             android:textSize="@dimen/textSize_14" />
 

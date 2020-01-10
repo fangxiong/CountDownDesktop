@@ -1,9 +1,11 @@
 <resources
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
-    <string name="app_name">桌面秀</string>
+    <string name="app_name">魔秀插件</string>
     <string name="process_name">com.fax.showdt.service</string>
 
+    <string name="tab_recommend">推荐</string>
+    <string name="tab_mine">我的</string>
     <string name="close">关闭</string>
     <string name="cpv_default_title">挑选颜色</string>
     <string name="cpv_presets">内置颜色</string>
@@ -33,8 +35,8 @@
     <string name="setting_lock_switch">锁屏</string>
     <string name="setting_market_scoring">给秀桌面打分</string>
 
-    <string name="countdown4_4">秀桌面4x4</string>
-    <string name="countdown1_1">秀桌面1x1</string>
+    <string name="countdown4_4">魔秀插件4x4</string>
+    <string name="countdown1_1">魔秀插件4x4</string>
     <string name="countdownContent_default_desktop">点击设置倒计时\n长按可调节宽高</string>
     <string name="widget_select">选择插件</string>
 
@@ -70,6 +72,11 @@
     <string name="widget_clip_love">心形</string>
     <string name="widget_clip_rect">正方形</string>
     <string name="widget_clip_pentagon">五边形</string>
+    <string name="widget_text_color">颜色</string>
+    <string name="widget_text_letter_spacing">字间距</string>
+    <string name="widget_text_line_spacing">行间距</string>
+
+    <string name="widget_edit_select_bg_title">选择背景板</string>
 
 
 

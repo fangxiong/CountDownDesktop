@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 import es.dmoral.toasty.Toasty;
 
 public class WidgetStickerPropertiesEditFragment extends Fragment implements View.OnClickListener {
-    private TextView mTvClipeShape, mTvStrokeColor;
+    private TextView mTvClipShape, mTvStrokeColor;
     private SwitchButton switchButton;
     private CustomDialog mClipShapeDialog;
     private DrawableSticker drawableSticker;
@@ -38,14 +38,15 @@ public class WidgetStickerPropertiesEditFragment extends Fragment implements Vie
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.widget_sticker_properties_edit_fragment, container, false);
-        mTvClipeShape = view.findViewById(R.id.tv_clip_shape);
+        mTvClipShape = view.findViewById(R.id.tv_clip_shape);
         mTvStrokeColor = view.findViewById(R.id.tv_stroke_color);
         switchButton = view.findViewById(R.id.switch_btn);
-        mTvClipeShape.setOnClickListener(this);
+        mTvClipShape.setOnClickListener(this);
         mTvStrokeColor.setOnClickListener(this);
         switchButton.setOnClickListener(this);
         initSwitchBtn();
         isInitSuccessed = true;
+        initActionUI();
         return view;
     }
 
@@ -55,7 +56,7 @@ public class WidgetStickerPropertiesEditFragment extends Fragment implements Vie
             ToastShowUtils.showCommonToast(getActivity(), "请先从相册选择图片", Toasty.LENGTH_SHORT);
             return;
         }
-        if (v == mTvClipeShape) {
+        if (v == mTvClipShape) {
             showClipShapeDialog();
         } else if (v == mTvStrokeColor) {
             showColorPickDialog(drawableSticker.getStrokeColor());
@@ -146,23 +147,23 @@ public class WidgetStickerPropertiesEditFragment extends Fragment implements Vie
         if (drawableSticker != null && isInitSuccessed) {
             switch (drawableSticker.getClipType()) {
                 case DrawableSticker.CIRCLE: {
-                    mTvClipeShape.setText(getString(R.string.widget_clip_circle));
+                    mTvClipShape.setText(getString(R.string.widget_clip_circle));
                     break;
                 }
                 case DrawableSticker.ROUND: {
-                    mTvClipeShape.setText(getString(R.string.widget_clip_round));
+                    mTvClipShape.setText(getString(R.string.widget_clip_round));
                     break;
                 }
                 case DrawableSticker.RECT: {
-                    mTvClipeShape.setText(getString(R.string.widget_clip_rect));
+                    mTvClipShape.setText(getString(R.string.widget_clip_rect));
                     break;
                 }
                 case DrawableSticker.LOVE: {
-                    mTvClipeShape.setText(getString(R.string.widget_clip_love));
+                    mTvClipShape.setText(getString(R.string.widget_clip_love));
                     break;
                 }
                 case DrawableSticker.PENTAGON: {
-                    mTvClipeShape.setText(getString(R.string.widget_clip_pentagon));
+                    mTvClipShape.setText(getString(R.string.widget_clip_pentagon));
                     break;
                 }
 

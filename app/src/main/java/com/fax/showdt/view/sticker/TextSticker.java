@@ -10,15 +10,18 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
 import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.utils.CustomPlugUtil;
+import com.fax.showdt.utils.FileUtil;
 import com.fax.showdt.utils.FontCache;
 import com.fax.showdt.utils.ViewUtils;
 
@@ -27,6 +30,8 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import java.io.File;
 
 /**
  * Customize your sticker with text and image background.
@@ -41,42 +46,57 @@ import androidx.core.content.ContextCompat;
 
 public class TextSticker extends Sticker {
 
+    public static final int DEFAULT_BG_CORNER = ViewUtils.dpToPx(5, AppContext.get());
+    public static final String DEFAULT_BG_COLOR = "#38FFFFFF";
+    public static final int DEFAULT_TEXT_SIZE = 18;
     private final Context context;
     private Rect realBounds;
     private final TextPaint textPaint;
     private Drawable drawable;
     private String text;
-    private String tempText;
-    private int textWidth, textHeight;
+    private String resultText;
+    private int textWidth;
     private String color = "#000000";
-    public static final int DEFAULT_TEXT_SIZE = 18;
     private int scaleParam = DEFAULT_TEXT_SIZE;
     private int textSize = DEFAULT_TEXT_SIZE;
     private String mFontPath = "";
     private boolean isShimmerText;
     private String shimmerColor;
 //    private Shimmer mShimmer;
-    private Layout.Alignment mAlignment = Layout.Alignment.ALIGN_CENTER;
-    /**
-     * Upper bounds for text size.
-     * This acts as a starting point for resizing.
-     */
-    private float maxTextSizePixels;
 
     /**
-     * Lower bounds for text size.
+     * 文本的对齐方式(在屏幕中的对齐方式)
      */
-    private float minTextSizePixels;
+    private Layout.Alignment mAlignment = Layout.Alignment.ALIGN_NORMAL;
+    /**
+     * 是否支持设置背景
+     */
+    private boolean supportBg = false;
+
+    private int bgCorner = DEFAULT_BG_CORNER;
+    /**
+     * 背景颜色
+     */
+    private String bgColor = DEFAULT_BG_COLOR;
+    /**
+     * 用于绘制多行文本
+     */
+    private StaticLayout mStaticLayout;
 
     /**
-     * Line spacing multiplier.
+     * 字间距{@link Paint#setLetterSpacing(float)}
      */
-    private float lineSpacingMultiplier = 1.0f;
+    private float letterSpacing = 0.2f;
 
     /**
-     * Additional line spacing.
+     * 行间距{@link StaticLayout#StaticLayout(CharSequence, int, int, TextPaint, int, Layout.Alignment, float, float, boolean, TextUtils.TruncateAt, int)}
      */
-    private float lineSpacingExtra = 0.0f;
+    private float lineSpacingMultiplier = 1.2f;
+
+    /**
+     * 额外的行间距{@link StaticLayout#StaticLayout(CharSequence, int, int, TextPaint, int, Layout.Alignment, float, float, boolean, TextUtils.TruncateAt, int)}
+     */
+    private float lineSpacingExtra = 0f;
 
     public TextSticker(long id) {
         this(null, id);
@@ -88,85 +108,84 @@ public class TextSticker extends Sticker {
         this.drawable = drawable;
         if (drawable == null) {
             this.drawable = ContextCompat.getDrawable(context, R.drawable.sticker_transparent_background);
-        }
+            this.drawable = new GradientDrawable();
 
+        }
         textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
         text = "双击修改文字";
-        minTextSizePixels = ViewUtils.dpToPx(6,context);
-        maxTextSizePixels = ViewUtils.dpToPx(50,context);
-        textPaint.setTextSize(ViewUtils.dpToPx(textSize,context));
-        initRect();
+        textPaint.setTextSize(ViewUtils.dpToPx(textSize,AppContext.get()));
+        resizeText();
     }
 
     public void resizeText() {
         if (!TextUtils.isEmpty(mFontPath)) {
             Typeface typeface = FontCache.get(mFontPath,context);
             if (typeface != null) {
-//                Log.i("test_font:",mFontPath);
                 textPaint.setTypeface(typeface);
             }
         } else {
             textPaint.setTypeface(Typeface.DEFAULT);
         }
-        tempText = CustomPlugUtil.getPlugTextFromSigns(text);
+        textPaint.setLetterSpacing(letterSpacing);
 
-        int fontWidth = (int) textPaint.measureText(tempText);
-        int fontHeight = (int) (textPaint.getFontMetrics().descent - textPaint.getFontMetrics().ascent);
-        textWidth = fontWidth ;
-        textHeight = fontHeight;
-    }
 
-    private void initRect() {
-//        Log.i("test_font:",mFontPath== null ? " null" : mFontPath);
-        if (!TextUtils.isEmpty(mFontPath)) {
-            Typeface typeface = FontCache.get(mFontPath,context);
-            if (typeface != null) {
-//                Log.i("test_font:","设置字体");
-                textPaint.setTypeface(typeface);
-            }
-        } else {
-            textPaint.setTypeface(Typeface.DEFAULT);
+        resultText = CustomPlugUtil.getPlugTextFromSigns(text);
+
+        StaticLayout staticLayout = new StaticLayout(resultText, textPaint, AppContext.get().getResources().getDisplayMetrics().widthPixels * 4, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
+                lineSpacingExtra, true);
+        mStaticLayout =
+                new StaticLayout(resultText, textPaint, getMaxLineWidth(staticLayout), mAlignment, lineSpacingMultiplier,
+                        lineSpacingExtra, true);
+        textWidth = getMaxLineWidth(staticLayout);
+        if (mAlignment == null) {
+            realBounds = new Rect((int) getTextDrawLeftX() , 0, getMaxLineWidth(staticLayout), mStaticLayout.getHeight());
+
+        } else if (mAlignment == Layout.Alignment.ALIGN_NORMAL) {
+            realBounds = new Rect((int) getTextDrawLeftX(), 0, getMaxLineWidth(staticLayout), mStaticLayout.getHeight());
+
+        } else if (mAlignment == Layout.Alignment.ALIGN_CENTER) {
+            realBounds = new Rect((int) getTextDrawLeftX(), 0, getMaxLineWidth(staticLayout) / 2 , mStaticLayout.getHeight());
+
+        } else if (mAlignment == Layout.Alignment.ALIGN_OPPOSITE) {
+            realBounds = new Rect((int) getTextDrawLeftX(), 0, 0, mStaticLayout.getHeight());
         }
-        tempText = CustomPlugUtil.getPlugTextFromSigns(text);
-        int fontWidth = (int) textPaint.measureText(tempText);
-        int fontHeight = (int) (textPaint.getFontMetrics().descent - textPaint.getFontMetrics().ascent);
-        textWidth = fontWidth ;
-        textHeight = fontHeight;
 
-        realBounds = new Rect((int) getTextDrawLeftX(), 0, textWidth / 2, textHeight);
-
-        drawable.setBounds(realBounds);
     }
-
 
     @Override
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
-        initRect();
+        resizeText();
         canvas.save();
         Matrix matrix = getMatrix();
         canvas.concat(matrix);
-//        if (drawable != null) {
-//            drawable.setBounds(realBounds);
-//            drawable.draw(canvas);
-//        }
-        String textStr = CustomPlugUtil.getPlugTextFromSigns(text);
-//        Log.i("test_text_draw:","origin text:"+text+" result text:"+textStr);
-        Paint.FontMetricsInt fm = textPaint.getFontMetricsInt();
+        if (drawable != null && isSupportBg()) {
+            ((GradientDrawable) drawable).setShape(GradientDrawable.RECTANGLE);
+            ((GradientDrawable) drawable).setCornerRadius(bgCorner);//设置4个角的弧度
+            ((GradientDrawable) drawable).setColor(Color.parseColor(getBgColor()));// 设置颜色
+            drawable.setBounds(realBounds);
+            drawable.draw(canvas);
+        }
         if (isShimmerText) {
-            initShimmer(textPaint, textStr);
+            initShimmer(textPaint, resultText);
+            canvas.translate(getTextDrawLeftX(), 0);
             startShimmer();
-//            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent + internalMargin, mShimmer.getMPaint());
+            mStaticLayout.draw(canvas);
+
         } else {
             stopShimmer();
+            canvas.translate(getTextDrawLeftX(), 0);
             textPaint.setShader(null);
-            canvas.drawText(textStr, getTextDrawLeftX(), 0 - fm.ascent, textPaint);
+            mStaticLayout.draw(canvas);
+
         }
-
         canvas.restore();
-
-
     }
 
+    /**
+     * 根据其对齐方式获取边界的上下左右的四个点的值
+     *
+     * @param points
+     */
     @Override
     public void getBoundPoints(@NonNull float[] points) {
         if (mAlignment == null) {
@@ -197,6 +216,14 @@ public class TextSticker extends Sticker {
     }
 
 
+    /**
+     * 获取中心点坐标
+     * 当改变了对齐方式 那么需要设置其绘制插件的初始中心点坐标位置
+     * 默认是从左到右绘制沿其（0,0）坐标开始绘制  当对齐方式改变
+     * 则通过canvas.translate（x,y）的方式平移  比如居中对齐 就要平移中心点到(0,0)
+     *
+     * @param dst
+     */
     @Override
     public void getCenterPoint(@NonNull PointF dst) {
         if (mAlignment == null) {
@@ -231,16 +258,22 @@ public class TextSticker extends Sticker {
         }
     }
 
+    /**
+     * 决定选中的边框的宽度
+     * @return
+     */
     @Override
     public int getWidth() {
-//        return drawable.getIntrinsicWidth();
-        return textWidth;
+        return realBounds.width();
     }
 
+    /**
+     * 决定选中的边框的高度
+     * @return
+     */
     @Override
     public int getHeight() {
-//        return drawable.getIntrinsicHeight();
-        return textHeight;
+        return realBounds.height();
     }
 
     @Override
@@ -295,31 +328,20 @@ public class TextSticker extends Sticker {
         return color;
     }
 
-
-    @NonNull
-    public TextSticker setMaxTextSize(@Dimension(unit = Dimension.SP) float size) {
-        textPaint.setTextSize(ViewUtils.dpToPx(size,context));
-        maxTextSizePixels = textPaint.getTextSize();
-        return this;
+    public void setLetterSpacing(float letterSpacing) {
+        this.letterSpacing = letterSpacing;
     }
 
-    /**
-     * Sets the lower text size limit
-     *
-     * @param minTextSizeScaledPixels the minimum size to use for text in this view,
-     *                                in scaled pixels.
-     */
-    @NonNull
-    public TextSticker setMinTextSize(float minTextSizeScaledPixels) {
-        minTextSizePixels = ViewUtils.dpToPx(minTextSizeScaledPixels,context);
-        return this;
+    public float getLetterSpacing() {
+        return letterSpacing;
     }
 
-    @NonNull
-    public TextSticker setLineSpacing(float add, float multiplier) {
-        lineSpacingMultiplier = multiplier;
-        lineSpacingExtra = add;
-        return this;
+    public void setLineSpacingMultiplier(float lineSpacingMultiplier) {
+        this.lineSpacingMultiplier = lineSpacingMultiplier;
+    }
+
+    public float getLineSpacingMultiplier() {
+        return lineSpacingMultiplier;
     }
 
     @NonNull
@@ -339,6 +361,24 @@ public class TextSticker extends Sticker {
         return text;
     }
 
+    /**
+     * 获取StaticLayout的宽度
+     *
+     * @return
+     */
+    private int getMaxLineWidth(StaticLayout staticLayout) {
+        int lineCount = staticLayout.getLineCount();
+        float maxLineLength = 0;
+        for (int i = 0; i < lineCount; i++) {
+            float lineLength = staticLayout.getLineWidth(i);
+            if (lineLength > maxLineLength) {
+                maxLineLength = lineLength;
+            }
+        }
+        return (int) maxLineLength;
+
+    }
+
 
     public int getScaleParam() {
         return scaleParam;
@@ -353,7 +393,6 @@ public class TextSticker extends Sticker {
             double scale = Math.pow(10 / 11f, this.scaleParam - scaleParam);
             this.getMatrix().postScale((float) scale, (float) scale, pointF.x, pointF.y);
         }
-        PointF point = this.getMappedCenterPoint();
         this.scaleParam = scaleParam;
     }
 
@@ -361,27 +400,27 @@ public class TextSticker extends Sticker {
         RectF rectF = getMappedRectF();
         float offsetX = 0;
         float mappedTextLength = rectF.right - rectF.left;
-        if(this.mAlignment == Layout.Alignment.ALIGN_NORMAL){
-            if(alignment == Layout.Alignment.ALIGN_CENTER){
-                offsetX = mappedTextLength/2f;
-            }else if(alignment == Layout.Alignment.ALIGN_OPPOSITE){
+        if (this.mAlignment == Layout.Alignment.ALIGN_NORMAL) {
+            if (alignment == Layout.Alignment.ALIGN_CENTER) {
+                offsetX = mappedTextLength / 2f;
+            } else if (alignment == Layout.Alignment.ALIGN_OPPOSITE) {
                 offsetX = mappedTextLength;
             }
-        }else if(this.mAlignment == Layout.Alignment.ALIGN_CENTER){
-            if(alignment == Layout.Alignment.ALIGN_NORMAL){
-                offsetX = -mappedTextLength/2f;
-            }else if(alignment == Layout.Alignment.ALIGN_OPPOSITE){
-                offsetX = mappedTextLength/2f;
+        } else if (this.mAlignment == Layout.Alignment.ALIGN_CENTER) {
+            if (alignment == Layout.Alignment.ALIGN_NORMAL) {
+                offsetX = -mappedTextLength / 2f;
+            } else if (alignment == Layout.Alignment.ALIGN_OPPOSITE) {
+                offsetX = mappedTextLength / 2f;
             }
-        }else if(this.mAlignment == Layout.Alignment.ALIGN_OPPOSITE) {
-            if(alignment == Layout.Alignment.ALIGN_NORMAL){
+        } else if (this.mAlignment == Layout.Alignment.ALIGN_OPPOSITE) {
+            if (alignment == Layout.Alignment.ALIGN_NORMAL) {
                 offsetX = -mappedTextLength;
-            }else if(alignment == Layout.Alignment.ALIGN_CENTER){
-                offsetX = -mappedTextLength/2f;
+            } else if (alignment == Layout.Alignment.ALIGN_CENTER) {
+                offsetX = -mappedTextLength / 2f;
             }
         }
         this.mAlignment = alignment;
-        getMatrix().postTranslate(offsetX,0);
+        getMatrix().postTranslate(offsetX, 0);
     }
 
     public Layout.Alignment getAlignment() {
@@ -407,56 +446,19 @@ public class TextSticker extends Sticker {
     }
 
     public void setStickerConfig(@NonNull TextPlugBean bean) {
-        setId(Long.valueOf(bean.getId()));
+        setText(bean.getText());
+        setJumpAppPath(bean.getJumpAppPath());
+        setFontPath(bean.getFontPath());
         setTextColor(bean.getColor());
         setScaleParam((int) bean.getScale());
         setJumpContent(bean.getJumpContent());
         setShimmerColor(bean.getShimmerColor());
         setShimmerText(bean.isShimmerText());
         setAlignment(bean.getAlignment());
-    }
-
-    public boolean isContainTimer() {
-        return CustomPlugUtil.checkContainTimerCode(text);
-    }
-
-    /**
-     * @return lower text size limit, in pixels.
-     */
-    public float getMinTextSizePixels() {
-        return minTextSizePixels;
-    }
-
-    /**
-     * Sets the text size of a clone of the view's {@link TextPaint} object
-     * and uses a {@link StaticLayout} instance to measure the height of the text.
-     *
-     * @return the height of the text when placed in a view
-     * with the specified width
-     * and when the text has the specified size.
-     */
-    protected int getTextHeightPixels(@NonNull CharSequence source, int availableWidthPixels,
-                                      float textSizePixels) {
-        textPaint.setTextSize(textSizePixels);
-        // It's not efficient to create a StaticLayout instance
-        // every time when measuring, we can use StaticLayout.Builder
-        // since api 23.
-        StaticLayout staticLayout =
-                new StaticLayout(source, textPaint, availableWidthPixels, Layout.Alignment.ALIGN_NORMAL,
-                        lineSpacingMultiplier, lineSpacingExtra, true);
-        return staticLayout.getHeight();
-    }
-
-    /**
-     * @return the number of pixels which scaledPixels corresponds to on the device.
-     */
-    private float convertSpToPx(float scaledPixels) {
-        return scaledPixels * context.getResources().getDisplayMetrics().scaledDensity;
-    }
-
-
-    public int getMaxTextSizeSp() {
-        return (int) (maxTextSizePixels / context.getResources().getDisplayMetrics().scaledDensity);
+        setLetterSpacing(bean.getLetterSpacing());
+        setLineSpacingMultiplier(bean.getLineSpacing());
+        Log.i("test_text_draw:","letter:"+letterSpacing);
+        Log.i("test_text_draw:","line:"+lineSpacingMultiplier);
     }
 
     public String getFontPath() {
@@ -478,7 +480,28 @@ public class TextSticker extends Sticker {
 //        }
     }
 
-    public void setSliding(boolean sliding) {
+    public boolean isSupportBg() {
+        return supportBg;
+    }
+
+    public void setSupportBg(boolean supportBg) {
+        this.supportBg = supportBg;
+    }
+
+    public void setBgCorner(int bgCorner) {
+        this.bgCorner = bgCorner > 0 ? DEFAULT_BG_CORNER : 0;
+    }
+
+    public int getBgCorner() {
+        return bgCorner;
+    }
+
+    public String getBgColor() {
+        return TextUtils.isEmpty(bgColor) ? DEFAULT_BG_COLOR : bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
     }
 
     public String getShimmerColor() {

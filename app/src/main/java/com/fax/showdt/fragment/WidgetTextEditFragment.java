@@ -1,7 +1,5 @@
 package com.fax.showdt.fragment;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -13,6 +11,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditTextCallback;
@@ -22,33 +26,26 @@ import com.fax.showdt.dialog.TimePickerDialog;
 import com.fax.showdt.dialog.WidgetTextInputDialog;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextElementEditFragment;
 import com.fax.showdt.fragment.widgetTextEdit.WidgetTextFontEditFragment;
-import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.fragment.widgetTextEdit.WidgetTextPropertiesEditFragment;
 import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.ViewUtils;
-import com.fax.showdt.view.colorPicker.ColorPickerDialog;
-import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.showdt.view.sticker.TextSticker;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WidgetTextEditFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView mIvKeyboard, mElement,mFont, mColor, mAdd,mTouch,mConsume;
+    private ImageView mIvKeyboard, mElement,mFont, mProperties, mAdd,mTouch,mConsume;
     private WidgetEditTextCallback mWidgetEditTextCallback;
     private TextSticker mTextSticker;
     private WidgetTextElementEditFragment mElementEditFragment;
     private WidgetTextFontEditFragment mFontEditFragment;
     private WidgetClickSettingFragment mTouchEditFragment;
+    private WidgetTextPropertiesEditFragment mPropertiesEditFragment;
     private List<View> mViews = new ArrayList<>();
     enum EditTextType {
-        ELEMENT, FONT, TOUCH
+        ELEMENT, FONT, TOUCH,PROPERTIES
     }
 
     public WidgetTextEditFragment(){}
@@ -61,20 +58,21 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         mIvKeyboard = view.findViewById(R.id.iv_keyboard);
         mElement = view.findViewById(R.id.iv_element);
         mFont = view.findViewById(R.id.iv_font);
-        mColor = view.findViewById(R.id.iv_color);
+        mProperties = view.findViewById(R.id.iv_properties);
         mAdd = view.findViewById(R.id.iv_add);
         mConsume = view.findViewById(R.id.iv_consume);
         mTouch = view.findViewById(R.id.iv_touch);
         mIvKeyboard.setOnClickListener(this);
         mElement.setOnClickListener(this);
         mFont.setOnClickListener(this);
-        mColor.setOnClickListener(this);
+        mProperties.setOnClickListener(this);
         mAdd.setOnClickListener(this);
         mConsume.setOnClickListener(this);
         mTouch.setOnClickListener(this);
         mViews.add(mElement);
         mViews.add(mFont);
         mViews.add(mTouch);
+        mViews.add(mProperties);
         initAllEditFragments();
         refreshSelectedViewStatus(mElement);
         switchToOneFragment(EditTextType.ELEMENT);
@@ -129,6 +127,12 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         if(mFontEditFragment != null) {
             mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
         }
+        if(mPropertiesEditFragment != null){
+            mPropertiesEditFragment.setSticker(mTextSticker);
+        }
+        if(mTouchEditFragment != null){
+            mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent());
+        }
     }
 
     @Override
@@ -147,11 +151,9 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             refreshSelectedViewStatus(mFont);
             switchToOneFragment(EditTextType.FONT);
 
-        }else if(resId == R.id.iv_color){
-//            refreshSelectedViewStatus(mColor);
-            if(mTextSticker != null) {
-                showColorPickDialog(mTextSticker.getTextColor());
-            }
+        }else if(resId == R.id.iv_properties){
+            refreshSelectedViewStatus(mProperties);
+            switchToOneFragment(EditTextType.PROPERTIES);
         }else if(resId == R.id.iv_touch){
             refreshSelectedViewStatus(mTouch);
             switchToOneFragment(EditTextType.TOUCH);
@@ -161,33 +163,6 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 mWidgetEditTextCallback.closePanel();
             }
         }
-    }
-
-    private void showColorPickDialog(String color){
-        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
-                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
-                .setAllowPresets(true)
-                .setDialogId(0)
-                .setColor(Color.parseColor(color))
-                .setShowAlphaSlider(true)
-                .setShowAlphaSlider(true)
-                .create();
-        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
-            @Override
-            public void onColorSelected(int dialogId, int color) {
-                String hexCode = "";
-                hexCode = CommonUtils.toHexEncoding(color);
-                if (mTextSticker != null) {
-                    mTextSticker.setTextColor(hexCode);
-                }
-            }
-
-            @Override
-            public void onDialogDismissed(int dialogId) {
-
-            }
-        });
-        dialog.show(getChildFragmentManager(),"color_dialog");
     }
 
     private void refreshSelectedViewStatus(View view){
@@ -205,11 +180,12 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
         mElementEditFragment = new WidgetTextElementEditFragment();
         mFontEditFragment = new WidgetTextFontEditFragment();
         mTouchEditFragment = new WidgetClickSettingFragment();
-//        mColorEditFragment = new WidgetTextColorEditFragment();
+        mPropertiesEditFragment = new WidgetTextPropertiesEditFragment();
+        mPropertiesEditFragment.setSticker(mTextSticker);
         transaction.add(R.id.fl_text_edit_body, mFontEditFragment);
         transaction.add(R.id.fl_text_edit_body, mElementEditFragment);
         transaction.add(R.id.fl_text_edit_body,mTouchEditFragment);
-//        transaction.add(R.id.fl_text_edit_body, mColorEditFragment);
+        transaction.add(R.id.fl_text_edit_body, mPropertiesEditFragment);
         mElementEditFragment.setWidgetEditTextElementSelectedCallback(new WidgetEditTextElementSelectedCallback() {
             @Override
             public void selectTextElement(String text, boolean isCountdownPlug) {
@@ -223,7 +199,6 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 }
             }
         });
-//        mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
         mFontEditFragment.setWidgetTextFontSeelctedCallback(new WidgetEditTextFontSelectedCallback() {
             @Override
             public void selectTextFont(String fontPath) {
@@ -262,8 +237,6 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 result = CustomPlugUtil.posAndNegSwitchTimer(result, time);
                 if(mTextSticker != null){
                     Log.i("test_time:",result+"");
-//                    String lastText = mTextSticker.getText();
-//                    mTextSticker.setText(lastText+result);
                     mTextSticker.setText(result);
                 }
             }
@@ -284,6 +257,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             case ELEMENT: {
                 transaction.hide(mFontEditFragment);
                 transaction.hide(mTouchEditFragment);
+                transaction.hide(mPropertiesEditFragment);
                 transaction.show(mElementEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
@@ -291,6 +265,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             case FONT: {
                 transaction.hide(mElementEditFragment);
                 transaction.hide(mTouchEditFragment);
+                transaction.hide(mPropertiesEditFragment);
                 transaction.show(mFontEditFragment);
                 if(mTextSticker != null) {
                     mFontEditFragment.initFontSelectedPos(mTextSticker.getFontPath());
@@ -301,11 +276,24 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             case TOUCH:{
                 transaction.hide(mElementEditFragment);
                 transaction.hide(mFontEditFragment);
+                transaction.hide(mPropertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 if(mTextSticker != null){
                     mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent());
                 }
                 transaction.commitAllowingStateLoss();
+                break;
+            }
+            case PROPERTIES:{
+                transaction.hide(mElementEditFragment);
+                transaction.hide(mFontEditFragment);
+                transaction.hide(mTouchEditFragment);
+                transaction.show(mPropertiesEditFragment);
+                if(mTextSticker != null){
+                    mPropertiesEditFragment.initActionUI();
+                }
+                transaction.commitAllowingStateLoss();
+                break;
             }
 
         }

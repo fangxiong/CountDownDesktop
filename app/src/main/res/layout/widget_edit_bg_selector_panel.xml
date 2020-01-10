@@ -7,23 +7,35 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_30">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:text="@string/widget_edit_select_bg_title"
+            android:textColor="@color/c_FCF43C"
+            android:textStyle="bold"
+            android:textSize="@dimen/textSize_20" />
+
         <TextView
             android:id="@+id/tv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/c_FCF43C"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_15"
-            android:layout_alignParentEnd="true"
-            android:textSize="@dimen/margin_18"
-            android:text="@string/close"/>
+            android:text="@string/close"
+            android:textColor="@color/c_FCF43C"
+            android:textSize="@dimen/textSize_18" />
     </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
-        android:layout_marginTop="@dimen/margin_10"
-        android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        />
+        android:layout_marginTop="@dimen/margin_10"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,10 +15,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
@@ -46,6 +47,7 @@ import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.interfaces.OnShowListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
 import com.fax.showdt.dialog.ios.util.DialogSettings;
+import com.fax.showdt.dialog.ios.util.view.BlurView;
 import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
@@ -98,6 +100,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -106,6 +109,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.fax.showdt.dialog.ios.util.DialogSettings.blurAlpha;
 
 /**
  * Author: fax
@@ -137,8 +142,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private FullScreenDialog mEditBgDialog;
     private boolean mIsGetSystemBgSuc = true;
     private CustomWidgetConfig customWidgetConfig;
-    private TipDialog mWaitDialog;
     private UpdateLrcReceiver mUpdateLrcReceiver;
+    private boolean selectBgFromAlbum = false;
 
 
     @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS})
@@ -146,9 +151,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     public @interface EditType {
     }
 
-    public static void startSelf(Context context,CustomWidgetConfig config){
-        Intent intent = new Intent(context,DiyWidgetMakeActivity.class);
-        intent.putExtra(ConstantString.widget_make_data,config.toJSONString());
+    public static void startSelf(Context context, CustomWidgetConfig config) {
+        Intent intent = new Intent(context, DiyWidgetMakeActivity.class);
+        intent.putExtra(ConstantString.widget_make_data, config.toJSONString());
         context.startActivity(intent);
     }
 
@@ -187,7 +192,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             Logger.e("onAttachFragment mStickerEditFragment");
             mStickerEditFragment = (WidgetStickerEditFragment) fragment;
             transaction.remove(mStickerEditFragment);
-        }else if(mProgressEditFragment == null && fragment instanceof WidgetProgressEditFragment){
+        } else if (mProgressEditFragment == null && fragment instanceof WidgetProgressEditFragment) {
             Logger.e("onAttachFragment mProgressEditFragment");
             mProgressEditFragment = (WidgetProgressEditFragment) fragment;
             transaction.remove(mProgressEditFragment);
@@ -218,6 +223,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         initAllEditFragments();
         initStickerView();
         initStickerViewBg();
+        initBlurView();
         initData();
     }
 
@@ -225,18 +231,18 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerList = new LongSparseArray<>();
         Intent intent = getIntent();
         String json = intent.getStringExtra(ConstantString.widget_make_data);
-        if(!TextUtils.isEmpty(json)){
-            customWidgetConfig = GsonUtils.parseJsonWithGson(json,CustomWidgetConfig.class);
+        if (!TextUtils.isEmpty(json)) {
+            customWidgetConfig = GsonUtils.parseJsonWithGson(json, CustomWidgetConfig.class);
             initStickers();
         }
     }
 
-    private void initStickers(){
-        if(customWidgetConfig != null){
+    private void initStickers() {
+        if (customWidgetConfig != null) {
             mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
             mStickerViewBg.setImageBitmap(mEditBitmap);
-            CustomWidgetConfigConvertHelper  mHelper = new CustomWidgetConfigConvertHelper();
-            mHelper.initAllStickerPlugs( mStickerView, customWidgetConfig, mStickerList);
+            CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
+            mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
         }
     }
 
@@ -270,7 +276,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             switchToOneFragment(EDIT_SHAPE);
         } else if (resId == R.id.tv_progress) {
             ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
-            progressSticker.resize(ViewUtils.dpToPx(150f,this),ViewUtils.dpToPx(10f,this));
+            progressSticker.resize(ViewUtils.dpToPx(150f, this), ViewUtils.dpToPx(10f, this));
             progressSticker.setPercent(0.7f);
             progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
             progressSticker.setDrawType(ProgressSticker.SOLID);
@@ -288,7 +294,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     });
         } else if (resId == R.id.iv_change_bg) {
             showEditBgPanel();
-        } else if(resId == R.id.iv_save){
+        } else if (resId == R.id.iv_save) {
             saveConfig();
         }
     }
@@ -301,6 +307,15 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mImmersionBar = ImmersionBar.with(this);
         mImmersionBar.fullScreen(true);
         mImmersionBar.init();
+    }
+
+    private void initBlurView() {
+        BlurView blurView = new BlurView(this, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        RelativeLayout rootView = findViewById(R.id.rootView);
+        rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
+        rootView.addView(blurView, 0, params);
     }
 
     private void initStickerView() {
@@ -337,11 +352,11 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onStickerDeleted(@NonNull Sticker sticker) {
                 mStickerList.delete(sticker.getId());
-                    if (mEditPaneShowing) {
-                        setEditBodySlideOutAnimation();
-                        mEditPaneShowing = false;
-                    }
-                    mHandlingSticker = null;
+                if (mEditPaneShowing) {
+                    setEditBodySlideOutAnimation();
+                    mEditPaneShowing = false;
+                }
+                mHandlingSticker = null;
             }
 
             @Override
@@ -362,9 +377,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                         mShapeEditFragment.setWidgetEditShapeSticker((DrawableSticker) sticker);
                     } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SDCARD) {
                         switchToOneFragment(EDIT_STICKER);
-                        mStickerEditFragment.setDrawableSticker((DrawableSticker)sticker);
+                        mStickerEditFragment.setDrawableSticker((DrawableSticker) sticker);
                     }
-                }else if(sticker instanceof  ProgressSticker){
+                } else if (sticker instanceof ProgressSticker) {
                     mProgressEditFragment.setProgressSticker((ProgressSticker) sticker);
                     switchToOneFragment(EDIT_PROGRESS);
                 }
@@ -428,14 +443,14 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             Log.i("test_size:", "height:" + bitmap.getHeight() + " width:" + bitmap.getWidth());
             int cropWidth = (int) (w * WidgetConfig.WIDGET_MAX_WIDTH_RATIO);// 裁切后所取的正方形区域边长
             int x = (int) ((w - cropWidth) * 1.0f / 2);
-            int marginTop = ViewUtils.dpToPx(60f,this);
+            int marginTop = ViewUtils.dpToPx(60f, this);
             if ((w < h || w == h) && w > h - marginTop) {
                 marginTop = (int) (h - w);
-            }else if(w > h){
-                 cropWidth = (int)(cropWidth/2f);
+            } else if (w > h) {
+                cropWidth = (int) (cropWidth / 2f);
             }
             resultBitmap = Bitmap.createBitmap(bitmap, x, marginTop, cropWidth, cropWidth, null, false);
-        }catch (Exception e){
+        } catch (Exception e) {
             resultBitmap = null;
         }
         return resultBitmap;
@@ -509,7 +524,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
             @Override
             public void onPickPhoto() {
-                startCropOneImg(1,1);
+                startCropOneImg(1, 1);
             }
         });
         mShapeEditFragment.setWidgetEditShapeCallback(new WidgetEditShapeCallback() {
@@ -542,7 +557,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onAddProgressSticker() {
                 ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
-                progressSticker.resize(ViewUtils.dpToPx(150f,DiyWidgetMakeActivity.this),ViewUtils.dpToPx(10f,DiyWidgetMakeActivity.this));
+                progressSticker.resize(ViewUtils.dpToPx(150f, DiyWidgetMakeActivity.this), ViewUtils.dpToPx(10f, DiyWidgetMakeActivity.this));
                 progressSticker.setPercent(0.7f);
                 progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
                 progressSticker.setDrawType(ProgressSticker.SOLID);
@@ -596,8 +611,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (editType) {
             case EDIT_TEXT: {
-                if(!mFragments.containsKey(EDIT_TEXT)){
-                    mFragments.put(EDIT_TEXT,mTextEditFragment);
+                if (!mFragments.containsKey(EDIT_TEXT)) {
+                    mFragments.put(EDIT_TEXT, mTextEditFragment);
                     transaction.add(R.id.rl_edit_body, mTextEditFragment);
                     transaction.commitAllowingStateLoss();
                 }
@@ -605,9 +620,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 for (int i = 0; i < mFragments.size(); i++) {
                     long key = mFragments.keyAt(i);
                     Fragment fragment = mFragments.get(key);
-                    if(fragment == mTextEditFragment){
+                    if (fragment == mTextEditFragment) {
                         transaction1.show(fragment);
-                    }else {
+                    } else {
                         transaction1.hide(fragment);
                     }
                 }
@@ -619,8 +634,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 break;
             }
             case EDIT_STICKER: {
-                if(!mFragments.containsKey(EDIT_STICKER)){
-                    mFragments.put(EDIT_STICKER,mStickerEditFragment);
+                if (!mFragments.containsKey(EDIT_STICKER)) {
+                    mFragments.put(EDIT_STICKER, mStickerEditFragment);
                     transaction.add(R.id.rl_edit_body, mStickerEditFragment);
                     transaction.commitAllowingStateLoss();
                 }
@@ -628,9 +643,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 for (int i = 0; i < mFragments.size(); i++) {
                     long key = mFragments.keyAt(i);
                     Fragment fragment = mFragments.get(key);
-                    if(fragment == mStickerEditFragment){
+                    if (fragment == mStickerEditFragment) {
                         transaction1.show(fragment);
-                    }else {
+                    } else {
                         transaction1.hide(fragment);
                     }
                 }
@@ -642,8 +657,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 break;
             }
             case EDIT_SHAPE: {
-                if(!mFragments.containsKey(EDIT_SHAPE)){
-                    mFragments.put(EDIT_SHAPE,mShapeEditFragment);
+                if (!mFragments.containsKey(EDIT_SHAPE)) {
+                    mFragments.put(EDIT_SHAPE, mShapeEditFragment);
                     transaction.add(R.id.rl_edit_body, mShapeEditFragment);
                     transaction.commitAllowingStateLoss();
                 }
@@ -651,9 +666,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 for (int i = 0; i < mFragments.size(); i++) {
                     long key = mFragments.keyAt(i);
                     Fragment fragment = mFragments.get(key);
-                    if(fragment == mShapeEditFragment){
+                    if (fragment == mShapeEditFragment) {
                         transaction1.show(fragment);
-                    }else {
+                    } else {
                         transaction1.hide(fragment);
                     }
                 }
@@ -665,8 +680,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 break;
             }
             case EDIT_PROGRESS: {
-                if(!mFragments.containsKey(EDIT_PROGRESS)){
-                    mFragments.put(EDIT_PROGRESS,mProgressEditFragment);
+                if (!mFragments.containsKey(EDIT_PROGRESS)) {
+                    mFragments.put(EDIT_PROGRESS, mProgressEditFragment);
                     transaction.add(R.id.rl_edit_body, mProgressEditFragment);
                     transaction.commitAllowingStateLoss();
                 }
@@ -674,9 +689,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 for (int i = 0; i < mFragments.size(); i++) {
                     long key = mFragments.keyAt(i);
                     Fragment fragment = mFragments.get(key);
-                    if(fragment == mProgressEditFragment){
+                    if (fragment == mProgressEditFragment) {
                         transaction1.show(fragment);
-                    }else {
+                    } else {
                         transaction1.hide(fragment);
                     }
                 }
@@ -731,6 +746,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         if (mIsGetSystemBgSuc) {
             mEditBgList.add(0, "");
         }
+        mEditBgList.add(0, "");
         Resources res = AppContext.get().getResources();
         String[] strs = res.getStringArray(R.array.widget_edit_bg);
         List<String> tempList = Arrays.asList(strs);
@@ -740,7 +756,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             protected void convert(ViewHolder holder, String s, int position) {
                 ImageView mIv = holder.getView(R.id.iv_item);
-                if (position == 0 && mIsGetSystemBgSuc) {
+                if (position == 0) {
+                    mIv.setImageResource(R.drawable.widget_bg_add_icon);
+                } else if (position == 1 && mIsGetSystemBgSuc) {
                     mIv.setImageBitmap(mSystemBgBitmap);
                 } else {
                     GlideUtils.loadImage(DiyWidgetMakeActivity.this, "file:///android_asset/" + s, mIv);
@@ -752,11 +770,19 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mEditBgAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                if (position == 0 && mIsGetSystemBgSuc) {
+                if (position == 0) {
+                    selectBgFromAlbum = true;
+                    startCropOneImg(1, 1);
+                } else if (position == 1 && mIsGetSystemBgSuc) {
                     mStickerViewBg.setImageBitmap(mSystemBgBitmap);
+                    RelativeLayout rootView = findViewById(R.id.rootView);
+                    rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
                 } else {
                     mEditBitmap = CommonUtils.getAssetPic(DiyWidgetMakeActivity.this, mEditBgList.get(position));
                     mStickerViewBg.setImageBitmap(mEditBitmap);
+                    RelativeLayout rootView = findViewById(R.id.rootView);
+                    rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
+
                 }
                 if (mEditBgDialog != null) {
                     mEditBgDialog.doDismiss();
@@ -771,8 +797,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mRvEditBg.setAdapter(mEditBgAdapter);
     }
 
-    private void  sendConfigChangedBroadcast() {
-        Intent intent =new Intent();
+    private void sendConfigChangedBroadcast() {
+        Intent intent = new Intent();
         intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
         sendBroadcast(intent);
     }
@@ -784,30 +810,30 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerView.clearCurrentSticker();
         Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
         final Bitmap coverBitmap = BitmapUtils.mergeBitmap(bgBitmap, stickerBitmap, 0);
-        final String coverFileName = "widget_cover" + System.currentTimeMillis()+".png";
-        final String bgFileName = "widget_bg" + System.currentTimeMillis()+".png";
-        final String coverDir = Environment.getHomeDir()+File.separator+Constant.WIDGET_DATA_DIR+File.separator+"widget_screenshot";
-        final String bgDir = Environment.getHomeDir()+File.separator+Constant.WIDGET_DATA_DIR+File.separator+"widget_bg";
+        final String coverFileName = "widget_cover" + System.currentTimeMillis() + ".png";
+        final String bgFileName = "widget_bg" + System.currentTimeMillis() + ".png";
+        final String coverDir = Environment.getHomeDir() + File.separator + Constant.WIDGET_DATA_DIR + File.separator + "widget_screenshot";
+        final String bgDir = Environment.getHomeDir() + File.separator + Constant.WIDGET_DATA_DIR + File.separator + "widget_bg";
         Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 BitmapUtils.saveFile(coverBitmap, coverFileName, coverDir);
-                BitmapUtils.saveFile(bgBitmap,bgFileName,bgDir);
+                BitmapUtils.saveFile(bgBitmap, bgFileName, bgDir);
                 customWidgetConfig = new CustomWidgetConfig();
-                if(FileExUtils.exists(customWidgetConfig.getCoverUrl())){
+                if (FileExUtils.exists(customWidgetConfig.getCoverUrl())) {
                     FileExUtils.deleteSingleFile(customWidgetConfig.getCoverUrl());
                 }
-                if(FileExUtils.exists(customWidgetConfig.getBgPath())){
+                if (FileExUtils.exists(customWidgetConfig.getBgPath())) {
                     FileExUtils.deleteSingleFile(customWidgetConfig.getBgPath());
                 }
-                customWidgetConfig.setCoverUrl(coverDir+ File.separator+coverFileName);
-                customWidgetConfig.setBgPath(bgDir+ File.separator+bgFileName);
+                customWidgetConfig.setCoverUrl(coverDir + File.separator + coverFileName);
+                customWidgetConfig.setBgPath(bgDir + File.separator + bgFileName);
                 customWidgetConfig.setId(System.currentTimeMillis());
                 customWidgetConfig.setBaseOnHeightPx(mStickerView.getHeight());
                 customWidgetConfig.setBaseOnWidthPx(mStickerView.getWidth());
                 CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
-                CustomWidgetConfig newConfig = mHelper.saveConfig(customWidgetConfig,mStickerList);
-                Log.i("test_widget_config:","保存到数据库："+newConfig.toJSONString());
+                CustomWidgetConfig newConfig = mHelper.saveConfig(customWidgetConfig, mStickerList);
+                Log.i("test_widget_config:", "保存到数据库：" + newConfig.toJSONString());
                 CustomWidgetConfigDao.getInstance(DiyWidgetMakeActivity.this).insert(newConfig);
                 e.onNext(true);
             }
@@ -817,7 +843,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     @Override
                     public void accept(Disposable disposable) throws Exception {
                         DialogSettings.tipTheme = DialogSettings.THEME.LIGHT;
-                        WaitDialog.show(DiyWidgetMakeActivity.this,"加工数据中...");
+                        WaitDialog.show(DiyWidgetMakeActivity.this, "加工数据中...");
                     }
                 })
                 .subscribe(new Observer<Boolean>() {
@@ -866,20 +892,25 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     @Override
     public void cropSuc(String path) {
         super.cropSuc(path);
-        Drawable drawable = new BitmapDrawable(getResources(), path);
-        DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
-        drawableSticker.setmPicType(DrawableSticker.SDCARD);
-        drawableSticker.setDrawablePath(path);
-        mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
-        if(mStickerEditFragment != null){
-            mStickerEditFragment.setDrawableSticker(drawableSticker);
+        if (selectBgFromAlbum) {
+            mEditBitmap = BitmapUtils.decodeFile(path);
+            mStickerViewBg.setImageBitmap(mEditBitmap);
+        } else {
+            Drawable drawable = new BitmapDrawable(getResources(), path);
+            DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+            drawableSticker.setmPicType(DrawableSticker.SDCARD);
+            drawableSticker.setDrawablePath(path);
+            mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+            if (mStickerEditFragment != null) {
+                mStickerEditFragment.setDrawableSticker(drawableSticker);
+            }
         }
     }
 
     @Override
     public void cropFail(Throwable throwable) {
         throwable.printStackTrace();
-        Log.i("crop_fail:","msg:"+throwable.getMessage());
+        Log.i("crop_fail:", "msg:" + throwable.getMessage());
         super.cropFail(throwable);
     }
 
@@ -896,14 +927,14 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 CustomPlugUtil.album = intent.getStringExtra(KLWPSongUpdateManager.ALBUM_KEY);
                 CustomPlugUtil.singerName = intent.getStringExtra(KLWPSongUpdateManager.SINGER_KEY);
                 CustomPlugUtil.songName = intent.getStringExtra(KLWPSongUpdateManager.SONGNAME_KEY);
-                CustomPlugUtil.duration = intent.getLongExtra(KLWPSongUpdateManager.DURATION_KEY,0L);
-                CustomPlugUtil.currentDuration = intent.getLongExtra(KLWPSongUpdateManager.CURRENT_DURATION_KEY,0L);
-                Log.i("test_song:","lrc:"+intent.getStringExtra(KLWPSongUpdateManager.LRC_KEY));
-                Log.i("test_song:","album:"+CustomPlugUtil.album);
-                Log.i("test_song:","singerName:"+CustomPlugUtil.singerName);
-                Log.i("test_song:","songName:"+CustomPlugUtil.songName);
-                Log.i("test_song:","duration:"+CustomPlugUtil.duration);
-                Log.i("test_song:","currentDuration:"+CustomPlugUtil.currentDuration);
+                CustomPlugUtil.duration = intent.getLongExtra(KLWPSongUpdateManager.DURATION_KEY, 0L);
+                CustomPlugUtil.currentDuration = intent.getLongExtra(KLWPSongUpdateManager.CURRENT_DURATION_KEY, 0L);
+                Log.i("test_song:", "lrc:" + intent.getStringExtra(KLWPSongUpdateManager.LRC_KEY));
+                Log.i("test_song:", "album:" + CustomPlugUtil.album);
+                Log.i("test_song:", "singerName:" + CustomPlugUtil.singerName);
+                Log.i("test_song:", "songName:" + CustomPlugUtil.songName);
+                Log.i("test_song:", "duration:" + CustomPlugUtil.duration);
+                Log.i("test_song:", "currentDuration:" + CustomPlugUtil.currentDuration);
             }
         }
 

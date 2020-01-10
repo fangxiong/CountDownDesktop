@@ -3,6 +3,7 @@ package com.fax.showdt.manager.widget;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -23,7 +24,6 @@ import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.utils.BitmapUtils;
-import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.DrawableSticker;
 import com.fax.showdt.view.sticker.ProgressSticker;
@@ -33,6 +33,7 @@ import com.fax.showdt.view.sticker.TextSticker;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +85,8 @@ public class CustomWidgetConfigConvertHelper {
                 textPlugBean.setShimmerColor(((TextSticker) sticker).getShimmerColor());
                 textPlugBean.setShimmerText(((TextSticker) sticker).isShimmerText());
                 textPlugBean.setAlignment(((TextSticker) sticker).getAlignment());
+                textPlugBean.setLetterSpacing(((TextSticker) sticker).getLetterSpacing());
+                textPlugBean.setLineSpacing(((TextSticker) sticker).getLineSpacingMultiplier());
                 PointF point = sticker.getMappedCenterPoint();
                 textPlugBean.setLocation(new PlugLocation(point.x, point.y));
                 Log.i("test_text_sticker:", textPlugBean.toJSONString());
@@ -233,6 +236,12 @@ public class CustomWidgetConfigConvertHelper {
     public void drawStaticOnBitmapFromConfig(CustomWidgetConfig mCustomWidgetConfig, Canvas canvas) {
         List<DrawablePlugBean> mDrawableList = mCustomWidgetConfig.getDrawablePlugList();
         HashMap<Long, BasePlugBean> mStickerBeanList = new HashMap<>();
+        if(mCustomWidgetConfig.isDrawWithBg()) {
+            Bitmap bgBitmap = BitmapUtils.decodeFile(new File(mCustomWidgetConfig.getBgPath()));
+            if (bgBitmap != null) {
+                canvas.drawBitmap(bgBitmap, 0, 0, new Paint());
+            }
+        }
 
         for (int i = 0; i < mDrawableList.size(); i++) {
             DrawablePlugBean bean = mDrawableList.get(i);
@@ -258,35 +267,27 @@ public class CustomWidgetConfigConvertHelper {
      */
     private TextSticker initTextSticker(StickerView view, TextPlugBean bean, int baseOnWidth, int baseOnHeight) {
         TextSticker textSticker = new TextSticker(Long.valueOf(bean.getId()));
-        textSticker.setText(CustomPlugUtil.adaptOldVersionTimer(bean.getText()));
-        textSticker.setJumpContent(bean.getJumpContent());
-        textSticker.setJumpAppPath(bean.getJumpAppPath());
-        textSticker.setFontPath(bean.getFontPath());
-        textSticker.resizeText();
-        textSticker.setAlignment(bean.getAlignment());
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
-        view.addSticker(textSticker, Sticker.Position.INITIAL);
         textSticker.setStickerConfig(bean);
+        textSticker.resizeText();
+        view.addSticker(textSticker, Sticker.Position.INITIAL);
         RectF rectF = textSticker.getMappedRectF();
         float offsetX = 0;
         if (bean.getAlignment() == null) {
-            offsetX = targetPoint.x - textSticker.getWidth() / 2f;
-            Log.i("test_offestX:","targetPoint.x:"+targetPoint.x+" textSticker.getWidth() / 2f:"+textSticker.getWidth() / 2f);
+            offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
         } else {
             if (bean.getAlignment() == Layout.Alignment.ALIGN_NORMAL) {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
             } else if (bean.getAlignment() == Layout.Alignment.ALIGN_CENTER) {
-                offsetX = targetPoint.x;
+                offsetX = targetPoint.x-(rectF.centerX());
             } else {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getRight() - rectF.right);
             }
         }
-        Log.i("test_offestX:",offsetX+"");
-        float startY = textSticker.getHeight() / 2f;
+        float startY = textSticker.getMappedCenterPoint().y;
         float offsetY = targetPoint.y - startY;
         textSticker.getMatrix().postTranslate(offsetX, offsetY);
-        textSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         return textSticker;
     }
 
@@ -378,36 +379,26 @@ public class CustomWidgetConfigConvertHelper {
      */
     private void drawTextSticker(Canvas canvas, TextPlugBean bean, int baseOnWidth, int baseOnHeight) {
         TextSticker textSticker = new TextSticker(Long.valueOf(bean.getId()));
-        String text = "";
-        text = CustomPlugUtil.adaptOldVersionTimer(bean.getText());
-        textSticker.setText(text);
-        textSticker.setJumpContent(bean.getJumpContent());
-        textSticker.setJumpAppPath(bean.getJumpAppPath());
-        textSticker.setFontPath(bean.getFontPath());
-        textSticker.resizeText();
-        textSticker.setAlignment(bean.getAlignment());
         textSticker.setStickerConfig(bean);
+        textSticker.resizeText();
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
         RectF rectF = textSticker.getMappedRectF();
         float offsetX = 0;
         if (bean.getAlignment() == null) {
-            offsetX = targetPoint.x - bean.getWidth() / 2f;
+            offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
         } else {
             if (bean.getAlignment() == Layout.Alignment.ALIGN_NORMAL) {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getLeft() - rectF.left);
             } else if (bean.getAlignment() == Layout.Alignment.ALIGN_CENTER) {
-                offsetX = targetPoint.x;
+                offsetX = targetPoint.x-(rectF.centerX());
             } else {
                 offsetX = getWidthRatio(baseOnWidth) * (bean.getRight() - rectF.right);
             }
         }
-        Log.i("test_offestX:","targetPoint.x:"+targetPoint.x+" textSticker.getWidth() / 2f:"+textSticker.getWidth() / 2f);
-        Log.i("test_offestX:",offsetX+"");
-        float startY = textSticker.getHeight() / 2f;
+        float startY = textSticker.getMappedCenterPoint().y;
         float offsetY = targetPoint.y - startY;
         textSticker.getMatrix().postTranslate(offsetX, offsetY);
-        textSticker.getMatrix().postRotate(bean.getAngle(),targetPoint.x,targetPoint.y);
         textSticker.draw(canvas, -1, false);
     }
 

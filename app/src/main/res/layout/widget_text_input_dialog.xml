@@ -44,7 +44,7 @@
             android:paddingBottom="@dimen/margin_12"
             android:paddingStart="@dimen/margin_12"
             android:paddingEnd="@dimen/margin_12"
-            android:textColor="@color/c_121212"
+            android:textColor="@color/c_1C1C1D"
             android:textSize="@dimen/textSize_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

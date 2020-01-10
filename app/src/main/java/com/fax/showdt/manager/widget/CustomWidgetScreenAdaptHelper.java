@@ -95,7 +95,6 @@ public class CustomWidgetScreenAdaptHelper {
         bean.setTop((plugLocation.getY() - (height / 2) * adaptHeightRatio));
         bean.setBottom((plugLocation.getY() + (height / 2) * adaptHeightRatio));
         bean.setText(bean.getText());
-        bean.setAlignment(null);
     }
 
     private void initDrawableSticker(DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {

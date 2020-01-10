@@ -68,7 +68,6 @@ public class WidgetUtils {
                 }
                 case WidgetClickType.CLICK_MUSIC: {
                     pendingIntent = getClickToMusicController(bean.getJumpContent());
-                    Log.i("test_click:","target:"+pendingIntent.toString());
                     break;
                 }
                 case WidgetClickType.CLICK_URL: {
@@ -108,30 +107,32 @@ public class WidgetUtils {
     public static PendingIntent getClickToMusicController(String path) {
         Intent intent = new Intent(NLService.NOTIFY_CONTROL_MUSIC);
         Log.i("test_click:","target:"+path);
-        switch (path) {
-            case WidgetMusicActionType.PLAY_OR_PAUSE: {
-                intent.putExtra("music_control", WidgetMusicActionType.PLAY_OR_PAUSE);
-                return PendingIntent.getBroadcast(AppContext.get(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            case WidgetMusicActionType.NEXT: {
-                intent.putExtra("music_control", WidgetMusicActionType.NEXT);
-                return PendingIntent.getBroadcast(AppContext.get(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            case WidgetMusicActionType.PREVIOUS: {
-                intent.putExtra("music_control", WidgetMusicActionType.PREVIOUS);
-                return PendingIntent.getBroadcast(AppContext.get(), 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            case WidgetMusicActionType.VOICE_ADD: {
-                intent.putExtra("music_control", WidgetMusicActionType.VOICE_ADD);
-                return PendingIntent.getBroadcast(AppContext.get(), 3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            case WidgetMusicActionType.VOICE_MULTI: {
-                intent.putExtra("music_control", WidgetMusicActionType.VOICE_MULTI);
-                return PendingIntent.getBroadcast(AppContext.get(), 4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            case WidgetMusicActionType.OPEN_APP: {
-                intent.putExtra("music_control", WidgetMusicActionType.OPEN_APP);
-                return PendingIntent.getBroadcast(AppContext.get(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(!TextUtils.isEmpty(path)) {
+            switch (path) {
+                case WidgetMusicActionType.PLAY_OR_PAUSE: {
+                    intent.putExtra("music_control", WidgetMusicActionType.PLAY_OR_PAUSE);
+                    return PendingIntent.getBroadcast(AppContext.get(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
+                case WidgetMusicActionType.NEXT: {
+                    intent.putExtra("music_control", WidgetMusicActionType.NEXT);
+                    return PendingIntent.getBroadcast(AppContext.get(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
+                case WidgetMusicActionType.PREVIOUS: {
+                    intent.putExtra("music_control", WidgetMusicActionType.PREVIOUS);
+                    return PendingIntent.getBroadcast(AppContext.get(), 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
+                case WidgetMusicActionType.VOICE_ADD: {
+                    intent.putExtra("music_control", WidgetMusicActionType.VOICE_ADD);
+                    return PendingIntent.getBroadcast(AppContext.get(), 3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
+                case WidgetMusicActionType.VOICE_MULTI: {
+                    intent.putExtra("music_control", WidgetMusicActionType.VOICE_MULTI);
+                    return PendingIntent.getBroadcast(AppContext.get(), 4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
+                case WidgetMusicActionType.OPEN_APP: {
+                    intent.putExtra("music_control", WidgetMusicActionType.OPEN_APP);
+                    return PendingIntent.getBroadcast(AppContext.get(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                }
             }
         }
         return null;

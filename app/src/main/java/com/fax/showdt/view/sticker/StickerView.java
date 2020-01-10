@@ -38,7 +38,9 @@ import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 
 public class StickerView extends FrameLayout {
-
+    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f,AppContext.get());
+    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f,AppContext.get());
+    private static final int STICKER_BORDER_PADDING = 10;
     private boolean showIcons;
     private boolean showBorder;
     private boolean showGrid = false;
@@ -50,8 +52,7 @@ public class StickerView extends FrameLayout {
     private final float CENTER_GAP = 3F;
     private final boolean bringToFrontCurrentSticker;
     private boolean showNumber = false;
-    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f,AppContext.get());
-    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f,AppContext.get());
+
 
     @IntDef({
             ActionMode.NONE, ActionMode.DRAG, ActionMode.ZOOM_WITH_TWO_FINGER, ActionMode.ICON,
@@ -291,14 +292,14 @@ public class StickerView extends FrameLayout {
             getStickerPoints(handlingSticker, bitmapPoints);
             float[] resultPoints = handlingSticker.getMappedLinePoints(bitmapPoints);
 
-            float x1 = resultPoints[0];
-            float y1 = resultPoints[1];
-            float x2 = resultPoints[2];
-            float y2 = resultPoints[3];
-            float x3 = resultPoints[4];
-            float y3 = resultPoints[5];
-            float x4 = resultPoints[6];
-            float y4 = resultPoints[7];
+            float x1 = resultPoints[0]-STICKER_BORDER_PADDING;
+            float y1 = resultPoints[1]-STICKER_BORDER_PADDING;
+            float x2 = resultPoints[2]+STICKER_BORDER_PADDING;
+            float y2 = resultPoints[3]-STICKER_BORDER_PADDING;
+            float x3 = resultPoints[4]-STICKER_BORDER_PADDING;
+            float y3 = resultPoints[5]+STICKER_BORDER_PADDING;
+            float x4 = resultPoints[6]+STICKER_BORDER_PADDING;
+            float y4 = resultPoints[7]+STICKER_BORDER_PADDING;
 
             if (showBorder) {
                 canvas.drawLine(x1, y1, x2, y2, borderPaint);
@@ -497,9 +498,6 @@ public class StickerView extends FrameLayout {
     protected void onTouchUp(@NonNull MotionEvent event) {
         showGrid = false;
         long currentTime = SystemClock.uptimeMillis();
-        if (handlingSticker != null && handlingSticker instanceof TextSticker) {
-            ((TextSticker) handlingSticker).setSliding(false);
-        }
         if (currentMode == ActionMode.ICON && currentIcon != null && handlingSticker != null) {
             currentIcon.onActionUp(this, event);
 
@@ -552,9 +550,6 @@ public class StickerView extends FrameLayout {
                 break;
             case ActionMode.DRAG:
                 if (handlingSticker != null) {
-                    if (handlingSticker instanceof TextSticker) {
-                        ((TextSticker) handlingSticker).setSliding(true);
-                    }
                     moveMatrix.set(downMatrix);
                     moveMatrix.postTranslate(event.getX() - downX, event.getY() - downY);
                     handlingSticker.setMatrix(moveMatrix);

@@ -9,6 +9,8 @@ public class TextPlugBean extends BasePlugBean {
     private String shimmerColor;
     private boolean isShimmerText;
     private int alignment;
+    private float letterSpacing;
+    private float lineSpacing;
 
 
     public String getText() {
@@ -65,6 +67,22 @@ public class TextPlugBean extends BasePlugBean {
         } else {
             return null;
         }
+    }
+
+    public float getLetterSpacing() {
+        return letterSpacing;
+    }
+
+    public void setLetterSpacing(float letterSpacing) {
+        this.letterSpacing = letterSpacing;
+    }
+
+    public float getLineSpacing() {
+        return lineSpacing;
+    }
+
+    public void setLineSpacing(float lineSpacing) {
+        this.lineSpacing = lineSpacing;
     }
 }
 

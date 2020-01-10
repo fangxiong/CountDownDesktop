@@ -10,7 +10,7 @@
 
     <style name="MainActivityTheme" parent="AppTheme">
         <item name="android:actionMenuTextColor">@color/colorPrimaryDark</item>
-        <item name="android:statusBarColor">@color/c_121212</item>
+        <item name="android:statusBarColor">@color/c_1C1C1D</item>
 
     </style>
 
@@ -18,7 +18,7 @@
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">false</item>
 <!--        <item name="android:windowFullscreen">true</item>-->
-        <item name="android:statusBarColor">@color/c_121212</item>
+        <item name="android:statusBarColor">@color/c_1C1C1D</item>
         <item name="android:windowBackground">@drawable/main_ui_splash_bg</item>
     </style>
 
@@ -26,7 +26,7 @@
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:windowTranslucentStatus">false</item>-->
 <!--        <item name="android:windowFullscreen">true</item>-->
-        <item name="android:statusBarColor">@color/c_121212</item>
+        <item name="android:statusBarColor">@color/c_1C1C1D</item>
         <item name="android:windowBackground">@drawable/background_black</item>
     </style>
 

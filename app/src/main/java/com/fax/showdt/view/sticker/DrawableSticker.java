@@ -253,7 +253,6 @@ public class DrawableSticker extends Sticker {
                 alphaPaint.setAntiAlias(true);
                 alphaPaint.setFilterBitmap(true);
                 Canvas canvas1 = new Canvas(alphaBitmap);
-//                canvas1.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
                 int frame = (int) (mFrame / mRatio);
                 int newWidth = width - frame;
                 int newHeight = height - frame;

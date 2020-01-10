@@ -1110,21 +1110,6 @@ public class CustomPlugUtil {
         }
     }
 
-    /**
-     * ** bug描述：** 倒计时的code为“C00”  正计时的code为“C01” 由于老版本的bug 全写成C00  v4.6版本由于要在倒计时时间到达之后显示0天  所以出现了下载老版本主题应用后计时显示为0天的bug
-     * **解决方案：** v4.7版本做版本适配 选取一个时间点(加入主题投稿的线上版本发版时间)   将计时器选取时间在这个时间点之前的将“C00”替换成“C01”  如果倒计时时间选取在所定时间点到当前时间点之间 便无法解决 不过这种情况少见
-     * **时间点定为** ：1560268800000 （2019-06-12）
-     */
-    public static String adaptOldVersionTimer(String countDownId) {
-        String result = countDownId;
-        if (CustomPlugUtil.checkContainTimerCode(countDownId)) {
-            long targetTime = CustomPlugUtil.getTimerTargetTime(countDownId);
-            if (targetTime < ADAPT_OLD_VERSION_TIME_POINT) {
-                result = countDownId.replaceFirst("C00-", "C01-");
-            }
-        }
-        return result;
-    }
 
 
     public static @WidgetUpdateService.RefreshGap int getWidgetRefreshGap(CustomWidgetConfig config){
