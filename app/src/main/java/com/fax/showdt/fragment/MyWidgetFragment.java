@@ -89,6 +89,12 @@ public class MyWidgetFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        queryDataFromDataBase();
+    }
+
     private void initView() {
         mAdapter = new CommonAdapter<CustomWidgetConfig>(getActivity(), R.layout.my_widget_mine_item, mData) {
             @Override

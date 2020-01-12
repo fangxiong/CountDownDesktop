@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.R;
@@ -20,11 +21,13 @@ import com.fax.showdt.permission.Permission;
 import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
 import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
+import com.tencent.bugly.beta.Beta;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,6 +39,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import es.dmoral.toasty.Toasty;
 
 import static com.fax.showdt.utils.CommonUtils.START_QQ_TYPE_GROUP_PROFILE;
 
@@ -59,19 +63,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mImmersionBar.statusBarColor(initStatusBarColor());
         mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
         mImmersionBar.statusBarDarkFont(false).init();
-//        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
         fragments.add(new SelectionWidgetFragment());
         fragments.add(new MyWidgetFragment());
         pagerAdapter = new CommonViewPagerAdapter(getSupportFragmentManager(), fragments);
-//        mTabLayout.setupWithViewPager(viewPager, false);
         viewPager.setAdapter(pagerAdapter);
         alphaTabsIndicator.setViewPager(viewPager);
-//        for (int i = 0; i < titles.length; i++) {
-//            mTabLayout.getTabAt(i).setText(titles[i]);
-//        }
         initDrawerLayout();
         initNavigationView();
         initBlurView();
+        ToastShowUtils.showCommonToast(this, "版本号：" + BuildConfig.VERSION_CODE, Toasty.LENGTH_SHORT);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    private void initBlurView(){
+    private void initBlurView() {
 //        BlurView blurView = new BlurView(this, null);
 //        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 ////        blurView.setOverlayColor(Color.argb(blurAlpha, 255, 255, 255));
@@ -98,7 +98,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initNavigationView() {
-        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.white), ViewUtils.dpToPx(0.5f,this));
+        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.white), ViewUtils.dpToPx(0.5f, this));
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -108,16 +108,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         break;
                     }
-                    case R.id.nav_lock: {
-                        break;
-                    }
+
                     case R.id.nav_add_qq: {
                         CommonUtils.startQQ(MainActivity.this, START_QQ_TYPE_GROUP_PROFILE, "721030399");
                         break;
 
                     }
                     case R.id.nav_setting: {
-                        startActivity(new Intent(MainActivity.this,SettingActivity.class));
+                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
 
                     }
@@ -138,6 +136,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (resId == R.id.iv_menu) {
             drawerLayout.openDrawer(GravityCompat.START);
         } else if (resId == R.id.iv_make) {
+            startActivity(new Intent(this, DiyWidgetMakeActivity.class));
+        } else if (resId == R.id.iv_add) {
             startActivity(new Intent(this, DiyWidgetMakeActivity.class));
         }
     }
@@ -178,9 +178,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             }
                         }
                         if (isEnableNext) {
-                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText().Short("获得全部权限");
-                            }
+                            Beta.checkUpgrade();
                         } else {
                             checkPermission();
                         }
@@ -199,6 +197,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Permission.ACCESS_FINE_LOCATION};
         if (!PermissionUtils.isHasElfPermission(this)) {
             showPermissionReqDialog(perms);
+        }else{
+            Beta.checkUpgrade();
         }
     }
 

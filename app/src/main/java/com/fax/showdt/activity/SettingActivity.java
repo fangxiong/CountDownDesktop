@@ -29,6 +29,7 @@ import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.utils.ToastShowUtils;
 import com.kyleduo.switchbutton.SwitchButton;
+import com.tencent.bugly.beta.Beta;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -80,6 +81,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             FeedbackAPI.openFeedbackActivity();
         }else if(resId == R.id.rl_check_version){
             reqUpdateVersionData();
+            Beta.checkUpgrade(true,false);
         }else if(resId == R.id.rl_help){
 
         }else if(resId == R.id.rl_share){

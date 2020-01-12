@@ -856,6 +856,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     public void onNext(Boolean aBoolean) {
                         TipDialog.show(DiyWidgetMakeActivity.this, "保存成功！", TipDialog.TYPE.SUCCESS);
                         sendConfigChangedBroadcast();
+                        DiyWidgetMakeActivity.this.finish();
                         Log.i("test_config:", GsonUtils.toJsonWithSerializeNulls(customWidgetConfig));
                         Log.i("test_config:", "保存成功");
                     }

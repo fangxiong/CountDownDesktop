@@ -8,9 +8,14 @@ import android.util.Log;
 
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.lib.config.ConfigManager;
+import com.fax.showdt.activity.MainActivity;
 import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.OkHttpClientHelper;
+import com.meituan.android.walle.WalleChannelReader;
 import com.simple.spiderman.SpiderMan;
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import androidx.annotation.NonNull;
@@ -47,11 +52,12 @@ public class AppContext extends Application {
         if (!TextUtils.isEmpty(processName) &&processName.equals(this.getPackageName())) {
             Log.i("test_init_application:","初始化主进程");
             OkHttpUtils.initClient(OkHttpClientHelper.getOkHttpClient());
-            MultiDex.install(this);
+
             FeedbackAPI.init(this);
             Toasty.Config.getInstance()
                     .allowQueue(false)
                     .apply();
+            initBugly();
         }else {
             Log.i("test_init_application:","初始化子进程");
             OkHttpUtils.initClient(OkHttpClientHelper.getOkHttpClient());
@@ -67,6 +73,20 @@ public class AppContext extends Application {
         });
 
     }
+
+    private void initBugly(){
+        CrashReport.UserStrategy userStrategy = new CrashReport.UserStrategy(this);
+        userStrategy.setAppChannel(WalleChannelReader.getChannel(this,"home"));
+        userStrategy.setAppVersion(BuildConfig.VERSION_NAME);
+        userStrategy.setAppPackageName(BuildConfig.APPLICATION_ID);
+//        CrashReport.initCrashReport(getApplicationContext(), ConstantString.BUGLY_APP_ID, false);
+        CrashReport.setIsDevelopmentDevice(this,BuildConfig.DEBUG);
+        Beta.canShowUpgradeActs.add(MainActivity.class);
+        Beta.autoCheckUpgrade = false;
+        Bugly.init(getApplicationContext(), ConstantString.BUGLY_APP_ID, BuildConfig.DEBUG);
+
+    }
+
 
     /**
      * 初始化Takt 检测FPS
@@ -88,6 +108,7 @@ public class AppContext extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
      public static String getProcessName() {

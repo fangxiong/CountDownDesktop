@@ -9,4 +9,6 @@ public interface ConstantString {
     String widget_map_data_key = "widget_map_data_key";
     String widget_id = "widget_id";
     String widget_make_data = "widget_make_data";
+
+    String BUGLY_APP_ID = "a532c59eaa";
 }
