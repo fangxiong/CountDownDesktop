@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:text="@string/app_permission01"
-            android:textColor="@color/c_1C1C1D"
+            android:textColor="@color/c_171925"
             android:textSize="@dimen/textSize_16" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_marginTop="@dimen/margin_8"
             android:gravity="start"
             android:text="@string/app_permission02"
-            android:textColor="@color/c_1C1C1D"
+            android:textColor="@color/c_171925"
             android:textSize="@dimen/textSize_16" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_marginTop="@dimen/margin_8"
             android:gravity="start"
             android:text="@string/app_permission03"
-            android:textColor="@color/c_1C1C1D"
+            android:textColor="@color/c_171925"
             android:textSize="@dimen/textSize_16" />
     </RelativeLayout>
 </RelativeLayout>

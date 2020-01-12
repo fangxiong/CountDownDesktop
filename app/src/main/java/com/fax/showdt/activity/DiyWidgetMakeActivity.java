@@ -284,6 +284,10 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             switchToOneFragment(EDIT_PROGRESS);
             mProgressEditFragment.setProgressSticker(progressSticker);
         } else if (resId == R.id.iv_back) {
+            if(mStickerList.isEmpty()){
+                finish();
+                return;
+            }
             MessageDialog.show(this, "提示", "确定要退出编辑吗？")
                     .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
                         @Override
@@ -883,7 +887,11 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 mEditPaneShowing = false;
                 setEditBodySlideOutAnimation();
             } else {
-                showEditDialog();
+                if(mStickerList.isEmpty()){
+                    finish();
+                }else {
+                    showEditDialog();
+                }
             }
             return true;
         }

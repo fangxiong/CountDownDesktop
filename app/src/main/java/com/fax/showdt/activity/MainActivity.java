@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.R;
@@ -104,11 +103,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.nav_widget: {
-
-                        break;
-                    }
-
                     case R.id.nav_add_qq: {
                         CommonUtils.startQQ(MainActivity.this, START_QQ_TYPE_GROUP_PROFILE, "721030399");
                         break;
@@ -117,7 +111,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.id.nav_setting: {
                         startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
-
                     }
                 }
                 return false;
@@ -127,7 +120,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected int initStatusBarColor() {
-        return R.color.c_1C1C1D;
+        return R.color.c_171925;
     }
 
     @Override

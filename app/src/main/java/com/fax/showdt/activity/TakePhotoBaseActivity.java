@@ -111,8 +111,8 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
             mUCropOption = new UCrop.Options();
             mUCropOption.setHideBottomControls(true);
             mUCropOption.setAllowedGestures(UCropActivity.SCALE, UCropActivity.NONE, UCropActivity.ALL);
-            mUCropOption.setStatusBarColor(getResources().getColor(R.color.c_1C1C1D));
-            mUCropOption.setToolbarColor(getResources().getColor(R.color.c_1C1C1D));
+            mUCropOption.setStatusBarColor(getResources().getColor(R.color.c_171925));
+            mUCropOption.setToolbarColor(getResources().getColor(R.color.c_171925));
 //            mUCropOption.setCircleDimmedLayer(true);
             mUCropOption.setShowCropFrame(false);
             mUCropOption.setShowCropGrid(false);
