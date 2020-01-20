@@ -145,7 +145,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private CustomWidgetConfig customWidgetConfig;
     private UpdateLrcReceiver mUpdateLrcReceiver;
     private boolean selectBgFromAlbum = false;
-    private Bundle mBundle;
 
 
     @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS})
@@ -230,27 +229,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerView = findViewById(R.id.sticker_view);
         mStickerViewBg = findViewById(R.id.iv_select_bg);
         mRLEditBody = findViewById(R.id.rl_edit_body);
-
-    }
-
-    /**
-     * 在手机有导航栏的的情况下  编辑页和桌面的高度回不一致
-     * 导致背景壁纸显示有差异 造成针对背景编辑的用户 在桌面看到的效果与预期不一致
-     */
-    private void adaptNavigation() {
-//        ScreenUtils.isNavigationBarExist(this, new ScreenUtils.OnNavigationStateListener() {
-//            @Override
-//            public void onNavigationState(boolean isShowing, int bottom) {
-//                if (isShowing) {
-//                    int navigationHeight = bottom;
-//                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) llAddContent.getLayoutParams();
-//                    params.bottomMargin = navigationHeight;
-//                } else {
-//                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) llAddContent.getLayoutParams();
-//                    params.bottomMargin = 0;
-//                }
-//            }
-//        });
 
     }
 
@@ -347,9 +325,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
      */
     private void initStatusBar() {
         ImmersionBar.hideStatusBar(getWindow());
-//        mImmersionBar = ImmersionBar.with(this);
-//        mImmersionBar.fullScreen(true);
-//        mImmersionBar.init();
     }
 
     private void initBlurView() {
@@ -385,11 +360,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onStickerClicked(@NonNull Sticker sticker) {
                 Log.i("test_click:", "click");
-//                if(sticker instanceof TextSticker){
-//                    switchToOneFragment(EditType.EDIT_TEXT);
-//                }else if(sticker instanceof DrawableSticker){
-//                    switchToOneFragment(EditType.EDIT_SHAPE);
-//                }
+
             }
 
             @Override
@@ -534,11 +505,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerEditFragment = new WidgetStickerEditFragment();
         mShapeEditFragment = new WidgetShapeEditFragment();
         mProgressEditFragment = new WidgetProgressEditFragment();
-//        transaction.add(R.id.rl_edit_body, mTextEditFragment);
-//        transaction.add(R.id.rl_edit_body, mStickerEditFragment);
-//        transaction.add(R.id.rl_edit_body, mShapeEditFragment);
-//        transaction.add(R.id.rl_edit_body, mProgressEditFragment);
-//        transaction.commitAllowingStateLoss();
         mTextEditFragment.setWidgetEditTextCallback(new WidgetEditTextCallback() {
             @Override
             public void onAddSticker() {
@@ -657,6 +623,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             setEditBodySlideInAnimation();
         }
         mEditPaneShowing = true;
+        Log.i("test_show:","visible"+mRLEditBody.getHeight());
         mRLEditBody.setVisibility(View.VISIBLE);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (editType) {

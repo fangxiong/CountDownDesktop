@@ -598,7 +598,7 @@ public class StickerView extends FrameLayout {
                         float ratio = handlingSticker.getMatrixScale(moveMatrix);
                         float drawableWidth = handlingSticker.getWidth() * ratio;
                         float drawableHeight = handlingSticker.getHeight() * ratio;
-                        if (drawableWidth < MIN_DRAWABLE_WIDTH_OR_HEIGHT || drawableHeight < MIN_DRAWABLE_WIDTH_OR_HEIGHT) {
+                        if (drawableWidth < MIN_DRAWABLE_WIDTH_OR_HEIGHT && drawableHeight < MIN_DRAWABLE_WIDTH_OR_HEIGHT) {
                             return;
                         }
                         handlingSticker.setMatrix(moveMatrix);

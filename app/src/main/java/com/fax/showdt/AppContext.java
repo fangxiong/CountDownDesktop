@@ -34,6 +34,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import jp.wasabeef.takt.Audience;
 import jp.wasabeef.takt.Seat;
 import jp.wasabeef.takt.Takt;
+import me.jessyan.autosize.AutoSize;
 
 public class AppContext extends Application {
     private static Application mContext;
@@ -45,6 +46,7 @@ public class AppContext extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        AutoSize.initCompatMultiProcess(this);
         SpiderMan.init(this);
         Environment.init(mContext);
         ConfigManager.init(mContext);

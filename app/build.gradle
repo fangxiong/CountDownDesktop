@@ -5,8 +5,8 @@ apply plugin: 'com.mob.sdk'
 
 def cfg = rootProject.ext.android
 android {
+    compileSdkVersion cfg.compileSdkVersion
     defaultConfig {
-        compileSdkVersion cfg.compileSdkVersion
         minSdkVersion cfg.minSdkVersion
         targetSdkVersion cfg.targetSdkVersion
         versionCode cfg.versionCode
@@ -116,5 +116,7 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//bugly
     implementation 'com.just.agentweb:agentweb:4.1.2'//webview封装
     implementation 'cn.bmob.android:bmob-sdk:3.7.3-rc1'//bmob云数据库
+    implementation 'me.jessyan:autosize:1.1.2'//头条UI适配
+
 
 }

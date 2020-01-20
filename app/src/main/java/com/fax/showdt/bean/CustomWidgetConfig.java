@@ -160,6 +160,22 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     }
 
+    public String getUserIcon() {
+        return userIcon;
+    }
+
+    public void setUserIcon(String userIcon) {
+        this.userIcon = userIcon;
+    }
+
+    public String getUserNick() {
+        return userNick;
+    }
+
+    public void setUserNick(String userNick) {
+        this.userNick = userNick;
+    }
+
     public String getCoverUrl() {
         return coverUrl == null ? "" : coverUrl;
     }

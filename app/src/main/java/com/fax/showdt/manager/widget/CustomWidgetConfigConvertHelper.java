@@ -24,7 +24,6 @@ import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.utils.BitmapUtils;
-import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.DrawableSticker;
 import com.fax.showdt.view.sticker.ProgressSticker;
 import com.fax.showdt.view.sticker.Sticker;
@@ -133,7 +132,7 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setAppName(appName);
                 drawablePlugBean.setClipType(((DrawableSticker) sticker).getClipType());
                 drawablePlugBean.setStrokeColor(((DrawableSticker) sticker).getStrokeColor());
-                drawablePlugBean.setSvgColor(((DrawableSticker) sticker).getSvgColor());
+                drawablePlugBean.setSvgColor(((DrawableSticker) sticker).getDrawableColor());
                 drawablePlugBean.setShowFrame(((DrawableSticker) sticker).isShowFrame());
                 drawablePlugBean.setmPicType(((DrawableSticker) sticker).getmPicType());
 
@@ -355,7 +354,7 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setJumpAppPath(bean.getJumpAppPath());
             drawableSticker.setmPicType(bean.getmPicType());
             drawableSticker.setStrokeColor(bean.getStrokeColor());
-            drawableSticker.setSvgColor(bean.getSvgColor());
+            drawableSticker.setDrawableColor(bean.getSvgColor());
             drawableSticker.setmPicType(bean.getmPicType());
             drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
             float adaptRatio = getWidthRatio(baseOnWidth);
@@ -467,7 +466,7 @@ public class CustomWidgetConfigConvertHelper {
         drawableSticker.setDrawablePath(bean.getDrawablePath());
         drawableSticker.setJumpContent(bean.getJumpContent());
         drawableSticker.setJumpAppPath(bean.getJumpAppPath());
-        drawableSticker.setSvgColor(bean.getSvgColor());
+        drawableSticker.setDrawableColor(bean.getSvgColor());
         drawableSticker.setStrokeColor(bean.getStrokeColor());
         drawableSticker.setClipType(bean.getClipType());
         drawableSticker.setmPicType(bean.getmPicType());

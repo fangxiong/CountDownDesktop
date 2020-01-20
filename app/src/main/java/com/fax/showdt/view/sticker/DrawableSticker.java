@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 
 import com.fax.showdt.AppContext;
@@ -35,6 +36,7 @@ public class DrawableSticker extends Sticker {
     public static final String RECT = "rect";
     public static final String LOVE = "love";
     public static final String PENTAGON = "pentagon";
+    private static final int DEFAULT_DRAWABLE_HEIGHT = ViewUtils.dpToPx(100, AppContext.get());
     private Drawable drawable;
     private Rect realBounds;
     private String drawablePath;
@@ -42,37 +44,79 @@ public class DrawableSticker extends Sticker {
     private Bitmap mMaskBitmap;
     private String clipType = RECT;
     private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+    /**
+     * 图片是否显示描边
+     */
     private boolean mShowFrame;
-    private int mFrame = ViewUtils.dpToPx(6, AppContext.get());
-    private float mRatio = 1;
-    private String strokeColor="#FFFFFF";
-    private String svgColor="#FFFFFF";
+    /**
+     * 图片的默认宽度
+     */
+    private int mFrame = ViewUtils.dpToPx(4, AppContext.get());
+    /**
+     * 图片的缩放比
+     */
+    private float mRatio;
+    /**
+     * 描边颜色包括sd卡图片的描边和背景板的描边颜色
+     */
+    private String strokeColor = "#FFFFFF";
+    /**
+     * 图片描边的宽度(用ratio来计算),默认为高度的0.05f
+     */
+    private float strokeRatio = 0.05f;
+
+    /**
+     * 图片圆角(用ratio来计算),默认为高度的0.5f
+     */
+    private float cornerRatio = 0.5f;
+    /**
+     * 背景板默认高度比例(默认高度的)
+     */
+    private int bgHeightRatio = 1;
+
+    /**
+     * 图片的颜色(用于svg和背景板)
+     */
+    private String drawableColor = "#FFFFFF";
+    /**
+     * 来自asset文件夹下的图片
+     */
     public static final int ASSET = 0;
+    /**
+     * 来自svg文件夹下的图片
+     */
     public static final int SVG = 1;
+    /**
+     * 来自sd卡的图片
+     */
     public static final int SDCARD = 2;
+    /**
+     * 背景板
+     */
+    public static final int BG = 3;
 
     @PicType
     private int mPicType = ASSET;
 
-    @IntDef({ASSET, SVG,SDCARD})
+    @IntDef({ASSET, SVG, SDCARD, BG})
     @Retention(RetentionPolicy.SOURCE)
     public @interface PicType {
     }
 
-    @StringDef({CIRCLE, ROUND,RECT,LOVE,PENTAGON})
+    @StringDef({CIRCLE, ROUND, RECT, LOVE, PENTAGON})
     @Retention(RetentionPolicy.SOURCE)
     public @interface PicClip {
     }
+
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
         this.drawable = drawable;
-        realBounds = new Rect(0, 0, getWidth(), getHeight());
-        int minLength = getWidth() > getHeight() ? getHeight() : getWidth();
-        int maxLength = getWidth() > getHeight() ? getWidth() : getHeight();
-        float ratio = defaultWidth * 1.0f / minLength;
-        if (maxLength * ratio / defaultWidth > 3.0f) {
-            ratio = 3.0f;
+        if (drawable == null) {
+            this.drawable = new GradientDrawable();
         }
+        realBounds = new Rect(0, 0, getWidth(), getHeight());
+        int maxLength = getWidth() > getHeight() ? getWidth() : getHeight();
+        float ratio = defaultWidth * 1.0f / maxLength;
         PointF pointF = new PointF();
         getCenterPoint(pointF);
         getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
@@ -80,7 +124,7 @@ public class DrawableSticker extends Sticker {
     }
 
     public DrawableSticker(Drawable drawable, long id) {
-        this(drawable, id, ViewUtils.dpToPx(100,AppContext.get()));
+        this(drawable, id, DEFAULT_DRAWABLE_HEIGHT);
     }
 
     @NonNull
@@ -119,41 +163,20 @@ public class DrawableSticker extends Sticker {
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
         canvas.save();
         canvas.concat(getMatrix());
-        if (mMaskBitmap != null) {
-//            int width = drawable.getIntrinsicWidth();
-//            int height = drawable.getIntrinsicHeight();
-//            Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//            Canvas drawCanvas = new Canvas(newBitmap);
-//            drawable.setBounds(realBounds);
-//            drawable.draw(drawCanvas);
-//
-//            Paint paint = new Paint();
-//            paint.reset();
-//            paint.setXfermode(xfermode);
-//            drawCanvas.drawBitmap(mMaskBitmap, 0, 0, paint);
-//            paint.setXfermode(null);
-//
-//            if (mShowFrame) {
-//                Bitmap alphaBitmap = getAlphaBitmap(mMaskBitmap);
-//                Paint alphaPaint = new Paint();
-//                alphaPaint.setAntiAlias(true);
-//                alphaPaint.setFilterBitmap(true);
-//
-//                canvas.drawBitmap(alphaBitmap, 0, 0, alphaPaint);
-//                int frame = (int) (mFrame / mRatio);
-//                int newWidth = width - frame;
-//                int newHeight = height - frame;
-//                int offSet = frame / 2;
-//                Bitmap zoomBitmap = Bitmap.createScaledBitmap(newBitmap, newWidth, newHeight, true);
-//                canvas.drawBitmap(zoomBitmap, offSet, offSet, null);
-//            } else {
-//                canvas.drawBitmap(newBitmap, 0, 0, null);
-//            }
-            canvas.drawBitmap(mMaskBitmap,0,0,null);
-
-        } else {
+        if (mPicType == BG) {
+            ((GradientDrawable) drawable).setShape(GradientDrawable.RECTANGLE);
+            ((GradientDrawable) drawable).setCornerRadius(DEFAULT_DRAWABLE_HEIGHT * bgHeightRatio * cornerRatio);
+            ((GradientDrawable) drawable).setColor(Color.parseColor(drawableColor));
+            ((GradientDrawable) drawable).setStroke((int) (DEFAULT_DRAWABLE_HEIGHT * strokeRatio), Color.parseColor(strokeColor));
             drawable.setBounds(realBounds);
             drawable.draw(canvas);
+        } else {
+            if (mMaskBitmap != null) {
+                canvas.drawBitmap(mMaskBitmap, 0, 0, null);
+            } else {
+                drawable.setBounds(realBounds);
+                drawable.draw(canvas);
+            }
         }
         canvas.restore();
     }
@@ -183,29 +206,30 @@ public class DrawableSticker extends Sticker {
         }
     }
 
-    private String getClipSvgPath(String clipType){
-        switch (clipType){
-            case CIRCLE:{
+    private String getClipSvgPath(String clipType) {
+        switch (clipType) {
+            case CIRCLE: {
                 return "shape_circle.svg";
             }
-            case ROUND:{
+            case ROUND: {
                 return "shape_round.svg";
             }
-            case RECT:{
+            case RECT: {
                 return "shape_rect.svg";
             }
-            case LOVE:{
+            case LOVE: {
                 return "shape_love.svg";
             }
-            case PENTAGON:{
+            case PENTAGON: {
                 return "shape_pentagon.svg";
             }
             default:
                 return "shape_rect.svg";
         }
     }
+
     public void addMaskBitmap(Context context, String clipType) {
-        if(SDCARD != mPicType){
+        if (SDCARD != mPicType) {
             mMaskBitmap = null;
             return;
         }
@@ -233,7 +257,7 @@ public class DrawableSticker extends Sticker {
             canvas.drawPicture(svg.getPicture(), rectF);
             result = bitmap;
         }
-        if(result != null){
+        if (result != null) {
             int w = drawable.getIntrinsicWidth();
             int h = drawable.getIntrinsicHeight();
             Bitmap newBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -298,12 +322,12 @@ public class DrawableSticker extends Sticker {
         return mShowFrame;
     }
 
-    public void setSvgColor(String svgColor) {
-        this.svgColor = svgColor;
+    public void setDrawableColor(String drawableColor) {
+        this.drawableColor = drawableColor;
     }
 
-    public String getSvgColor() {
-        return svgColor;
+    public String getDrawableColor() {
+        return drawableColor;
     }
 
     public void setClipType(String clipType) {

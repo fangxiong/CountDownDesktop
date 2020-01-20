@@ -90,7 +90,7 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
             }
         } else if (resId == R.id.iv_color) {
             if (mDrawableSticker != null) {
-                showColorPickDialog(mDrawableSticker.getSvgColor());
+                showColorPickDialog(mDrawableSticker.getDrawableColor());
             }
         } else if (resId == R.id.iv_local) {
             switchToOneFragment(EditShapeType.ELEMENT);
@@ -123,7 +123,7 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
                 String hexCode = "";
                 hexCode = CommonUtils.toHexEncoding(color);
                 if (mDrawableSticker != null) {
-                    mDrawableSticker.setSvgColor(hexCode);
+                    mDrawableSticker.setDrawableColor(hexCode);
                     try {
                         SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN))
                                 .readFromAsset(getActivity().getAssets(), mDrawableSticker.getDrawablePath()).build();

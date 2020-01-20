@@ -16,45 +16,46 @@
             android:layout_width="@dimen/margin_35"
             android:layout_height="@dimen/margin_35"
             android:layout_centerVertical="true"
-            android:onClick="onClick"
             android:layout_marginStart="@dimen/margin_15"
-            android:src="@drawable/common_iv_back_white"/>
+            android:onClick="onClick"
+            android:src="@drawable/common_iv_back_white" />
 
         <ImageView
             android:id="@+id/iv_save"
             android:layout_width="@dimen/margin_35"
             android:layout_height="@dimen/margin_35"
-            android:layout_centerVertical="true"
-            android:onClick="onClick"
-            android:layout_marginEnd="@dimen/margin_15"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_15"
-            android:src="@drawable/widget_make_save_btn"/>
+            android:layout_marginEnd="@dimen/margin_15"
+            android:onClick="onClick"
+            android:src="@drawable/widget_make_save_btn" />
+
         <ImageView
             android:id="@+id/iv_change_bg"
             android:layout_width="@dimen/margin_35"
             android:layout_height="@dimen/margin_35"
             android:layout_centerVertical="true"
-            android:onClick="onClick"
-            android:layout_toStartOf="@id/iv_save"
-            android:layout_marginEnd="@dimen/margin_15"
             android:layout_marginStart="@dimen/margin_15"
-            android:src="@drawable/widget_make_bg_change_btn"/>
+            android:layout_marginEnd="@dimen/margin_15"
+            android:layout_toStartOf="@id/iv_save"
+            android:onClick="onClick"
+            android:src="@drawable/widget_make_bg_change_btn" />
     </RelativeLayout>
 
     <FrameLayout
-        android:layout_below="@id/titleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_centerHorizontal="true">
+        android:layout_below="@id/titleView"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white">
 
         <com.fax.showdt.view.sticker.StickerView
             android:id="@+id/sticker_view"
             android:layout_width="330dp"
             android:layout_height="165dp"
-            android:layout_margin="@dimen/margin_2"
             android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/margin_2"
             app:borderColor="@color/white"
             app:showBorder="true"
             app:showIcons="true">

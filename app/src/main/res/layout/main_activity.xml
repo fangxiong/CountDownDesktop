@@ -69,21 +69,21 @@
             android:layout_below="@+id/titleView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/c_171925" />
+            android:background="@color/c_101010" />
 
         <RelativeLayout
             android:id="@+id/vg_bottom"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_53"
-            android:background="@color/c_101010"
+            android:background="@color/c_171925"
             android:elevation="@dimen/margin_5">
 
             <com.fax.showdt.view.tab.AlphaTabsIndicator
                 android:id="@+id/alphaIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/c_101010"
+                android:background="@color/c_171925"
                 android:layout_marginStart="-40dp"
                 android:layout_marginEnd="-40dp"
                 android:orientation="horizontal">
@@ -144,6 +144,8 @@
         android:background="@color/c_171925"
         android:alpha="150"
         app:itemTextColor="@color/white"
+        app:headerLayout="@layout/main_activity_drawer_header"
+        app:itemBackground="@drawable/navigationview_click_item_bg"
         app:menu="@menu/navigation_drawer_content">
 
     </com.google.android.material.navigation.NavigationView>
