@@ -2,15 +2,20 @@ package com.fax.showdt.activity;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
+import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonViewPagerAdapter;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
+import com.fax.showdt.dialog.ios.util.ShareUtils;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.fragment.MyWidgetFragment;
 import com.fax.showdt.fragment.SelectionWidgetFragment;
@@ -19,6 +24,7 @@ import com.fax.showdt.permission.GrantResult;
 import com.fax.showdt.permission.Permission;
 import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
+import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
@@ -26,6 +32,7 @@ import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
+import com.just.agentweb.AgentWeb;
 import com.tencent.bugly.beta.Beta;
 
 import java.util.ArrayList;
@@ -38,30 +45,25 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
 import es.dmoral.toasty.Toasty;
 
 import static com.fax.showdt.utils.CommonUtils.START_QQ_TYPE_GROUP_PROFILE;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private TabLayout mTabLayout;
     private AlphaTabsIndicator alphaTabsIndicator;
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ArrayList<Fragment> fragments = new ArrayList<>();
-    private String[] titles = new String[]{"精选", "我的"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         checkPermission();
-        mImmersionBar = ImmersionBar.with(this);
-        mImmersionBar.statusBarColor(initStatusBarColor());
-        mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
-        mImmersionBar.statusBarDarkFont(false).init();
         fragments.add(new SelectionWidgetFragment());
         fragments.add(new MyWidgetFragment());
         pagerAdapter = new CommonViewPagerAdapter(getSupportFragmentManager(), fragments);
@@ -69,7 +71,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         alphaTabsIndicator.setViewPager(viewPager);
         initDrawerLayout();
         initNavigationView();
-        initBlurView();
         ToastShowUtils.showCommonToast(this, "版本号：" + BuildConfig.VERSION_CODE, Toasty.LENGTH_SHORT);
     }
 
@@ -84,20 +85,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    private void initBlurView() {
-//        BlurView blurView = new BlurView(this, null);
-//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-////        blurView.setOverlayColor(Color.argb(blurAlpha, 255, 255, 255));
-//        blurView.setBlurRadius(0);
-//        navigationView.addView(blurView, 0, params);
-    }
 
     private void initDrawerLayout() {
         drawerLayout.setScrimColor(getResources().getColor(R.color.transparent));
     }
 
     private void initNavigationView() {
-        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.white), ViewUtils.dpToPx(0.5f, this));
+        ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.c_969696), ViewUtils.dpToPx(0.5f, this));
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -108,8 +102,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
 
                     }
-                    case R.id.nav_setting: {
-                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                    case R.id.nav_feedback: {
+                        FeedbackAPI.openFeedbackActivity();
+                        break;
+                    }
+                    case R.id.nav_help: {
+                        Intent intent = new Intent(MainActivity.this, WebActivity.class);
+                        intent.putExtra(WebActivity.URL_KEY, "https://baijiahao.baidu.com/s?id=1655524083114985245&wfr=spider&for=pc");
+                        startActivity(intent);
+                        break;
+                    }
+                    case R.id.nav_check_update: {
+                        Beta.checkUpgrade(true, false);
+                        break;
+                    }
+                    case R.id.nav_share: {
+                        ShareUtils.shareText(MainActivity.this, "我正在使用《魔秀插件》,很好用哦,推荐给你", "我正在使用《魔秀插件》,很好用哦,推荐给你哦\nhttp://www.baidu.com");
+                        break;
+                    }
+                    case R.id.nav_permission: {
+                        showOpenNotificationPermissionDialog();
                         break;
                     }
                 }
@@ -157,6 +169,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
+    /**
+     * 弹出通知监听权限开启提示框
+     */
+    private void showOpenNotificationPermissionDialog() {
+        MessageDialog.show(this, "提示", "开通通知监听权限可更大程度保证你桌面插件运行更加稳定哦!", "推荐开启")
+                .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v) {
+                        gotoOpen();
+                        return false;
+                    }
+                });
+    }
+
+    private void gotoOpen() {
+        try {
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            }
+           startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void requestPermission(String[] perms) {
         EasyPermission.with(this)
                 .addPermissions(perms)
@@ -190,7 +230,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Permission.ACCESS_FINE_LOCATION};
         if (!PermissionUtils.isHasElfPermission(this)) {
             showPermissionReqDialog(perms);
-        }else{
+        } else {
             Beta.checkUpgrade();
         }
     }

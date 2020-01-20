@@ -15,9 +15,11 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">false</item>
-<!--        <item name="android:windowFullscreen">true</item>-->
+        <item name="android:navigationBarColor">@color/c_171925</item>
+        <!--windowTranslucentNavigation这个属性设置成true，则navigationBarColor设置会失效-->
+        <!--<item name="android:windowTranslucentNavigation">false</item>-->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:statusBarColor">@color/c_171925</item>
         <item name="android:windowBackground">@drawable/main_ui_splash_bg</item>
     </style>
@@ -161,6 +163,16 @@
     <style name="topMenuAnim">
         <item name="android:windowEnterAnimation">@anim/top_menu_enter</item>
         <item name="android:windowExitAnimation">@anim/top_menu_exit</item>
+    </style>
+    <style name="toolBar">
+    <item name="colorControlNormal">#ffffff</item>
+    <item name="android:homeAsUpIndicator">@mipmap/web_close_btn</item>
+    <item name="android:titleTextStyle">@style/titlestyle</item>
+    </style>
+
+    <style name="titlestyle">
+
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

@@ -501,10 +501,10 @@ public class ViewUtils {
 
     public static void setNavigationMenuLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {
         try {
-            Field fieldByPressenter = navigationView.getClass().getDeclaredField("mPresenter");
+            Field fieldByPressenter = navigationView.getClass().getDeclaredField("presenter");
             fieldByPressenter.setAccessible(true);
             NavigationMenuPresenter menuPresenter = (NavigationMenuPresenter) fieldByPressenter.get(navigationView);
-            Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("mMenuView");
+            Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("menuView");
             fieldByMenuView.setAccessible(true);
             final NavigationMenuView mMenuView = (NavigationMenuView) fieldByMenuView.get(menuPresenter);
             mMenuView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {

@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group01"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_feedback"
-            android:icon="@drawable/navigation_setting_icon"
+            android:icon="@drawable/navigation_feedback_icon"
             android:title="@string/setting_feedback" />
         <item
             android:id="@+id/nav_add_qq"
             android:icon="@drawable/navigation_add_qq_group_icon"
-            android:title="加入qq群" />
-        <item
-            android:id="@+id/nav_setting"
-            android:icon="@drawable/navigation_setting_icon"
-            android:title="设置" />
+            android:title="@string/setting_add_qq_group" />
 
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/navigation_setting_icon"
+            android:icon="@drawable/navigation_help_icon"
             android:title="@string/setting_help" />
 
+    </group>
+    <group
+        android:id="@+id/group02"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_check_update"
-            android:icon="@drawable/navigation_setting_icon"
+            android:icon="@drawable/navigation_check_update_icon"
             android:title="@string/setting_check_version" />
         <item
             android:id="@+id/nav_share"
-            android:icon="@drawable/navigation_setting_icon"
+            android:icon="@drawable/navigation_share_icon"
             android:title="@string/setting_share" />
 
 
+    </group>
+
+    <group
+        android:id="@+id/group03"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_permission"
+            android:icon="@drawable/navigation_open_permission_icon"
+            android:title="@string/setting_open_permission" />
     </group>
 </menu>

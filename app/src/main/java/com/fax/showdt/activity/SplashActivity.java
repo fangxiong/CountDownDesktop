@@ -3,17 +3,21 @@ package com.fax.showdt.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.fax.showdt.utils.NotchUtils;
 import com.gyf.barlibrary.ImmersionBar;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImmersionBar.hideStatusBar(getWindow());
+        NotchUtils.openFullScreenModel(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -23,8 +27,4 @@ public class SplashActivity extends BaseActivity {
         },1500);
     }
 
-    @Override
-    protected boolean isEnableImmersionBar() {
-        return false;
-    }
 }

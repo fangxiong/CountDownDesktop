@@ -95,7 +95,7 @@ def renameReinforceApk() {
  */
 def reinforceApk() {
     println('开始进行加固操作')
-    File releaseApk = new File('build/outputs/apk/release/app-release.apk')
+    File releaseApk = new File('app/build/outputs/apk/release/app-release.apk')
     print("release path:"+releaseApk.absolutePath)
     if (!releaseApk.exists()) {
         throw new FileNotFoundException('Release包不存在，无法进行加固操作')

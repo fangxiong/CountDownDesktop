@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
+import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
 import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
@@ -102,6 +103,22 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
         transaction.add(R.id.fl_sticker_edit_body, mTouchEditFragment);
         transaction.commitAllowingStateLoss();
 
+        mTouchEditFragment.setEditClickCallback(new WidgetEditClickCallback() {
+            @Override
+            public void onActionType(String actionType) {
+                if (drawableSticker != null) {
+                    drawableSticker.setJumpAppPath(actionType);
+                }
+            }
+
+            @Override
+            public void onActionContent(String actionContent) {
+                if (drawableSticker != null) {
+                    drawableSticker.setJumpContent(actionContent);
+                }
+            }
+        });
+
     }
 
     private void switchToOneFragment(EditStickerType editTextType) {
@@ -125,7 +142,7 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
 
     public void setDrawableSticker(DrawableSticker drawableSticker) {
         this.drawableSticker = drawableSticker;
-        if(propertiesEditFragment != null){
+        if (propertiesEditFragment != null) {
             propertiesEditFragment.setSticker(drawableSticker);
         }
     }

@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import cn.bmob.v3.Bmob;
 import es.dmoral.toasty.Toasty;
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -47,7 +48,8 @@ public class AppContext extends Application {
         SpiderMan.init(this);
         Environment.init(mContext);
         ConfigManager.init(mContext);
-        initTakt();
+        Bmob.initialize(this, ConstantString.BMOB_APP_ID);
+//        initTakt();
         String processName = getProcessName();
         if (!TextUtils.isEmpty(processName) &&processName.equals(this.getPackageName())) {
             Log.i("test_init_application:","初始化主进程");
@@ -93,10 +95,11 @@ public class AppContext extends Application {
      */
     private void initTakt(){
         Takt.stock(this)
-                .seat(Seat.BOTTOM_RIGHT)
+                .seat(Seat.TOP_RIGHT)
                 .interval(250)
                 .color(Color.YELLOW)
                 .size(14f)
+                .showOverlaySetting(true)
                 .listener(new Audience() {
                     @Override
                     public void heartbeat(double fps) {
@@ -105,6 +108,15 @@ public class AppContext extends Application {
                 });
 
     }
+
+
+    @Override
+    public void onTerminate() {
+        Takt.finish();
+        super.onTerminate();
+
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

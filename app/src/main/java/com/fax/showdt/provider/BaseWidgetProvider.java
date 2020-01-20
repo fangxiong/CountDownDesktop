@@ -74,10 +74,6 @@ public class BaseWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
-//        DebugLog.i("test_widget:", "minwidth;" + Math.round(TypedValue.applyDimension(1,newOptions.getInt(OPTION_APPWIDGET_MIN_WIDTH),context.getResources().getDisplayMetrics())));
-//        DebugLog.i("test_widget:", "minHeight;" + Math.round(TypedValue.applyDimension(1,newOptions.getInt(OPTION_APPWIDGET_MIN_HEIGHT),context.getResources().getDisplayMetrics())));
-//        DebugLog.i("test_widget:", "maxHeight;" + Math.round(TypedValue.applyDimension(1,newOptions.getInt(OPTION_APPWIDGET_MAX_HEIGHT),context.getResources().getDisplayMetrics())));
-//        DebugLog.i("test_widget:", "maxWidth;" + Math.round(TypedValue.applyDimension(1,newOptions.getInt(OPTION_APPWIDGET_MAX_WIDTH),context.getResources().getDisplayMetrics())));
     }
 
     @Override

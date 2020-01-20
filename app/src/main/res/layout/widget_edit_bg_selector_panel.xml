@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/transparent"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -15,20 +16,22 @@
             android:layout_centerInParent="true"
             android:layout_marginEnd="@dimen/margin_15"
             android:text="@string/widget_edit_select_bg_title"
-            android:textColor="@color/c_FCF43C"
+            android:textColor="@color/c_A0A0A0"
             android:textStyle="bold"
             android:textSize="@dimen/textSize_20" />
 
-        <TextView
-            android:id="@+id/tv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:text="@string/close"
-            android:textColor="@color/c_FCF43C"
-            android:textSize="@dimen/textSize_18" />
+            android:layout_marginEnd="@dimen/margin_10"
+            android:paddingStart="@dimen/margin_5"
+            android:paddingEnd="@dimen/margin_5"
+            android:paddingTop="@dimen/margin_5"
+            android:paddingBottom="@dimen/margin_5"
+            android:src="@drawable/common_iv_close_btn" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView

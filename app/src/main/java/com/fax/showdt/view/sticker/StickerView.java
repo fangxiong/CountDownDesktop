@@ -38,8 +38,8 @@ import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 
 public class StickerView extends FrameLayout {
-    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f,AppContext.get());
-    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f,AppContext.get());
+    private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f, AppContext.get());
+    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f, AppContext.get());
     private static final int STICKER_BORDER_PADDING = 10;
     private boolean showIcons;
     private boolean showBorder;
@@ -208,7 +208,7 @@ public class StickerView extends FrameLayout {
     private void drawGrid(Canvas canvas) {
 
         linePaint.setColor(Color.parseColor("#FFFFFF"));
-        linePaint.setStrokeWidth(ViewUtils.dpToPx(0.3f,getContext()));
+        linePaint.setStrokeWidth(ViewUtils.dpToPx(0.3f, getContext()));
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
         linePaint.setPathEffect(null);
@@ -292,14 +292,14 @@ public class StickerView extends FrameLayout {
             getStickerPoints(handlingSticker, bitmapPoints);
             float[] resultPoints = handlingSticker.getMappedLinePoints(bitmapPoints);
 
-            float x1 = resultPoints[0]-STICKER_BORDER_PADDING;
-            float y1 = resultPoints[1]-STICKER_BORDER_PADDING;
-            float x2 = resultPoints[2]+STICKER_BORDER_PADDING;
-            float y2 = resultPoints[3]-STICKER_BORDER_PADDING;
-            float x3 = resultPoints[4]-STICKER_BORDER_PADDING;
-            float y3 = resultPoints[5]+STICKER_BORDER_PADDING;
-            float x4 = resultPoints[6]+STICKER_BORDER_PADDING;
-            float y4 = resultPoints[7]+STICKER_BORDER_PADDING;
+            float x1 = resultPoints[0] - STICKER_BORDER_PADDING;
+            float y1 = resultPoints[1] - STICKER_BORDER_PADDING;
+            float x2 = resultPoints[2] + STICKER_BORDER_PADDING;
+            float y2 = resultPoints[3] - STICKER_BORDER_PADDING;
+            float x3 = resultPoints[4] - STICKER_BORDER_PADDING;
+            float y3 = resultPoints[5] + STICKER_BORDER_PADDING;
+            float x4 = resultPoints[6] + STICKER_BORDER_PADDING;
+            float y4 = resultPoints[7] + STICKER_BORDER_PADDING;
 
             if (showBorder) {
                 canvas.drawLine(x1, y1, x2, y2, borderPaint);
@@ -344,8 +344,8 @@ public class StickerView extends FrameLayout {
         icon.setX(x);
         icon.setY(y);
         icon.getMatrix().reset();
-        if (icon.getWidth() > ViewUtils.dpToPx(24f,getContext())) {
-            float ratio = ViewUtils.dpToPx(24,getContext()) * 1.0f / icon.getWidth();
+        if (icon.getWidth() > ViewUtils.dpToPx(24f, getContext())) {
+            float ratio = ViewUtils.dpToPx(24, getContext()) * 1.0f / icon.getWidth();
             PointF pointF = new PointF();
             icon.getCenterPoint(pointF);
             icon.getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
@@ -543,6 +543,28 @@ public class StickerView extends FrameLayout {
         lastClickTime = currentTime;
     }
 
+//    private boolean adsorbStickerToCenter(float currentX, float downX,float currentY,float downY) {
+//        //往右边滑动
+//        if (currentX > downX) {
+//            if (((getWidth() / 2f - 10f) < handlingSticker.getMappedCenterPoint().x) && (handlingSticker.getMappedCenterPoint().x < getWidth() / 2f-2f)) {
+//                handlingSticker.getMatrix().postTranslate(Math.abs(getWidth() / 2f - handlingSticker.getMappedCenterPoint().x), currentY - downY);
+//                Log.i("test_tran:",handlingSticker.getMappedCenterPoint().x+"");
+//                Log.i("test_tran:","centerX:"+getWidth()/2f+"");
+//
+//                return true;
+//            }
+//        } else {
+//            //往左边滑动
+//            if (((getWidth() / 2f + 10f) > handlingSticker.getMappedCenterPoint().x) && (handlingSticker.getMappedCenterPoint().x > getWidth() / 2f)) {
+//                handlingSticker.getMatrix().postTranslate(handlingSticker.getMappedCenterPoint().x - getWidth() / 2f, 0);
+//                return true;
+//
+//            }
+//        }
+//        return false;
+//
+//    }
+
     protected void handleCurrentMode(@NonNull MotionEvent event) {
         switch (currentMode) {
             case ActionMode.NONE:
@@ -580,7 +602,7 @@ public class StickerView extends FrameLayout {
                             return;
                         }
                         handlingSticker.setMatrix(moveMatrix);
-                    }else if (handlingSticker instanceof ProgressSticker) {
+                    } else if (handlingSticker instanceof ProgressSticker) {
                         moveMatrix.postScale(scale, scale, midPoint.x,
                                 midPoint.y);
                         handlingSticker.setMatrix(moveMatrix);

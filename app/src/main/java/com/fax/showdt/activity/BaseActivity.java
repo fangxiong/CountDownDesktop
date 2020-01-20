@@ -168,8 +168,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             mImmersionBar.fitsSystemWindows(true);
             mImmersionBar.statusBarColor(initStatusBarColor());
         }
-        mImmersionBar.navigationBarColor(R.color.c_F7FAFA);
-//        mImmersionBar.statusBarDarkFont(true).init();
+        mImmersionBar.navigationBarColor(R.color.c_171925);
+        mImmersionBar.init();
     }
 
     protected ImmersionBar getImmersionBar() {

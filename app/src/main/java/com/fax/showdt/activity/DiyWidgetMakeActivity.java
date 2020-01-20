@@ -72,6 +72,7 @@ import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
+import com.fax.showdt.utils.ScreenUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.BitmapStickerIcon;
 import com.fax.showdt.view.sticker.DeleteIconEvent;
@@ -119,7 +120,7 @@ import static com.fax.showdt.dialog.ios.util.DialogSettings.blurAlpha;
  * Description:
  */
 public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View.OnClickListener {
-
+    private final String KEY_RESTORE_DATA = "restore_data";
     public static final int EDIT_TEXT = 0;
     public static final int EDIT_STICKER = 1;
     public static final int EDIT_SHAPE = 2;
@@ -144,6 +145,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private CustomWidgetConfig customWidgetConfig;
     private UpdateLrcReceiver mUpdateLrcReceiver;
     private boolean selectBgFromAlbum = false;
+    private Bundle mBundle;
 
 
     @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_SHAPE, EDIT_PROGRESS})
@@ -162,6 +164,10 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.diy_widget_make_activity);
         WeatherManager.getInstance().starGetWeather();
+        initStatusBar();
+        intervalRefreshStickerView();
+
+        initData(savedInstanceState);
     }
 
     @Override
@@ -202,8 +208,14 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        CustomWidgetConfig config = new CustomWidgetConfigConvertHelper().saveConfig(customWidgetConfig, mStickerList);
+        customWidgetConfig.setBaseOnHeightPx(mStickerView.getHeight());
+        customWidgetConfig.setBaseOnWidthPx(mStickerView.getWidth());
+        outState.putString(KEY_RESTORE_DATA, config.toJSONString());
+        Log.i("test_save_state:",config.toJSONString());
+
     }
 
     @Override
@@ -218,29 +230,56 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerView = findViewById(R.id.sticker_view);
         mStickerViewBg = findViewById(R.id.iv_select_bg);
         mRLEditBody = findViewById(R.id.rl_edit_body);
-        initStatusBar();
-        intervalRefreshStickerView();
-        initAllEditFragments();
-        initStickerView();
-        initStickerViewBg();
-        initBlurView();
-        initData();
+
     }
 
-    private void initData() {
+    /**
+     * 在手机有导航栏的的情况下  编辑页和桌面的高度回不一致
+     * 导致背景壁纸显示有差异 造成针对背景编辑的用户 在桌面看到的效果与预期不一致
+     */
+    private void adaptNavigation() {
+//        ScreenUtils.isNavigationBarExist(this, new ScreenUtils.OnNavigationStateListener() {
+//            @Override
+//            public void onNavigationState(boolean isShowing, int bottom) {
+//                if (isShowing) {
+//                    int navigationHeight = bottom;
+//                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) llAddContent.getLayoutParams();
+//                    params.bottomMargin = navigationHeight;
+//                } else {
+//                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) llAddContent.getLayoutParams();
+//                    params.bottomMargin = 0;
+//                }
+//            }
+//        });
+
+    }
+
+    private void initData(Bundle savedInstanceState) {
         mStickerList = new LongSparseArray<>();
         Intent intent = getIntent();
         String json = intent.getStringExtra(ConstantString.widget_make_data);
         if (!TextUtils.isEmpty(json)) {
             customWidgetConfig = GsonUtils.parseJsonWithGson(json, CustomWidgetConfig.class);
-            initStickers();
         }
+        if (savedInstanceState != null) {
+            String saveJson = savedInstanceState.getString(KEY_RESTORE_DATA);
+            Log.i("test_save_state:","初始化："+saveJson);
+            if (!TextUtils.isEmpty(saveJson)) {
+                customWidgetConfig = GsonUtils.parseJsonWithGson(saveJson, CustomWidgetConfig.class);
+            }
+        }
+        if(customWidgetConfig == null){
+            customWidgetConfig = new CustomWidgetConfig();
+        }
+        initStickers();
+        initAllEditFragments();
+        initStickerView();
+        initStickerViewBg();
+        initBlurView();
     }
 
     private void initStickers() {
         if (customWidgetConfig != null) {
-            mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
-            mStickerViewBg.setImageBitmap(mEditBitmap);
             CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
             mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
         }
@@ -284,7 +323,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             switchToOneFragment(EDIT_PROGRESS);
             mProgressEditFragment.setProgressSticker(progressSticker);
         } else if (resId == R.id.iv_back) {
-            if(mStickerList.isEmpty()){
+            if (mStickerList.isEmpty()) {
                 finish();
                 return;
             }
@@ -308,9 +347,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
      */
     private void initStatusBar() {
         ImmersionBar.hideStatusBar(getWindow());
-        mImmersionBar = ImmersionBar.with(this);
-        mImmersionBar.fullScreen(true);
-        mImmersionBar.init();
+//        mImmersionBar = ImmersionBar.with(this);
+//        mImmersionBar.fullScreen(true);
+//        mImmersionBar.init();
     }
 
     private void initBlurView() {
@@ -318,7 +357,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         RelativeLayout rootView = findViewById(R.id.rootView);
-        rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
+        rootView.setBackground(new BitmapDrawable(getResources(), mEditBitmap));
         rootView.addView(blurView, 0, params);
     }
 
@@ -466,19 +505,26 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             mIsGetSystemBgSuc = true;
             mEditBitmap = bitmap;
             mSystemBgBitmap = bitmap;
-            mStickerViewBg.setImageBitmap(mEditBitmap);
         } else {
             mIsGetSystemBgSuc = false;
             mEditBitmap = CommonUtils.getAssetPic(this, "file:///android_asset/widgetBg/template00.png");
         }
+        if(customWidgetConfig != null) {
+            if(!TextUtils.isEmpty(customWidgetConfig.getBgPath())) {
+                mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
+            }
+        }
+        mStickerViewBg.setImageBitmap(mEditBitmap);
+
     }
 
     private void intervalRefreshStickerView() {
         addDisponsable(Observable.interval(30, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        mStickerView.invalidate();
+                        mStickerView.postInvalidate();
                     }
                 }));
     }
@@ -716,9 +762,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             public void onBind(final FullScreenDialog dialog, View rootView) {
                 Log.i("test_dialog:", "initEditBgPanel");
                 mRvEditBg = rootView.findViewById(R.id.rv);
-                TextView mTvClose = rootView.findViewById(R.id.tv_close);
+                ImageView mIvClose = rootView.findViewById(R.id.iv_close);
                 mEditBgDialog = dialog;
-                mTvClose.setOnClickListener(new View.OnClickListener() {
+                mIvClose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.doDismiss();
@@ -780,12 +826,12 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 } else if (position == 1 && mIsGetSystemBgSuc) {
                     mStickerViewBg.setImageBitmap(mSystemBgBitmap);
                     RelativeLayout rootView = findViewById(R.id.rootView);
-                    rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
+                    rootView.setBackground(new BitmapDrawable(getResources(), mEditBitmap));
                 } else {
                     mEditBitmap = CommonUtils.getAssetPic(DiyWidgetMakeActivity.this, mEditBgList.get(position));
                     mStickerViewBg.setImageBitmap(mEditBitmap);
                     RelativeLayout rootView = findViewById(R.id.rootView);
-                    rootView.setBackground(new BitmapDrawable(getResources(),mEditBitmap));
+                    rootView.setBackground(new BitmapDrawable(getResources(), mEditBitmap));
 
                 }
                 if (mEditBgDialog != null) {
@@ -887,9 +933,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 mEditPaneShowing = false;
                 setEditBodySlideOutAnimation();
             } else {
-                if(mStickerList.isEmpty()){
+                if (mStickerList.isEmpty()) {
                     finish();
-                }else {
+                } else {
                     showEditDialog();
                 }
             }
@@ -902,8 +948,11 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     public void cropSuc(String path) {
         super.cropSuc(path);
         if (selectBgFromAlbum) {
+            selectBgFromAlbum = false;
             mEditBitmap = BitmapUtils.decodeFile(path);
             mStickerViewBg.setImageBitmap(mEditBitmap);
+            RelativeLayout rootView = findViewById(R.id.rootView);
+            rootView.setBackground(new BitmapDrawable(getResources(), mEditBitmap));
         } else {
             Drawable drawable = new BitmapDrawable(getResources(), path);
             DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());

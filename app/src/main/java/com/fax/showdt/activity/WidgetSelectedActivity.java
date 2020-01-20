@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fax.showdt.ConstantString;
@@ -26,6 +27,7 @@ import com.fax.showdt.fragment.MyWidgetFragment;
 import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.WidgetManager;
+import com.fax.showdt.service.NLService;
 import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GlideUtils;
@@ -54,15 +56,16 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class WidgetSelectedActivity extends BaseActivity implements View.OnClickListener{
+public class WidgetSelectedActivity extends BaseActivity implements View.OnClickListener {
     private RecyclerView mRv;
     private CommonAdapter<CustomWidgetConfig> mAdapter;
     private List<CustomWidgetConfig> mData = new ArrayList<>();
     private Disposable disposable;
     private TipDialog mTipsDialog;
     private SwipeRefreshLayout mRefreshLayout;
+    private LinearLayout llTipContent;
     private String mWidgetId;
-    private String[] menus = {"设置插件","设置插件(包含壁纸)","删除"};
+    private String[] menus = {"设置插件", "设置插件(包含壁纸)", "删除"};
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,14 +73,9 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.widget_selected_activity);
         mRv = findViewById(R.id.rv);
         mRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        mRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(true);
-                queryDataFromDataBase();
-            }
-        });
+        llTipContent = findViewById(R.id.ll_make_tip_content);
         initData();
+        restartWidgetService();
 
     }
 
@@ -86,6 +84,7 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         super.onNewIntent(intent);
         setIntent(intent);
         initData();
+        restartWidgetService();
     }
 
     @Override
@@ -93,10 +92,23 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         return false;
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mRefreshLayout.setRefreshing(true);
+                queryDataFromDataBase();
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(disposable != null){
+        if (disposable != null) {
             disposable.dispose();
         }
     }
@@ -104,9 +116,19 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         int resId = v.getId();
-        if(resId == R.id.iv_back){
+        if (resId == R.id.iv_back) {
             finish();
+        } else if (resId == R.id.iv_make) {
+            startActivity(new Intent(WidgetSelectedActivity.this, DiyWidgetMakeActivity.class));
+
+        } else if (resId == R.id.tv_make) {
+            startActivity(new Intent(WidgetSelectedActivity.this, DiyWidgetMakeActivity.class));
         }
+    }
+
+    private void restartWidgetService(){
+        WidgetUpdateService.startSelf(this);
+        NLService.startSelf(this);
     }
 
 
@@ -137,11 +159,11 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
             public void onItemClick(View view, RecyclerView.ViewHolder holder, final int position) {
                 final CustomWidgetConfig config = mData.get(position);
                 config.setDrawWithBg(false);
-                if(!TextUtils.isEmpty(mWidgetId)) {
-                    Log.i("test_widget","put widget"+mWidgetId);
+                if (!TextUtils.isEmpty(mWidgetId)) {
+                    Log.i("test_widget", "put widget" + mWidgetId);
                     sendConfigChangedBroadcast();
-                    WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId,config.toJSONString(),ConstantString.widget_map_data_key);
-                    ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"设置成功",Toasty.LENGTH_SHORT);
+                    WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId, config.toJSONString(), ConstantString.widget_map_data_key);
+                    ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "设置成功", Toasty.LENGTH_SHORT);
                 }
             }
 
@@ -152,44 +174,46 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         });
     }
 
-    private void  sendConfigChangedBroadcast() {
-        Intent intent =new Intent();
+    private void sendConfigChangedBroadcast() {
+        Intent intent = new Intent();
         intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
         sendBroadcast(intent);
     }
 
-    private class OnMenuClickListener implements View.OnClickListener{
+    private class OnMenuClickListener implements View.OnClickListener {
         private CustomWidgetConfig config;
-        public OnMenuClickListener(CustomWidgetConfig customWidgetConfig){
+
+        public OnMenuClickListener(CustomWidgetConfig customWidgetConfig) {
             this.config = customWidgetConfig;
         }
+
         @Override
         public void onClick(View v) {
             BottomMenu.show(WidgetSelectedActivity.this, menus, new OnMenuItemClickListener() {
                 @Override
                 public void onClick(String text, int index) {
-                    switch (index){
-                        case 0:{
+                    switch (index) {
+                        case 0: {
                             config.setDrawWithBg(false);
-                            if(!TextUtils.isEmpty(mWidgetId)) {
-                                Log.i("test_widget","put widget"+mWidgetId);
-                                WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId,config.toJSONString(),ConstantString.widget_map_data_key);
+                            if (!TextUtils.isEmpty(mWidgetId)) {
+                                Log.i("test_widget", "put widget" + mWidgetId);
+                                WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId, config.toJSONString(), ConstantString.widget_map_data_key);
                                 WidgetManager.getInstance().changeWidgetInfo();
-                                ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"设置成功",Toasty.LENGTH_SHORT);
+                                ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "设置成功", Toasty.LENGTH_SHORT);
                             }
                             break;
                         }
-                        case 1:{
+                        case 1: {
                             config.setDrawWithBg(true);
-                            if(!TextUtils.isEmpty(mWidgetId)) {
-                                Log.i("test_widget","put widget"+mWidgetId);
-                                WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId,config.toJSONString(),ConstantString.widget_map_data_key);
+                            if (!TextUtils.isEmpty(mWidgetId)) {
+                                Log.i("test_widget", "put widget" + mWidgetId);
+                                WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId, config.toJSONString(), ConstantString.widget_map_data_key);
                                 WidgetManager.getInstance().changeWidgetInfo();
-                                ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"设置成功",Toasty.LENGTH_SHORT);
+                                ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "设置成功", Toasty.LENGTH_SHORT);
                             }
                             break;
                         }
-                        case 2:{
+                        case 2: {
                             Observable.create(new ObservableOnSubscribe<Boolean>() {
                                 @Override
                                 public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
@@ -208,14 +232,14 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
 
                                         @Override
                                         public void onNext(Boolean aBoolean) {
-                                            ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"删除成功",Toasty.LENGTH_SHORT);
+                                            ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "删除成功", Toasty.LENGTH_SHORT);
                                             mData.remove(config);
                                             mAdapter.notifyDataSetChanged();
                                         }
 
                                         @Override
                                         public void onError(Throwable e) {
-                                            ToastShowUtils.showCommonToast(WidgetSelectedActivity.this,"删除失败",Toasty.LENGTH_SHORT);
+                                            ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "删除失败", Toasty.LENGTH_SHORT);
                                         }
 
                                         @Override
@@ -238,7 +262,7 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
                     @Override
                     public void accept(Disposable disposable) throws Exception {
                         DialogSettings.tipTheme = DialogSettings.THEME.LIGHT;
-                        mTipsDialog = WaitDialog.show(WidgetSelectedActivity.this,"加载中...");
+                        mTipsDialog = WaitDialog.show(WidgetSelectedActivity.this, "加载中...");
                     }
                 })
                 .subscribe(new SingleObserver<List<CustomWidgetConfig>>() {
@@ -249,12 +273,17 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
 
                     @Override
                     public void onSuccess(List<CustomWidgetConfig> customWidgetConfigs) {
-                        if(disposable != null && !disposable.isDisposed()) {
+                        if (disposable != null && !disposable.isDisposed()) {
                             disposable.dispose();
                         }
                         mData.clear();
                         mData.addAll(customWidgetConfigs);
                         Collections.sort(mData);
+                        if (mData.isEmpty()) {
+                            llTipContent.setVisibility(View.VISIBLE);
+                        } else {
+                            llTipContent.setVisibility(View.GONE);
+                        }
                         mAdapter.notifyDataSetChanged();
                         mTipsDialog.doDismiss();
                         mRefreshLayout.setRefreshing(false);

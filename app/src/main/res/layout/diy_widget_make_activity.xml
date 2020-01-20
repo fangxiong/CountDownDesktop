@@ -71,7 +71,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/margin_70"
+        android:layout_height="@dimen/margin_60"
         android:layout_alignParentBottom="true"
         android:background="@color/white">
 
@@ -84,7 +84,7 @@
         <TextView
             android:id="@+id/tv_text"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_60"
+            android:layout_height="@dimen/margin_55"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_46"
             android:layout_toStartOf="@id/tv_sticker"
@@ -98,7 +98,7 @@
         <TextView
             android:id="@+id/tv_sticker"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_60"
+            android:layout_height="@dimen/margin_55"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_23"
             android:layout_toStartOf="@id/baseLine"
@@ -113,7 +113,7 @@
         <TextView
             android:id="@+id/tv_shape"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_60"
+            android:layout_height="@dimen/margin_55"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_23"
             android:layout_toEndOf="@id/baseLine"
@@ -127,7 +127,7 @@
         <TextView
             android:id="@+id/tv_progress"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_60"
+            android:layout_height="@dimen/margin_55"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_46"
             android:layout_toEndOf="@id/tv_shape"
@@ -146,6 +146,5 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:visibility="gone"/>
-
 
     </RelativeLayout>

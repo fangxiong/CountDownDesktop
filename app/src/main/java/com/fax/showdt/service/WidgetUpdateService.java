@@ -62,8 +62,12 @@ public class WidgetUpdateService extends Service {
     }
 
     public static void startSelf(Context context) {
-        Intent intent = new Intent(context, WidgetUpdateService.class);
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            Intent intent = new Intent(context, WidgetUpdateService.class);
+            ContextCompat.startForegroundService(context, intent);
+        }catch (Exception e){
+
+        }
     }
 
     public static void stopSelf(Context context) {
@@ -119,7 +123,7 @@ public class WidgetUpdateService extends Service {
         Notification notification = notificationBuilder.setOngoing(true)
 //                .setSmallIcon(R.drawable.logo_small_icon)
 //                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.umeng_push_notification_default_large_icon))
-                .setContentTitle("秀桌面正在运行")
+                .setContentTitle("魔秀插件正在运行")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();

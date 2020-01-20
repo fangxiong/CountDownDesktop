@@ -45,7 +45,6 @@ public class CustomWidgetScreenAdaptHelper {
         mResultConfig.setTitle(config.getTitle());
         mResultConfig.setBaseOnWidthPx(mAdaptWidth);
         mResultConfig.setBaseOnHeightPx(mAdaptHeight);
-        mResultConfig.setTextSize(ViewUtils.dpToPx(TextSticker.DEFAULT_TEXT_SIZE, AppContext.get()));
         mResultConfig.setDefaultScale(TextSticker.DEFAULT_TEXT_SIZE);
         mResultConfig.setCreatedTime(System.currentTimeMillis());
         mResultConfig.setDesc(config.getDesc());

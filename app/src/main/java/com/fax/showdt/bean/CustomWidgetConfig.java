@@ -1,7 +1,6 @@
 package com.fax.showdt.bean;
 
 
-
 import com.fax.showdt.db.DIYConverters;
 
 import java.util.ArrayList;
@@ -15,29 +14,19 @@ import androidx.room.TypeConverters;
 @Entity
 public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetConfig> {
 
-    @TypeConverters({DIYConverters.TextPlugListConverters.class})
-    private List<TextPlugBean> textPlugList;
-
-    @TypeConverters({DIYConverters.ProgressPlugListConverters.class})
-    private List<ProgressPlugBean> progressPlugList;
-
-    @TypeConverters({DIYConverters.DrawablePlugListConverters.class})
-    private List<DrawablePlugBean> drawablePlugList;
-
-    String title;
-
-    String desc;
 
     @PrimaryKey
     private long id;
 
-    private int version;
+    private String title;
+
+    private String desc;
+
+    private int version;//当前版本制作
 
     private String bgPath;
 
     private int defaultScale;
-
-    private int textSize;
 
     private int baseOnWidthPx;
 
@@ -48,6 +37,19 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
     private long createdTime;
 
     private boolean drawWithBg;
+
+    private String userIcon;
+    private String userNick;
+
+    @TypeConverters({DIYConverters.TextPlugListConverters.class})
+    private List<TextPlugBean> textPlugList;
+
+    @TypeConverters({DIYConverters.ProgressPlugListConverters.class})
+    private List<ProgressPlugBean> progressPlugList;
+
+    @TypeConverters({DIYConverters.DrawablePlugListConverters.class})
+    private List<DrawablePlugBean> drawablePlugList;
+
     public List<TextPlugBean> getTextPlugList() {
         if (textPlugList == null) {
             return new ArrayList<>();
@@ -112,14 +114,6 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     public void setDefaultScale(int defaultScale) {
         this.defaultScale = defaultScale;
-    }
-
-    public int getTextSize() {
-        return textSize;
-    }
-
-    public void setTextSize(int textSize) {
-        this.textSize = textSize;
     }
 
     public int getBaseOnWidthPx() {

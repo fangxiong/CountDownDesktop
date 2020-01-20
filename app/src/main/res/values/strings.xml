@@ -30,7 +30,9 @@
     <string name="setting">设置</string>
     <string name="setting_check_version">检查更新</string>
     <string name="setting_help">帮助手册</string>
+    <string name="setting_add_qq_group">加入QQ群</string>
     <string name="setting_share">分享给小伙伴</string>
+    <string name="setting_open_permission">开启权限</string>
     <string name="setting_feedback">我要反馈</string>
     <string name="setting_lock_switch">锁屏</string>
     <string name="setting_market_scoring">给秀桌面打分</string>
@@ -77,6 +79,8 @@
     <string name="widget_text_line_spacing">行间距</string>
 
     <string name="widget_edit_select_bg_title">选择背景板</string>
+    <string name="no_widget">您还没有任何作品⊙__⊙</string>
+    <string name="go_to_make_widget">去制作</string>
 
 
 

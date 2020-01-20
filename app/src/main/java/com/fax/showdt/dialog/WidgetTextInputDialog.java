@@ -18,9 +18,11 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.fax.showdt.R;
 import com.fax.showdt.utils.RomUtils;
 import com.fax.showdt.utils.ViewUtils;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
@@ -62,10 +64,7 @@ public class WidgetTextInputDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.widget_text_input_dialog, container, false);
         mRelativeLayout = (RelativeLayout) view.findViewById(R.id.rl_body);
         mEditText = (EditText) view.findViewById(R.id.et_font);
-        mEditText.setFilters(new InputFilter[]{new TextLengthFilter(max)});
-        if (RomUtils.isEmui()) {
-            mEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(max / 2)});
-        }
+        mEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(max)});
         mAdd = (ImageView) view.findViewById(R.id.tv_font_add);
         getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
             @Override

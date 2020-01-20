@@ -55,7 +55,9 @@
         <activity
             android:name=".activity.SettingActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".activity.WebActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.fax.showdt.activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -112,15 +114,11 @@
                 android:resource="@xml/provider_path" />
         </provider>
 
-<!--        <provider-->
-<!--            android:name="com.tencent.bugly.beta.utils.BuglyFileProvider"-->
-<!--            android:authorities="${applicationId}.fileProvider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/provider_paths" />-->
-<!--        </provider>-->
+        <provider
+            android:name="cn.bmob.v3.util.BmobContentProvider"
+            android:authorities="com.fax.showdt.BmobContentProvider">
+        </provider>
+
 
     </application>
 
