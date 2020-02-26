@@ -11,9 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fax.showdt.BuildConfig;
 import com.fax.showdt.ConstantString;
+import com.fax.showdt.EventMsg;
 import com.fax.showdt.R;
 import com.fax.showdt.activity.DiyWidgetMakeActivity;
+import com.fax.showdt.activity.PushWidgetActivity;
 import com.fax.showdt.activity.WidgetSelectedActivity;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
@@ -134,11 +137,17 @@ public class MyWidgetFragment extends Fragment {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                 CustomWidgetConfig config = mData.get(position);
-                DiyWidgetMakeActivity.startSelf(getActivity(), config);
+                DiyWidgetMakeActivity.startSelf(getActivity(), config.toJSONString(),false);
             }
 
             @Override
             public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
+                if(BuildConfig.DEBUG) {
+                    CustomWidgetConfig config = mData.get(position);
+                    Intent intent = new Intent(getActivity(), PushWidgetActivity.class);
+                    intent.putExtra(EventMsg.widget_data_to_push, config.toJSONString());
+                    startActivity(intent);
+                }
                 return false;
             }
         });
@@ -158,7 +167,7 @@ public class MyWidgetFragment extends Fragment {
                 public void onClick(String text, int index) {
                     switch (index) {
                         case 0: {
-                            DiyWidgetMakeActivity.startSelf(getActivity(), config);
+                            DiyWidgetMakeActivity.startSelf(getActivity(), config.toJSONString(),false);
                             break;
                         }
                         case 1: {

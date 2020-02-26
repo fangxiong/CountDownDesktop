@@ -7,5 +7,5 @@
     android:minResizeHeight="40dp"
     android:label="@string/countdownContent_default_desktop"
     android:resizeMode="horizontal|vertical"
-    android:previewImage="@drawable/ic_launcher_background"
+    android:previewImage="@mipmap/ic_launcher"
     android:updatePeriodMillis="1000" />

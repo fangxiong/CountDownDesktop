@@ -1,4 +1,4 @@
-package com.fax.showdt.fragment.widgetShapeEdit;
+package com.fax.showdt.fragment.widgetVectorEdit;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -38,10 +38,9 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class ShapeElementFragment extends Fragment {
+public class VectorElementFragment extends Fragment {
     private CommonAdapter<WidgetShapeBean> mStickerAdapter;
     private List<WidgetShapeBean> mCurrentStickerBean = new ArrayList<>();
     private RecyclerView mStickerContentRv;
@@ -51,13 +50,13 @@ public class ShapeElementFragment extends Fragment {
     private ShapeElementCallback elementCallback;
 
 
-    public ShapeElementFragment() {
+    public VectorElementFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.shape_element_fragment, container, false);
+        View view = inflater.inflate(R.layout.vector_element_fragment, container, false);
         mStickerContentRv = view.findViewById(R.id.rv_content);
         initTextPlugSelectUI();
         return view;

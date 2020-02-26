@@ -28,17 +28,6 @@
                 android:onClick="onClick"
                 android:src="@drawable/menu_btn" />
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_marginStart="25dp"-->
-                <!--android:layout_toEndOf="@id/iv_menu"-->
-                <!--android:paddingBottom="@dimen/margin_3"-->
-                <!--android:text="插件"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="@dimen/textSize_20" />-->
-
             <ImageView
                 android:id="@+id/iv_make"
                 android:layout_width="@dimen/margin_25"
@@ -147,6 +136,19 @@
         app:headerLayout="@layout/main_activity_drawer_header"
         app:itemBackground="@drawable/navigationview_click_item_bg"
         app:menu="@menu/navigation_drawer_content">
+
+        <TextView
+            android:id="@+id/tv_login"
+            android:layout_width="@dimen/margin_180"
+            android:layout_height="@dimen/margin_35"
+            android:background="@drawable/logout_btn_bg"
+            android:text="@string/setting_login"
+            android:textSize="@dimen/margin_18"
+            android:onClick="onClick"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/margin_15"
+            android:layout_gravity="bottom|center"/>
 
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

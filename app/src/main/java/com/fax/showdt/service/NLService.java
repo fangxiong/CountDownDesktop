@@ -465,11 +465,13 @@ public class NLService extends NotificationListenerService implements OnPlayback
                             break;
                         }
                         case WidgetMusicActionType.VOICE_ADD: {
-//
+                            AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
                             break;
                         }
                         case WidgetMusicActionType.VOICE_MULTI: {
-
+                            AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
                             break;
                         }
                         case WidgetMusicActionType.OPEN_APP: {

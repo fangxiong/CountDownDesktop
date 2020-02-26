@@ -12,7 +12,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.text.LoginFilter;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.utils.ViewUtils;
@@ -72,7 +74,7 @@ public class DrawableSticker extends Sticker {
     /**
      * 背景板默认高度比例(默认高度的)
      */
-    private int bgHeightRatio = 1;
+    private float shapeHeightRatio = 1.0f;
 
     /**
      * 图片的颜色(用于svg和背景板)
@@ -93,12 +95,12 @@ public class DrawableSticker extends Sticker {
     /**
      * 背景板
      */
-    public static final int BG = 3;
+    public static final int SHAPE = 3;
 
     @PicType
     private int mPicType = ASSET;
 
-    @IntDef({ASSET, SVG, SDCARD, BG})
+    @IntDef({ASSET, SVG, SDCARD, SHAPE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface PicType {
     }
@@ -111,10 +113,12 @@ public class DrawableSticker extends Sticker {
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
         this.drawable = drawable;
-        if (drawable == null) {
+        if(drawable == null || drawable instanceof  GradientDrawable){
             this.drawable = new GradientDrawable();
+            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+        }else {
+            realBounds = new Rect(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         }
-        realBounds = new Rect(0, 0, getWidth(), getHeight());
         int maxLength = getWidth() > getHeight() ? getWidth() : getHeight();
         float ratio = defaultWidth * 1.0f / maxLength;
         PointF pointF = new PointF();
@@ -163,12 +167,18 @@ public class DrawableSticker extends Sticker {
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
         canvas.save();
         canvas.concat(getMatrix());
-        if (mPicType == BG) {
+        if (mPicType == SHAPE) {
+            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
             ((GradientDrawable) drawable).setShape(GradientDrawable.RECTANGLE);
-            ((GradientDrawable) drawable).setCornerRadius(DEFAULT_DRAWABLE_HEIGHT * bgHeightRatio * cornerRatio);
+            ((GradientDrawable) drawable).setCornerRadius(DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio * cornerRatio);
             ((GradientDrawable) drawable).setColor(Color.parseColor(drawableColor));
             ((GradientDrawable) drawable).setStroke((int) (DEFAULT_DRAWABLE_HEIGHT * strokeRatio), Color.parseColor(strokeColor));
+            Log.i("test_drawsticker_ling:",String.valueOf(DEFAULT_DRAWABLE_HEIGHT * strokeRatio));
             drawable.setBounds(realBounds);
+            Paint paint = new Paint();
+            paint.setColor(Color.parseColor("#333333"));
+            canvas.drawRect(realBounds,paint);
+            canvas.translate(DEFAULT_DRAWABLE_HEIGHT * strokeRatio/2f,DEFAULT_DRAWABLE_HEIGHT * (strokeRatio)/2f);
             drawable.draw(canvas);
         } else {
             if (mMaskBitmap != null) {
@@ -190,12 +200,13 @@ public class DrawableSticker extends Sticker {
 
     @Override
     public int getWidth() {
-        return drawable.getIntrinsicWidth();
+        Log.i("test_drawsticker_width:",String.valueOf(realBounds.width()));
+        return realBounds.width();
     }
 
     @Override
     public int getHeight() {
-        return drawable.getIntrinsicHeight();
+        return realBounds.height();
     }
 
     @Override
@@ -292,25 +303,15 @@ public class DrawableSticker extends Sticker {
 
     }
 
-    public Bitmap getAlphaBitmap(Bitmap bitmap) {
-
-        Bitmap mBitmap = bitmap;
-
-        int width = mBitmap.getWidth();
-        int height = mBitmap.getHeight();
-
+    private Bitmap getAlphaBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
         Bitmap mAlphaBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
         Canvas mCanvas = new Canvas(mAlphaBitmap);
-
         Paint mPaint = new Paint();
-
         mPaint.setColor(Color.parseColor(strokeColor));
-
         Bitmap alphaBitmap = bitmap.extractAlpha();
-
         mCanvas.drawBitmap(alphaBitmap, 0, 0, mPaint);
-
         return mAlphaBitmap;
     }
 
@@ -354,5 +355,27 @@ public class DrawableSticker extends Sticker {
         this.mPicType = mPicType;
     }
 
+    public float getStrokeRatio() {
+        return strokeRatio;
+    }
 
+    public void setStrokeRatio(float strokeRatio) {
+        this.strokeRatio = strokeRatio;
+    }
+
+    public float getCornerRatio() {
+        return cornerRatio;
+    }
+
+    public void setCornerRatio(float cornerRatio) {
+        this.cornerRatio = cornerRatio;
+    }
+
+    public float getShapeHeightRatio() {
+        return shapeHeightRatio;
+    }
+
+    public void setShapeHeightRatio(float shapeHeightRatio) {
+        this.shapeHeightRatio = shapeHeightRatio;
+    }
 }

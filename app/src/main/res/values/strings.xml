@@ -3,6 +3,10 @@
     tools:ignore="MissingTranslation">
     <string name="app_name">魔秀插件</string>
     <string name="process_name">com.fax.showdt.service</string>
+    <string name="color">颜色</string>
+    <string name="not_installed_qq">您还未安装QQ</string>
+    <string name="authorize_fail_msg">授权失败,错误信息:</string>
+    <string name="get_qq_userinfo_fail">获取用户QQ信息错误</string>
 
     <string name="tab_recommend">推荐</string>
     <string name="tab_mine">我的</string>
@@ -29,16 +33,21 @@
 
     <string name="setting">设置</string>
     <string name="setting_check_version">检查更新</string>
-    <string name="setting_help">帮助手册</string>
+    <string name="setting_help">使用教程</string>
     <string name="setting_add_qq_group">加入QQ群</string>
     <string name="setting_share">分享给小伙伴</string>
     <string name="setting_open_permission">开启权限</string>
     <string name="setting_feedback">我要反馈</string>
     <string name="setting_lock_switch">锁屏</string>
     <string name="setting_market_scoring">给秀桌面打分</string>
+    <string name="setting_logout">退出登录</string>
+    <string name="setting_login">立即登录</string>
+    <string name="click_login">点击登录</string>
 
     <string name="countdown4_4">魔秀插件4x4</string>
-    <string name="countdown1_1">魔秀插件4x4</string>
+    <string name="countdown3_3">魔秀插件3x3</string>
+    <string name="countdown2_2">魔秀插件2x2</string>
+    <string name="countdown1_1">魔秀插件1x1</string>
     <string name="countdownContent_default_desktop">点击设置倒计时\n长按可调节宽高</string>
     <string name="widget_select">选择插件</string>
 
@@ -77,6 +86,13 @@
     <string name="widget_text_color">颜色</string>
     <string name="widget_text_letter_spacing">字间距</string>
     <string name="widget_text_line_spacing">行间距</string>
+    <string name="widget_shape_height">高度</string>
+    <string name="widget_shape_line_width">线宽</string>
+    <string name="widget_shape_corner_width">圆角</string>
+    <string name="widget_shape_stroke_color">边框色</string>
+    <string name="widget_shape_solid_color">实心色</string>
+
+
 
     <string name="widget_edit_select_bg_title">选择背景板</string>
     <string name="no_widget">您还没有任何作品⊙__⊙</string>

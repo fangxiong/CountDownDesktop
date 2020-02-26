@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
-import com.fax.showdt.callback.WidgetEditStickerElementSelectedCallback;
-import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
 import com.fax.showdt.fragment.widgetStickerEdit.WidgetStickerPropertiesEditFragment;
 import com.fax.showdt.view.sticker.DrawableSticker;
 
@@ -112,9 +110,10 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
             }
 
             @Override
-            public void onActionContent(String actionContent) {
+            public void onActionContent(String actionContent,String appName) {
                 if (drawableSticker != null) {
                     drawableSticker.setJumpContent(actionContent);
+                    drawableSticker.setAppName(appName);
                 }
             }
         });
@@ -128,12 +127,18 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
                 transaction.hide(mTouchEditFragment);
                 transaction.show(propertiesEditFragment);
                 transaction.commitAllowingStateLoss();
+                if (drawableSticker != null){
+                    propertiesEditFragment.initActionUI();
+                }
                 break;
             }
             case TOUCH: {
                 transaction.hide(propertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 transaction.commitAllowingStateLoss();
+                if (drawableSticker != null){
+                    mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),drawableSticker.getJumpContent(),drawableSticker.getAppName());
+                }
                 break;
             }
         }
@@ -144,6 +149,9 @@ public class WidgetStickerEditFragment extends Fragment implements View.OnClickL
         this.drawableSticker = drawableSticker;
         if (propertiesEditFragment != null) {
             propertiesEditFragment.setSticker(drawableSticker);
+        }
+        if (mTouchEditFragment != null) {
+            mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),drawableSticker.getJumpContent(),drawableSticker.getAppName());
         }
     }
 

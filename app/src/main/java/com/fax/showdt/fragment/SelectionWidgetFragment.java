@@ -5,21 +5,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
+import com.fax.showdt.activity.PushWidgetActivity;
 import com.fax.showdt.adapter.CommonAdapter;
+import com.fax.showdt.adapter.CommonViewPagerAdapter;
 import com.fax.showdt.adapter.ViewHolder;
-import com.fax.showdt.bean.TestBen;
-import com.fax.showdt.bean.TestData;
+import com.fax.showdt.bean.widgetClassification;
+import com.fax.showdt.dialog.ios.v3.CustomDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
-import com.fax.showdt.utils.GlideUtils;
-import com.fax.showdt.utils.GsonUtils;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.fax.showdt.utils.ToastShowUtils;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,83 +26,73 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import okhttp3.Call;
+import androidx.viewpager.widget.ViewPager;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import es.dmoral.toasty.Toasty;
 
 public class SelectionWidgetFragment extends Fragment {
 
-    private RecyclerView mRv;
-    private CommonAdapter<TestBen> mAdapter;
-    private List<TestBen> mData = new ArrayList<>();
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
     private TipDialog mTipsDialog;
-    private SwipeRefreshLayout mRefreshLayout;
-
+    protected List<Fragment> mFragmentList = new ArrayList<>();
+    protected List<String> mTabList = new ArrayList<>();
     public SelectionWidgetFragment(){}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.selection_widget_fragment,container,false);
-        mRv = view.findViewById(R.id.rv);
-        mRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        initView();
-        reqHomeWidgetData();
+        initView(view);
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        queryWidgetClassificationData();
     }
 
-    private void initView(){
-        mAdapter = new CommonAdapter<TestBen>(getActivity(),R.layout.widget_show_item,mData) {
-            @Override
-            protected void convert(ViewHolder holder, TestBen testBen, int position) {
-                ImageView ivWidget = holder.getView(R.id.iv_widget);
-                GlideUtils.loadRoundCircleImage(getActivity(),testBen.getUrl(),ivWidget, 10);
-            }
-        };
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        mRv.setLayoutManager(gridLayoutManager);
-        mRv.setAdapter(mAdapter);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                reqHomeWidgetData();
-            }
-        });
-    }
 
-    private void reqHomeWidgetData(){
+
+    private void queryWidgetClassificationData(){
         mTipsDialog = WaitDialog.show((AppCompatActivity) getActivity(),"加载中...");
-        OkHttpUtils.get().url(ConstantString.req_widget_home_selection).build().execute(new StringCallback() {
+        BmobQuery<widgetClassification> query = new BmobQuery<>();
+        query.findObjects(new FindListener<widgetClassification>() {
             @Override
-            public void onError(Call call, Exception e, int id) {
+            public void done(List<widgetClassification> mDatas, BmobException e) {
                 mTipsDialog.doDismiss();
-                mRefreshLayout.setRefreshing(false);
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                mTipsDialog.doDismiss();
-                Log.i("test_result;",response);
-                if(response != null){
-                    TestData testData = GsonUtils.parseJsonWithGson(response,TestData.class);
-                    mData.clear();
-                    mData.addAll(testData.getList());
-                    mAdapter.notifyDataSetChanged();
-                    mRefreshLayout.setRefreshing(false);
+//                Log.i("test_req:",String.valueOf(mDatas.size()));
+                if (e == null) {
+                    if (mDatas != null && mDatas.size() > 0) {
+                        for (widgetClassification ccb : mDatas) {
+                            mTabList.add(ccb.getcName());
+                            mTabLayout.addTab(mTabLayout.newTab());
+                        }
+                        for(int i=0;i<mDatas.size();i++){
+                            mTabLayout.getTabAt(i).setText(mTabList.get(i));
+                        }
+                        for (int i = 0; i < mDatas.size(); i++) {
+                            mFragmentList.add(SelectionFragment.newInstance(mDatas.get(i).getCid()));
+                        }
+                        mViewPager.setAdapter(new CommonViewPagerAdapter(getChildFragmentManager(), mFragmentList, mTabList));
+                        mTabLayout.setupWithViewPager(mViewPager);
+                    }
+                }else {
+                    Log.i("test_req_error:",e.getMessage());
+                    e.printStackTrace();
+                    ToastShowUtils.showCommonToast(getActivity(),e.getMessage(), Toasty.LENGTH_SHORT);
                 }
             }
         });
     }
 
-
-
+    private void initView(View view){
+        mTabLayout = view.findViewById(R.id.tablayout);
+        mViewPager = view.findViewById(R.id.vg);
+    }
 
 }

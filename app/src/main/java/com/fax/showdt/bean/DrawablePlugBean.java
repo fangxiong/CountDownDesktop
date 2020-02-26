@@ -15,7 +15,10 @@ public class DrawablePlugBean extends BasePlugBean {
     @DrawableSticker.PicType
     private int mPicType;
     private String strokeColor ="#FFFFFF";
-    private String svgColor ="#FFFFFF";
+    private String drawableColor ="#FFFFFF";
+    private float shapeHeightRatio;
+    private float cornerRatio;
+    private float strokeRatio;
 
     public String getDrawablePath() {
         return drawablePath;
@@ -65,11 +68,35 @@ public class DrawablePlugBean extends BasePlugBean {
         this.strokeColor = strokeColor;
     }
 
-    public String getSvgColor() {
-        return svgColor;
+    public String getDrawableColor() {
+        return drawableColor;
     }
 
-    public void setSvgColor(String svgColor) {
-        this.svgColor = svgColor;
+    public void setDrawableColor(String drawableColor) {
+        this.drawableColor = drawableColor;
+    }
+
+    public float getShapeHeightRatio() {
+        return shapeHeightRatio;
+    }
+
+    public void setShapeHeightRatio(float shapeHeightRatio) {
+        this.shapeHeightRatio = shapeHeightRatio;
+    }
+
+    public float getCornerRatio() {
+        return cornerRatio;
+    }
+
+    public void setCornerRatio(float cornerRatio) {
+        this.cornerRatio = cornerRatio;
+    }
+
+    public float getStrokeRatio() {
+        return strokeRatio;
+    }
+
+    public void setStrokeRatio(float strokeRatio) {
+        this.strokeRatio = strokeRatio;
     }
 }

@@ -49,15 +49,10 @@ public class WidgetUtils {
 
     private static void initStickerClickAction(BasePlugBean bean,int width,int height,RemoteViews remoteViews){
         if (!TextUtils.isEmpty(bean.getJumpAppPath())) {
-            int childWidth = (int) (bean.getWidth() * bean.getScale());
-            int childHeight = (int) (bean.getHeight() * bean.getScale());
-            PlugLocation plugLocation = bean.getLocation();
-            float centerX = plugLocation.getX();
-            float centerY = plugLocation.getY();
-            int paddingLeft = (int) (centerX - childWidth / 2.0f);
-            int paddingTop = (int) (centerY - childHeight / 2.0f);
-            int paddingEnd = (width - paddingLeft - childWidth);
-            int paddingBottom = (height - childHeight - paddingTop);
+            int paddingLeft = (int)bean.getLeft();
+            int paddingTop = (int)bean.getTop();
+            int paddingEnd = width - (int)bean.getRight();
+            int paddingBottom = height - (int)bean.getBottom();
             RemoteViews remoteViews2 = new RemoteViews(AppContext.get().getPackageName(), R.layout.widget_touch_area);
             remoteViews2.setViewPadding(R.id.touch_padding, paddingLeft, paddingTop, paddingEnd, paddingBottom);
             PendingIntent pendingIntent = null;

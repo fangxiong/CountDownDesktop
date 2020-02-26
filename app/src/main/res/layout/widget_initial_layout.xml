@@ -3,18 +3,34 @@
     android:id="@+id/rl_body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#67000000">
+    android:background="#33000000">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
         <TextView
             android:id="@+id/tv_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:text="点击设定或者长按调整尺寸"
             android:textColor="@color/white"
-            android:textSize="@dimen/margin_14"
-            android:text="长按可调节插件位置大小"/>
+            android:textSize="@dimen/margin_14" />
 
-
-
+<!--        <TextView-->
+<!--            android:id="@+id/tv_edit"-->
+<!--            android:layout_width="@dimen/margin_177"-->
+<!--            android:layout_height="@dimen/margin_32"-->
+<!--            android:layout_marginTop="@dimen/margin_15"-->
+<!--            android:background="@drawable/widget_initial_layout_text_bg"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:text="设置插件"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="@dimen/margin_16" />-->
+    </LinearLayout>
 
 </RelativeLayout>

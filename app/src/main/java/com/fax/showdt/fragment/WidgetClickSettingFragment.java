@@ -1,6 +1,7 @@
 package com.fax.showdt.fragment;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
@@ -165,44 +166,44 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
             mTvClickTypeContent.setText(musicActions[0]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.PLAY_OR_PAUSE);
+                editClickCallback.onActionContent(WidgetMusicActionType.PLAY_OR_PAUSE,"");
             }
         } else if (v.getId() == R.id.tv_next) {
             mTvClickTypeContent.setText(musicActions[1]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.NEXT);
+                editClickCallback.onActionContent(WidgetMusicActionType.NEXT,"");
             }
         } else if (v.getId() == R.id.tv_previous) {
             mTvClickTypeContent.setText(musicActions[2]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.PREVIOUS);
+                editClickCallback.onActionContent(WidgetMusicActionType.PREVIOUS,"");
             }
         } else if (v.getId() == R.id.tv_voice_add) {
             mTvClickTypeContent.setText(musicActions[3]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.VOICE_ADD);
+                editClickCallback.onActionContent(WidgetMusicActionType.VOICE_ADD,"");
             }
         } else if (v.getId() == R.id.tv_voice_multi) {
             mTvClickTypeContent.setText(musicActions[4]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.VOICE_MULTI);
+                editClickCallback.onActionContent(WidgetMusicActionType.VOICE_MULTI,"");
             }
         } else if (v.getId() == R.id.tv_open_app) {
             mTvClickTypeContent.setText(musicActions[5]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
-                editClickCallback.onActionContent(WidgetMusicActionType.OPEN_APP);
+                editClickCallback.onActionContent(WidgetMusicActionType.OPEN_APP,"");
             }
         } else if (v.getId() == R.id.iv_close) {
             appIconDialog.doDismiss();
         }
     }
 
-    public void initActionUI(String actionType, String actionContent) {
+    public void initActionUI(String actionType, String actionContent,String appName) {
         if (TextUtils.isEmpty(actionType)) {
             mTvClickAction.setText(actions[0]);
             return;
@@ -216,7 +217,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
             case WidgetClickType.CLICK_APPLICATION: {
                 mTvClickAction.setText(actions[1]);
                 mTvClickTypeTitle.setText(actionTypes[0]);
-
+                mTvClickTypeContent.setText(appName);
                 break;
             }
             case WidgetClickType.CLICK_MUSIC: {
@@ -261,7 +262,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                     }
                 }
             } else if (WidgetClickType.CLICK_APPLICATION.equals(actionType)) {
-                mTvClickTypeContent.setText(AppIconUtils.getAppName(getActivity(),actionContent));
+//                mTvClickTypeContent.setText(AppIconUtils.getAppName(getActivity(),actionContent));
             }
         } else {
             llClickContent.setVisibility(View.GONE);
@@ -337,7 +338,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                         }
                         mTvClickTypeContent.setText(inputStr);
                         if (editClickCallback != null) {
-                            editClickCallback.onActionContent(inputStr);
+                            editClickCallback.onActionContent(inputStr,"");
                         }
                         return false;
                     }
@@ -428,7 +429,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                         AppInfo appInfo = appInfoList.get(position);
                         mTvClickTypeContent.setText(appInfo.getName());
                         if (editClickCallback != null) {
-                            editClickCallback.onActionContent(appInfo.getPackageName());
+                            editClickCallback.onActionContent(appInfo.getPackageName(),appInfo.getName());
                         }
                         appIconDialog.doDismiss();
                     }

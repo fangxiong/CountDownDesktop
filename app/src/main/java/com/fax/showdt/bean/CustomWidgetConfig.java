@@ -13,8 +13,6 @@ import androidx.room.TypeConverters;
 
 @Entity
 public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetConfig> {
-
-
     @PrimaryKey
     private long id;
 
@@ -34,12 +32,15 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     private String coverUrl;
 
+    private String zipImgUrl;
+
     private long createdTime;
 
     private boolean drawWithBg;
 
     private String userIcon;
     private String userNick;
+
 
     @TypeConverters({DIYConverters.TextPlugListConverters.class})
     private List<TextPlugBean> textPlugList;
@@ -178,6 +179,14 @@ public class CustomWidgetConfig extends Bean implements Comparable<CustomWidgetC
 
     public String getCoverUrl() {
         return coverUrl == null ? "" : coverUrl;
+    }
+
+    public String getZipImgUrl(){
+        return zipImgUrl == null ? "" : zipImgUrl;
+    }
+
+    public void setZipImgUrl(String url){
+        this.zipImgUrl = url;
     }
 
     public String getTitle() {

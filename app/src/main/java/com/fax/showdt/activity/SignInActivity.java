@@ -1,18 +1,24 @@
 package com.fax.showdt.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringDef;
+import cn.bmob.v3.BmobUser;
+import es.dmoral.toasty.Toasty;
 
+import com.fax.showdt.EventMsg;
 import com.fax.showdt.R;
+import com.fax.showdt.bean.LoginRepoUserInfo;
+import com.fax.showdt.callback.ILoginCallback;
+import com.fax.showdt.manager.FaxUserManager;
+import com.fax.showdt.manager.QQLoginManager;
+import com.fax.showdt.manager.WeiBoLoginManager;
+import com.fax.showdt.utils.ToastShowUtils;
 
-import java.util.HashMap;
-
-import cn.sharesdk.framework.Platform;
-import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.tencent.qq.QQ;
 
 /**
  * Author: fax
@@ -20,8 +26,11 @@ import cn.sharesdk.tencent.qq.QQ;
  * Date: 20-1-20
  * Description:
  */
-public class SignInActivity extends BaseActivity implements View.OnClickListener{
+public class SignInActivity extends BaseActivity implements View.OnClickListener, ILoginCallback {
 
+    public static final String SIGN_QQ="sign_qq";
+    public static final String SIGN_WEIBO="sign_weibo";
+    private String currentSignType = SIGN_QQ;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,44 +39,44 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.tv_login){
-            Platform qq = ShareSDK.getPlatform(QQ.NAME);
-            authorize(qq);
+        if(v.getId() == R.id.ll_qq_login_content){
+            currentSignType = SIGN_QQ;
+            QQLoginManager.getInstance(this,this).loginWithQQ();
+        }else if(v.getId() == R.id.ll_weibo_login_content){
+            currentSignType = SIGN_WEIBO;
+            WeiBoLoginManager.getInstance(this,this).loginToSina(this);
+        }else if(v.getId() == R.id.iv_back){
+            finish();
         }
     }
 
-    private void authorize(Platform plat) {
-        if (plat == null) {
-            return;
+    @Override
+    protected boolean isEnableImmersionBar() {
+        return false;
+    }
+
+    @Override
+    public void authorizeSuc(LoginRepoUserInfo info) {
+        Log.i("test_auth_info:",info.toJSONString());
+        if(SIGN_QQ.equals(currentSignType)) {
+            FaxUserManager.getInstance().thirdSingupLogin(this, BmobUser.BmobThirdUserAuth.SNS_TYPE_QQ, info);
+        }else if(SIGN_WEIBO.equals(currentSignType)){
+            FaxUserManager.getInstance().thirdSingupLogin(this, BmobUser.BmobThirdUserAuth.SNS_TYPE_WEIBO, info);
         }
-        //判断指定平台是否已经完成授权
-        if(plat.isAuthValid()) {
-            String userId = plat.getDb().getUserId();
-            if (userId != null) {
-//                login(plat.getName(), userId, null);
-//                return;
-            }
+    }
+
+    @Override
+    public void authorizeFail(String msg) {
+        ToastShowUtils.showCommonToast(this,msg,Toasty.LENGTH_SHORT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (SIGN_WEIBO.equals(currentSignType)) {
+            WeiBoLoginManager.getInstance(this,this).getmSsoHandler().authorizeCallBack(requestCode,resultCode,data);
+        }else if(SIGN_QQ.equals(currentSignType)){
+            QQLoginManager.getInstance(this,this).onActivityResultData(requestCode, resultCode, data);
         }
-        plat.setPlatformActionListener(new PlatformActionListener() {
-            @Override
-            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-
-            }
-
-            @Override
-            public void onError(Platform platform, int i, Throwable throwable) {
-
-            }
-
-            @Override
-            public void onCancel(Platform platform, int i) {
-
-            }
-        });
-        // true不使用SSO授权，false使用SSO授权
-        plat.SSOSetting(true);
-        ShareSDK.setActivity(this);//抖音登录适配安卓9.0
-        //获取用户资料
-        plat.showUser(null);
     }
 }

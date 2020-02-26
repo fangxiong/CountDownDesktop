@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.utils.ViewUtils;
@@ -114,6 +115,7 @@ public abstract class Sticker {
                 points[5] = getHeight();
                 points[6] = getWidth();
                 points[7] = getHeight();
+                Log.i("test_bound:","width:"+getWidth()+" height:"+getHeight());
             } else {
                 points[0] = 0f;
                 points[1] = getHeight();

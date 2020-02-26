@@ -36,14 +36,13 @@
 -dontwarn com.just.agentweb.**
 
 
-#ShareSDK
--keep class cn.sharesdk.**{*;}
--keep class com.sina.**{*;}
--keep class com.mob.**{*;}
--keep class com.bytedance.**{*;}
--dontwarn cn.sharesdk.**
--dontwarn com.sina.**
--dontwarn com.mob.**
+# Tencent Open SDK
+-keep class com.tencent.open.TDialog$*
+-keep class com.tencent.open.TDialog$* {*;}
+-keep class com.tencent.open.PKDialog
+-keep class com.tencent.open.PKDialog {*;}
+-keep class com.tencent.open.PKDialog$*
+-keep class com.tencent.open.PKDialog$* {*;}
 
 #bmob
 # keep BmobSDK
@@ -54,14 +53,6 @@
 -keep class * extends cn.bmob.v3.BmobObject {
     *;
 }
-#-keep class com.example.bmobexample.bean.BankCard{*;}
-#-keep class com.example.bmobexample.bean.GameScore{*;}
-#-keep class com.example.bmobexample.bean.MyUser{*;}
-#-keep class com.example.bmobexample.bean.Person{*;}
-#-keep class com.example.bmobexample.file.Movie{*;}
-#-keep class com.example.bmobexample.file.Song{*;}
-#-keep class com.example.bmobexample.relation.Post{*;}
-#-keep class com.example.bmobexample.relation.Comment{*;}
 
 # keep BmobPush
 -dontwarn  cn.bmob.push.**

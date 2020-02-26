@@ -11,7 +11,7 @@ import com.fax.showdt.AppContext;
  * Date: 19-8-23
  * Description:
  */
-public class WidgetConfig {
+public class WidgetSizeConfig {
 
     public static float WIDGET_MAX_WIDTH_RATIO = 0.89F;
     public static float WIDGET_4X1_HEIGHT_RATIO = 0.2225F;

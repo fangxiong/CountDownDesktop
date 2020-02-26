@@ -1,10 +1,5 @@
 package com.fax.showdt.fragment;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,19 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
-import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
-import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
-import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
-import com.fax.showdt.utils.CommonUtils;
-import com.fax.showdt.view.colorPicker.ColorPickerDialog;
-import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
+import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapePropertiesEditFragment;
 import com.fax.showdt.view.sticker.DrawableSticker;
-import com.fax.showdt.view.svg.SVG;
-import com.fax.showdt.view.svg.SVGBuilder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +22,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 public class WidgetShapeEditFragment extends Fragment implements View.OnClickListener {
-    private ImageView mIvLocal, mTouch, mIvColor, mConsume;
-    private WidgetShapeElementEditFragment mStickerElementEditFragment;
+    private ImageView mIvLocal, mAdd, mTouch, mConsume;
+    private WidgetShapePropertiesEditFragment propertiesEditFragment;
     private WidgetClickSettingFragment mTouchEditFragment;
-    private WidgetEditShapeCallback mWidgetEditShapeCallback;
-    private DrawableSticker mDrawableSticker;
     private List<View> mViews = new ArrayList<>();
+    private DrawableSticker drawableSticker;
+    private WidgetEditShapeCallback mCallback;
 
     enum EditShapeType {
         ELEMENT, TOUCH
@@ -54,25 +41,19 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.widget_shape_edit_fragment, container, false);
         mIvLocal = view.findViewById(R.id.iv_local);
-        mIvColor = view.findViewById(R.id.iv_color);
+        mAdd = view.findViewById(R.id.iv_add);
         mConsume = view.findViewById(R.id.iv_consume);
         mTouch = view.findViewById(R.id.iv_touch);
         mIvLocal.setOnClickListener(this);
-        mIvColor.setOnClickListener(this);
+        mAdd.setOnClickListener(this);
+        mIvLocal.setOnClickListener(this);
         mConsume.setOnClickListener(this);
         mTouch.setOnClickListener(this);
-        mIvLocal.setSelected(true);
         mViews.add(mIvLocal);
         mViews.add(mTouch);
-        refreshSelectedViewStatus(mIvLocal);
         initFragment();
+        refreshSelectedViewStatus(mIvLocal);
         return view;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
     }
 
     @Override
@@ -85,12 +66,8 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
     public void onClick(View view) {
         int resId = view.getId();
         if (resId == R.id.iv_consume) {
-            if (mWidgetEditShapeCallback != null) {
-                mWidgetEditShapeCallback.closePanel();
-            }
-        } else if (resId == R.id.iv_color) {
-            if (mDrawableSticker != null) {
-                showColorPickDialog(mDrawableSticker.getDrawableColor());
+            if (mCallback != null) {
+                mCallback.closePanel();
             }
         } else if (resId == R.id.iv_local) {
             switchToOneFragment(EditShapeType.ELEMENT);
@@ -98,79 +75,12 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
         } else if (resId == R.id.iv_touch) {
             switchToOneFragment(EditShapeType.TOUCH);
             refreshSelectedViewStatus(mTouch);
+
+        } else if (resId == R.id.iv_add) {
+            if(mCallback != null){
+                mCallback.onAddShapeSticker();
+            }
         }
-    }
-
-    public void setWidgetEditShapeSticker(DrawableSticker drawableSticker) {
-        mDrawableSticker = drawableSticker;
-        if (mTouchEditFragment != null) {
-            mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),mDrawableSticker.getJumpContent());
-        }
-    }
-
-    private void showColorPickDialog(String color) {
-        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
-                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
-                .setAllowPresets(true)
-                .setDialogId(0)
-                .setColor(Color.parseColor(color))
-                .setShowAlphaSlider(true)
-                .setShowAlphaSlider(true)
-                .create();
-        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
-            @Override
-            public void onColorSelected(int dialogId, int color) {
-                String hexCode = "";
-                hexCode = CommonUtils.toHexEncoding(color);
-                if (mDrawableSticker != null) {
-                    mDrawableSticker.setDrawableColor(hexCode);
-                    try {
-                        SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN))
-                                .readFromAsset(getActivity().getAssets(), mDrawableSticker.getDrawablePath()).build();
-                        PictureDrawable drawable = svg.getDrawable();
-                        mDrawableSticker.setDrawable(drawable);
-                    } catch (IOException e) {
-
-                    }
-                }
-            }
-
-            @Override
-            public void onDialogDismissed(int dialogId) {
-
-            }
-        });
-        dialog.show(getChildFragmentManager(), "color_dialog");
-    }
-
-    private void initFragment() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        mStickerElementEditFragment = new WidgetShapeElementEditFragment();
-        mTouchEditFragment = new WidgetClickSettingFragment();
-        transaction.add(R.id.fl_shape_edit_body, mTouchEditFragment);
-        transaction.add(R.id.fl_shape_edit_body, mStickerElementEditFragment);
-        transaction.commitAllowingStateLoss();
-        mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditShapeElementSelectedCallback() {
-            @Override
-            public void selectShapeElement(WidgetShapeBean widgetShapeBean) {
-                mWidgetEditShapeCallback.onAddShapeSticker(widgetShapeBean);
-            }
-        });
-        mTouchEditFragment.setEditClickCallback(new WidgetEditClickCallback() {
-            @Override
-            public void onActionType(String actionType) {
-                if (mDrawableSticker != null) {
-                    mDrawableSticker.setJumpAppPath(actionType);
-                }
-            }
-
-            @Override
-            public void onActionContent(String actionContent) {
-                if (mDrawableSticker != null) {
-                    mDrawableSticker.setJumpContent(actionContent);
-                }
-            }
-        });
     }
 
     private void refreshSelectedViewStatus(View view) {
@@ -182,26 +92,61 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
         view.setSelected(true);
     }
 
-    private void switchToOneFragment(EditShapeType editShapeType) {
+
+    private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        switch (editShapeType) {
+        propertiesEditFragment = new WidgetShapePropertiesEditFragment();
+        mTouchEditFragment = new WidgetClickSettingFragment();
+        propertiesEditFragment.setDrawableSticker(drawableSticker);
+        transaction.add(R.id.fl_sticker_edit_body, propertiesEditFragment);
+        transaction.add(R.id.fl_sticker_edit_body, mTouchEditFragment);
+        transaction.commitAllowingStateLoss();
+
+        mTouchEditFragment.setEditClickCallback(new WidgetEditClickCallback() {
+            @Override
+            public void onActionType(String actionType) {
+                if (drawableSticker != null) {
+                    drawableSticker.setJumpAppPath(actionType);
+                }
+            }
+
+            @Override
+            public void onActionContent(String actionContent,String appName) {
+                if (drawableSticker != null) {
+                    drawableSticker.setJumpContent(actionContent);
+                    drawableSticker.setAppName(appName);
+                }
+            }
+        });
+    }
+
+    private void switchToOneFragment(EditShapeType editTextType) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        switch (editTextType) {
             case ELEMENT: {
                 transaction.hide(mTouchEditFragment);
-                transaction.show(mStickerElementEditFragment);
+                transaction.show(propertiesEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
             case TOUCH: {
-                transaction.hide(mStickerElementEditFragment);
+                transaction.hide(propertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
         }
+
+    }
+    public void setDrawableSticker(DrawableSticker drawableSticker) {
+        this.drawableSticker = drawableSticker;
+        if (propertiesEditFragment != null) {
+            propertiesEditFragment.setDrawableSticker(drawableSticker);
+        }
     }
 
-    public void setWidgetEditShapeCallback(WidgetEditShapeCallback callback) {
-        this.mWidgetEditShapeCallback = callback;
+    public void setWidgetEditShapeCallback(WidgetEditShapeCallback widgetEditShapeCallback){
+        this.mCallback = widgetEditShapeCallback;
     }
 
 }

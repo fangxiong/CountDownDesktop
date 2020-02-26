@@ -3,13 +3,11 @@ package com.fax.showdt.manager.widget;
 import android.content.Context;
 import android.graphics.Point;
 
-import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
-import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.TextSticker;
 
 import java.util.List;
@@ -30,8 +28,8 @@ public class CustomWidgetScreenAdaptHelper {
 
     public CustomWidgetScreenAdaptHelper(Context context) {
         this.mContext = context;
-        mAdaptWidth =  WidgetConfig.getWidgetWidth();
-        mAdaptHeight = WidgetConfig.getWidgetWidth();
+        mAdaptWidth =  WidgetSizeConfig.getWidgetWidth();
+        mAdaptHeight = WidgetSizeConfig.getWidgetWidth();
     }
 
     public CustomWidgetConfig adaptConfig(@NonNull CustomWidgetConfig config) {

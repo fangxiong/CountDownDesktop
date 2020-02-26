@@ -5,14 +5,19 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
 import com.fax.showdt.BuildConfig;
+import com.fax.showdt.EventMsg;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonViewPagerAdapter;
+import com.fax.showdt.bean.User;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
 import com.fax.showdt.dialog.ios.util.ShareUtils;
@@ -26,12 +31,16 @@ import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
 import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.utils.Constant;
+import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.gyf.barlibrary.ImmersionBar;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
 import com.just.agentweb.AgentWeb;
 import com.tencent.bugly.beta.Beta;
 
@@ -46,6 +55,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import cn.bmob.v3.BmobUser;
 import es.dmoral.toasty.Toasty;
 
 import static com.fax.showdt.utils.CommonUtils.START_QQ_TYPE_GROUP_PROFILE;
@@ -57,6 +67,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PagerAdapter pagerAdapter;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private ImageView mIvAvatar;
+    private TextView mTvNick, mTvLogin;
     private ArrayList<Fragment> fragments = new ArrayList<>();
 
     @Override
@@ -71,7 +83,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         alphaTabsIndicator.setViewPager(viewPager);
         initDrawerLayout();
         initNavigationView();
-        ToastShowUtils.showCommonToast(this, "版本号：" + BuildConfig.VERSION_CODE, Toasty.LENGTH_SHORT);
     }
 
     @Override
@@ -81,16 +92,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         navigationView = findViewById(R.id.navigation_view);
         viewPager = findViewById(R.id.vp);
         alphaTabsIndicator = findViewById(R.id.alphaIndicator);
-
-
+        mTvLogin = navigationView.findViewById(R.id.tv_login);
+        mIvAvatar = navigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
+        mTvNick = navigationView.getHeaderView(0).findViewById(R.id.tv_nick);
+        mIvAvatar.setOnClickListener(this);
+        mTvNick.setOnClickListener(this);
     }
-
 
     private void initDrawerLayout() {
         drawerLayout.setScrimColor(getResources().getColor(R.color.transparent));
     }
 
+    @Subscribe(tags = {@Tag(EventMsg.sign_in_suc_notify_refresh_profile)})
+    public void updateUserProfile(Object obj) {
+        Log.i("test_receive_msg:","收到更新用户信息的消息");
+        updateUserProfileView();
+    }
+
+    private void updateUserProfileView() {
+        User user = BmobUser.getCurrentUser(User.class);
+        if (user != null && BmobUser.isLogin()) {
+            GlideUtils.loadCircleImage(this, user.getAvatarUrl(), mIvAvatar);
+            mTvNick.setText(user.getUserNick());
+            mTvLogin.setText(getString(R.string.setting_logout));
+        }else {
+            mIvAvatar.setImageResource(R.drawable.user_avatar_not_login);
+            mTvNick.setText(getString(R.string.click_login));
+            mTvLogin.setText(getString(R.string.setting_login));
+        }
+    }
+
     private void initNavigationView() {
+        updateUserProfileView();
         ViewUtils.setNavigationMenuLineStyle(navigationView, getResources().getColor(R.color.c_969696), ViewUtils.dpToPx(0.5f, this));
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -98,7 +131,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.nav_add_qq: {
-                        CommonUtils.startQQ(MainActivity.this, START_QQ_TYPE_GROUP_PROFILE, "721030399");
+                        CommonUtils.startQQ(MainActivity.this, START_QQ_TYPE_GROUP_PROFILE, Constant.QQ_GROUP);
                         break;
 
                     }
@@ -108,7 +141,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                     case R.id.nav_help: {
                         Intent intent = new Intent(MainActivity.this, WebActivity.class);
-                        intent.putExtra(WebActivity.URL_KEY, "https://baijiahao.baidu.com/s?id=1655524083114985245&wfr=spider&for=pc");
+                        intent.putExtra(WebActivity.URL_KEY, Constant.WIDGET_GUIDE);
                         startActivity(intent);
                         break;
                     }
@@ -140,10 +173,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int resId = v.getId();
         if (resId == R.id.iv_menu) {
             drawerLayout.openDrawer(GravityCompat.START);
+
         } else if (resId == R.id.iv_make) {
             startActivity(new Intent(this, DiyWidgetMakeActivity.class));
         } else if (resId == R.id.iv_add) {
             startActivity(new Intent(this, DiyWidgetMakeActivity.class));
+        } else if (resId == R.id.iv_avatar) {
+            startActivity(new Intent(this, SignInActivity.class));
+        } else if (resId == R.id.tv_nick) {
+            startActivity(new Intent(this, SignInActivity.class));
+        } else if (resId == R.id.tv_login) {
+            if (BmobUser.isLogin()) {
+                BmobUser.logOut();
+                updateUserProfileView();
+            } else {
+                startActivity(new Intent(this, SignInActivity.class));
+            }
         }
     }
 
@@ -191,7 +236,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             } else {
                 intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             }
-           startActivity(intent);
+            startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -52,5 +52,14 @@ public interface Constant {
     String WIDGET_DATA_DIR = ".widget";
     String WIDGET_CROP_DIR = ".crop";
 
+    /**
+     * 插件使用教程
+     */
+    String WIDGET_GUIDE="http://kwgt.baiduux.com/h5/widget_guide.html";
+
+    /**
+     * 插件交流qq群群号
+     */
+    String QQ_GROUP="1060401437";
 
 }

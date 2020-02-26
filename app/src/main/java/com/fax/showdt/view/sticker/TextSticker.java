@@ -452,6 +452,7 @@ public class TextSticker extends Sticker {
         setTextColor(bean.getColor());
         setScaleParam((int) bean.getScale());
         setJumpContent(bean.getJumpContent());
+        setAppName(bean.getAppName());
         setShimmerColor(bean.getShimmerColor());
         setShimmerText(bean.isShimmerText());
         setAlignment(bean.getAlignment());

@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.fax.showdt.R;
 import com.fax.showdt.utils.ScreenUtils;
 import com.gyf.barlibrary.ImmersionBar;
+import com.hwangjr.rxbus.RxBus;
 
 import java.util.Arrays;
 
@@ -46,10 +47,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ScreenUtils.adaptScreen4VerticalSlide(this, 360);
         initImmersionBar();
-        String className = getClass().getName();
+        RxBus.get().register(this);
     }
 
     @Override
@@ -84,6 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         mCompositeDisposable.clear();
+        RxBus.get().unregister(this);
     }
 
     @Override

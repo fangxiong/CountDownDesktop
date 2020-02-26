@@ -54,7 +54,7 @@
             android:id="@+id/sticker_view"
             android:layout_width="330dp"
             android:layout_height="165dp"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
             android:layout_margin="@dimen/margin_2"
             app:borderColor="@color/white"
             app:showBorder="true"
@@ -70,76 +70,93 @@
         </com.fax.showdt.view.sticker.StickerView>
     </FrameLayout>
 
-    <RelativeLayout
+    <com.fax.showdt.view.tab.AlphaTabsIndicator
+        android:id="@+id/alphaIndicator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_60"
         android:layout_alignParentBottom="true"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="horizontal">
 
-        <View
-            android:id="@+id/baseLine"
-            android:layout_width="@dimen/margin_1"
-            android:layout_height="@dimen/margin_1"
-            android:layout_centerInParent="true" />
-
-        <TextView
+        <com.fax.showdt.view.tab.AlphaTabView
             android:id="@+id/tv_text"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_55"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/margin_46"
-            android:layout_toStartOf="@id/tv_sticker"
-            android:drawableTop="@drawable/diy_widget_make_text_icon"
-            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/margin_43"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onClick"
-            android:text="文字"
-            android:textColor="@color/c_7C7C7C"
-            android:textSize="@dimen/textSize_14" />
+            app:paddingTexwithIcon="@dimen/margin_10"
+            app:tabTextSize="@dimen/textSize_13"
+            app:tabText="文字"
+            app:textColorNormal="@color/c_7C7C7C"
+            app:textColorSelected="@color/c_7C7C7C"
+            app:tabIconSelected="@drawable/diy_widget_make_text_icon"
+            app:tabIconNormal="@drawable/diy_widget_make_text_icon" />
 
-        <TextView
+        <com.fax.showdt.view.tab.AlphaTabView
             android:id="@+id/tv_sticker"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_55"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/margin_23"
-            android:layout_toStartOf="@id/baseLine"
-            android:drawableTop="@drawable/diy_widget_make_sticker_icon"
-            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/margin_43"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onClick"
-            android:text="贴纸"
-            android:textColor="@color/c_7C7C7C"
-            android:textSize="@dimen/textSize_14" />
+            app:paddingTexwithIcon="@dimen/margin_10"
+            app:tabTextSize="@dimen/textSize_13"
+            app:tabText="贴纸"
+            app:textColorNormal="@color/c_7C7C7C"
+            app:textColorSelected="@color/c_7C7C7C"
+            app:tabIconSelected="@drawable/diy_widget_make_sticker_icon"
+            app:tabIconNormal="@drawable/diy_widget_make_sticker_icon"/>
 
 
-        <TextView
-            android:id="@+id/tv_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_55"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_23"
-            android:layout_toEndOf="@id/baseLine"
-            android:drawableTop="@drawable/diy_widget_make_shape_icon"
-            android:gravity="center"
+        <com.fax.showdt.view.tab.AlphaTabView
+            android:id="@+id/tv_vector"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/margin_43"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onClick"
-            android:text="矢量图"
-            android:textColor="@color/c_7C7C7C"
-            android:textSize="@dimen/textSize_14" />
+            app:paddingTexwithIcon="@dimen/margin_10"
+            app:tabTextSize="@dimen/textSize_13"
+            app:tabText="矢量图"
+            app:textColorNormal="@color/c_7C7C7C"
+            app:textColorSelected="@color/c_7C7C7C"
+            app:tabIconSelected="@drawable/diy_widget_make_vector_icon"
+            app:tabIconNormal="@drawable/diy_widget_make_vector_icon"/>
 
-        <TextView
+
+        <com.fax.showdt.view.tab.AlphaTabView
             android:id="@+id/tv_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_55"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_46"
-            android:layout_toEndOf="@id/tv_shape"
-            android:drawableTop="@drawable/diy_widget_make_progress_bar_icon"
-            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/margin_43"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:onClick="onClick"
-            android:text="进度条"
-            android:textColor="@color/c_7C7C7C"
-            android:textSize="@dimen/textSize_14" />
-    </RelativeLayout>
+            app:paddingTexwithIcon="@dimen/margin_10"
+            app:tabTextSize="@dimen/textSize_13"
+            app:tabText="进度条"
+            app:textColorNormal="@color/c_7C7C7C"
+            app:textColorSelected="@color/c_7C7C7C"
+            app:tabIconSelected="@drawable/diy_widget_make_progress_bar_icon"
+            app:tabIconNormal="@drawable/diy_widget_make_progress_bar_icon"/>
 
+
+        <com.fax.showdt.view.tab.AlphaTabView
+            android:id="@+id/tv_shape"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/margin_43"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            app:paddingTexwithIcon="@dimen/margin_10"
+            app:tabTextSize="@dimen/textSize_13"
+            app:tabText="形状"
+            app:textColorNormal="@color/c_7C7C7C"
+            app:textColorSelected="@color/c_7C7C7C"
+            app:tabIconSelected="@drawable/diy_widget_make_shape_icon"
+            app:tabIconNormal="@drawable/diy_widget_make_shape_icon"/>
+
+    </com.fax.showdt.view.tab.AlphaTabsIndicator>
     <RelativeLayout
         android:id="@+id/rl_edit_body"
         android:layout_width="match_parent"

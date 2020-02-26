@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/c_171925"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <TextView
-        android:id="@+id/tv_login"
+    <ImageView
+        android:id="@+id/iv_back"
         android:onClick="onClick"
+        android:src="@drawable/common_iv_back_white"
+        android:layout_width="@dimen/margin_35"
+        android:layout_height="@dimen/margin_35"
+        android:layout_marginTop="@dimen/margin_15"
+        android:layout_marginStart="@dimen/margin_15"/>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="QQ登录"/>
-</LinearLayout>
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/ll_qq_login_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/margin_65"
+                android:layout_height="@dimen/margin_65"
+                android:scaleType="fitCenter"
+                android:background="@drawable/login_icon_bg"
+                android:src="@drawable/qq_login_icon"/>
+
+            <TextView
+                android:id="@+id/tv_qq_login"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_40"
+                android:textColor="@color/white"
+                android:text="QQ登录"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_weibo_login_content"
+            android:layout_marginStart="@dimen/margin_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/margin_65"
+                android:layout_height="@dimen/margin_65"
+                android:scaleType="fitCenter"
+                android:background="@drawable/login_icon_bg"
+                android:src="@drawable/weibo_login_icon"/>
+
+            <TextView
+                android:id="@+id/tv_weibo_login"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_40"
+                android:textColor="@color/white"
+                android:text="微博登录"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

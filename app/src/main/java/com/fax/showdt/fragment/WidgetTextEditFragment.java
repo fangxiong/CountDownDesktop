@@ -131,7 +131,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             mPropertiesEditFragment.setSticker(mTextSticker);
         }
         if(mTouchEditFragment != null){
-            mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent());
+            mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent(),mTextSticker.getAppName());
         }
     }
 
@@ -190,7 +190,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             @Override
             public void selectTextElement(String text, boolean isCountdownPlug) {
                 if(isCountdownPlug){
-                    showTimePickerDialog(text);
+                    showTimePickerDialog(mTextSticker.getText(),text);
                 }else {
                     if(mTextSticker != null) {
                         String lastText = mTextSticker.getText();
@@ -216,9 +216,10 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
             }
 
             @Override
-            public void onActionContent(String actionContent) {
-                if(mTextSticker != null){
+            public void onActionContent(String actionContent,String appName) {
+                if (mTextSticker != null) {
                     mTextSticker.setJumpContent(actionContent);
+                    mTextSticker.setAppName(appName);
                 }
             }
         });
@@ -227,17 +228,17 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
     }
 
 
-    private void showTimePickerDialog(final String text) {
-        long time = CustomPlugUtil.getTimerTargetTime(text);
+    private void showTimePickerDialog(final String originalText,final String date) {
+        long time = CustomPlugUtil.getTimerTargetTime(date);
         TimePickerDialog timePickerDialog = new TimePickerDialog(ViewUtils.dpToPx(156,getActivity()),
                 time, new TimePickerDialog.IClickConsumeCallback() {
             @Override
             public void clickConsume(long time) {
-                String result = CustomPlugUtil.changeTimerConfig(text, time);
+                String result = CustomPlugUtil.changeTimerConfig(date, time);
                 result = CustomPlugUtil.posAndNegSwitchTimer(result, time);
                 if(mTextSticker != null){
                     Log.i("test_time:",result+"");
-                    mTextSticker.setText(result);
+                    mTextSticker.setText(originalText+result);
                 }
             }
         }, new TimePickerDialog.IClickCancelCallback() {
@@ -279,7 +280,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
                 transaction.hide(mPropertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 if(mTextSticker != null){
-                    mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent());
+                    mTouchEditFragment.initActionUI(mTextSticker.getJumpAppPath(),mTextSticker.getJumpContent(),mTextSticker.getAppName());
                 }
                 transaction.commitAllowingStateLoss();
                 break;

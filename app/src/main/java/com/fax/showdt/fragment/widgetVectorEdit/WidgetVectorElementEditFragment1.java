@@ -1,12 +1,8 @@
-package com.fax.showdt.fragment.widgetShapeEdit;
+package com.fax.showdt.fragment.widgetVectorEdit;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +19,11 @@ import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.WidgetShapeBean;
-import com.fax.showdt.callback.WidgetEditShapeElementSelectedCallback;
+import com.fax.showdt.callback.WidgetEditVectorElementSelectedCallback;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,14 +35,14 @@ import java.util.List;
  * Date: 19-12-12
  * Description:
  */
-public class WidgetShapeElementEditFragment1 extends Fragment {
+public class WidgetVectorElementEditFragment1 extends Fragment {
     private CommonAdapter<WidgetShapeBean> mListAdapter;
     private List<WidgetShapeBean> mList;
     private RecyclerView mRv;
-    private WidgetEditShapeElementSelectedCallback mCallback;
+    private WidgetEditVectorElementSelectedCallback mCallback;
 
 
-    public WidgetShapeElementEditFragment1(){}
+    public WidgetVectorElementEditFragment1(){}
 
 
     @Nullable
@@ -82,7 +77,7 @@ public class WidgetShapeElementEditFragment1 extends Fragment {
         mListAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                mCallback.selectShapeElement(mList.get(position));
+                mCallback.selectVectorElement(mList.get(position));
             }
 
             @Override
@@ -94,7 +89,7 @@ public class WidgetShapeElementEditFragment1 extends Fragment {
 
     }
 
-    public void setWidgetEditShapeElementSelectedCallback(WidgetEditShapeElementSelectedCallback widgetEditShapeElementSelectedCallback) {
+    public void setWidgetEditShapeElementSelectedCallback(WidgetEditVectorElementSelectedCallback widgetEditShapeElementSelectedCallback) {
         mCallback = widgetEditShapeElementSelectedCallback;
     }
 }

@@ -12,7 +12,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -20,7 +19,7 @@ import android.widget.FrameLayout;
 
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
-import com.fax.showdt.manager.widget.WidgetConfig;
+import com.fax.showdt.manager.widget.WidgetSizeConfig;
 import com.fax.showdt.utils.ViewUtils;
 
 import java.io.File;
@@ -40,7 +39,7 @@ import androidx.core.view.ViewCompat;
 public class StickerView extends FrameLayout {
     private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f, AppContext.get());
     private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f, AppContext.get());
-    private static final int STICKER_BORDER_PADDING = 10;
+    private static final int STICKER_BORDER_PADDING = 0;
     private boolean showIcons;
     private boolean showBorder;
     private boolean showGrid = false;
@@ -213,7 +212,7 @@ public class StickerView extends FrameLayout {
         linePaint.setAntiAlias(true);
         linePaint.setPathEffect(null);
         canvas.save();
-        int height = WidgetConfig.getWidget4X4Height();
+        int height = WidgetSizeConfig.getWidget4X4Height();
         //绘制虚线
         canvas.drawLine(0, height / 4f, height * 1.0f, height / 4f, linePaint);
         canvas.drawLine(0, height * 3 / 4f, height * 1.0f, height * 3 / 4f, linePaint);

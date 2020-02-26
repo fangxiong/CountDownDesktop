@@ -9,10 +9,7 @@ import android.widget.ImageView;
 import com.fax.showdt.R;
 import com.fax.showdt.callback.WidgetEditProgressCallback;
 import com.fax.showdt.fragment.widgetProgressEdit.WidgetProgressPropertiesEditFragment;
-import com.fax.showdt.fragment.widgetShapeEdit.WidgetShapeElementEditFragment;
-import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.ProgressSticker;
-import com.fax.showdt.view.sticker.Sticker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
