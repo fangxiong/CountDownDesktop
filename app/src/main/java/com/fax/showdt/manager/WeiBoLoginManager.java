@@ -23,26 +23,24 @@ import okhttp3.Call;
 
 public class WeiBoLoginManager {
 
-    private Activity context;
     private ILoginCallback mCallback;
     private static WeiBoLoginManager mInstance;
     private SsoHandler mSsoHandler;
     private Oauth2AccessToken mAccessToken;
     private LoginRepoUserInfo loginRepoUserInfo;
 
-    private WeiBoLoginManager(Activity activity, ILoginCallback callback) {
-        context = activity;
+    private WeiBoLoginManager(ILoginCallback callback) {
         mCallback = callback;
         WbSdk.install(AppContext.get(),new AuthInfo(AppContext.get(), ConstantString.APP_KEY_SINA, ConstantString.REDIRECT_URL,
                 ConstantString.SCOPE));
         loginRepoUserInfo = new LoginRepoUserInfo();
     }
 
-    public static WeiBoLoginManager getInstance(Activity activity, ILoginCallback callback) {
+    public static WeiBoLoginManager getInstance(ILoginCallback callback) {
         if(mInstance == null){
             synchronized (QQLoginManager.class){
                 if(mInstance == null){
-                    mInstance = new WeiBoLoginManager(activity,callback);
+                    mInstance = new WeiBoLoginManager(callback);
                 }
             }
         }

@@ -2,6 +2,8 @@ package com.fax.showdt.manager;
 
 import android.app.Activity;
 import android.content.Intent;
+
+import com.fax.showdt.AppContext;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.bean.LoginRepoUserInfo;
@@ -13,6 +15,7 @@ import com.tencent.connect.auth.QQToken;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,35 +23,33 @@ import es.dmoral.toasty.Toasty;
 
 public class QQLoginManager implements IUiListener {
 
-    private Activity context;
     private ILoginCallback mCallback;
     private Tencent mTencent;
     private LoginRepoUserInfo mLoginRepoUserInfo;
     private static QQLoginManager mInstance;
 
-    private QQLoginManager(Activity activity, ILoginCallback callback) {
-        context = activity;
+    private QQLoginManager(ILoginCallback callback) {
         mCallback = callback;
     }
 
-    public static QQLoginManager getInstance(Activity activity, ILoginCallback callback) {
-        if(mInstance == null){
-            synchronized (QQLoginManager.class){
-                if(mInstance == null){
-                    mInstance = new QQLoginManager(activity,callback);
+    public static QQLoginManager getInstance(ILoginCallback callback) {
+        if (mInstance == null) {
+            synchronized (QQLoginManager.class) {
+                if (mInstance == null) {
+                    mInstance = new QQLoginManager(callback);
                 }
             }
         }
         return mInstance;
     }
 
-    public void loginWithQQ() {
-        if (CommonUtils.isQQAvilible(context)) {
-            mTencent  = Tencent.createInstance(ConstantString.TENCENT_APP_ID, context);
-            mTencent.login(context, "all", this);
+    public void loginWithQQ(Activity activity) {
+        if (CommonUtils.isQQAvilible(activity)) {
+            mTencent = Tencent.createInstance(ConstantString.TENCENT_APP_ID, activity);
+            mTencent.login(activity, "all", this);
         } else {
             if (mCallback != null) {
-                mCallback.authorizeFail(context.getString(R.string.not_installed_qq));
+                mCallback.authorizeFail(activity.getString(R.string.not_installed_qq));
             }
         }
     }
@@ -64,7 +65,6 @@ public class QQLoginManager implements IUiListener {
     public void onComplete(Object o) {
         JSONObject jsonObject = (JSONObject) o;
         initOpenidAndToken(jsonObject);
-
         getUserInfo();
     }
 
@@ -73,7 +73,7 @@ public class QQLoginManager implements IUiListener {
         if (mCallback != null) {
             mCallback.authorizeFail(uiError.errorMessage);
         }
-        ToastShowUtils.showCommonToast(context, context.getString(R.string.authorize_fail_msg), Toasty.LENGTH_SHORT);
+        ToastShowUtils.showCommonToast(AppContext.get(), AppContext.get().getString(R.string.authorize_fail_msg), Toasty.LENGTH_SHORT);
 
     }
 
@@ -103,7 +103,7 @@ public class QQLoginManager implements IUiListener {
 
     private void getUserInfo() {
         QQToken mQQToken = mTencent.getQQToken();
-        UserInfo userInfo = new UserInfo(context, mQQToken);
+        UserInfo userInfo = new UserInfo(AppContext.get(), mQQToken);
         userInfo.getUserInfo(new IUiListener() {
                                  @Override
                                  public void onComplete(final Object o) {
@@ -139,7 +139,7 @@ public class QQLoginManager implements IUiListener {
                                  @Override
                                  public void onCancel() {
                                      if (mCallback != null) {
-                                         mCallback.authorizeFail(context.getString(R.string.get_qq_userinfo_fail));
+                                         mCallback.authorizeFail(AppContext.get().getString(R.string.get_qq_userinfo_fail));
                                      }
                                  }
                              }

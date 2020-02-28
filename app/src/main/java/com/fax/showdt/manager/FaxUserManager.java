@@ -43,14 +43,13 @@ public class FaxUserManager {
      * @param loginRepoUserInfo
 
      */
-    public void thirdSingupLogin(final Context context, String snsType, final LoginRepoUserInfo loginRepoUserInfo) {
+    public void thirdSignUpLogin(final Activity context, String snsType, final LoginRepoUserInfo loginRepoUserInfo) {
         BmobUser.BmobThirdUserAuth authInfo = new BmobUser.BmobThirdUserAuth(snsType, loginRepoUserInfo.getToken(), loginRepoUserInfo.getExpires(), loginRepoUserInfo.getOpenId());
         BmobUser.loginWithAuthData(authInfo, new LogInListener<JSONObject>() {
             @Override
             public void done(JSONObject user, BmobException e) {
                 if (e == null) {
                     ToastShowUtils.showCommonToast(context,"登录成功",Toasty.LENGTH_SHORT);
-                    ((Activity)context).finish();
                     final User curUser = BmobUser.getCurrentUser(User.class);
                     curUser.setAvatarUrl(loginRepoUserInfo.getAvatarUrl());
                     curUser.setGender(loginRepoUserInfo.getGender());

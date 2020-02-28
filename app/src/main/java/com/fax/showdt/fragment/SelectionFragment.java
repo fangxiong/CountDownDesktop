@@ -68,6 +68,7 @@ public class SelectionFragment extends Fragment {
     }
 
     private void queryWidgetFromCid(){
+        WaitDialog.show((AppCompatActivity) getActivity(),"加载中");
         BmobQuery<WidgetConfig> query = new BmobQuery<>();
         query.addWhereEqualTo("cid",mCid);
         query.findObjects(new FindListener<WidgetConfig>() {

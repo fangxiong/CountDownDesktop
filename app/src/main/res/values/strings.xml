@@ -34,6 +34,7 @@
     <string name="setting">设置</string>
     <string name="setting_check_version">检查更新</string>
     <string name="setting_help">使用教程</string>
+    <string name="setting_common_problem">常见问题</string>
     <string name="setting_add_qq_group">加入QQ群</string>
     <string name="setting_share">分享给小伙伴</string>
     <string name="setting_open_permission">开启权限</string>

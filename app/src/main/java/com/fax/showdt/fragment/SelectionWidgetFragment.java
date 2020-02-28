@@ -37,9 +37,8 @@ public class SelectionWidgetFragment extends Fragment {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private TipDialog mTipsDialog;
-    protected List<Fragment> mFragmentList = new ArrayList<>();
-    protected List<String> mTabList = new ArrayList<>();
+    private List<Fragment> mFragmentList = new ArrayList<>();
+    private List<String> mTabList = new ArrayList<>();
     public SelectionWidgetFragment(){}
 
     @Nullable
@@ -59,12 +58,12 @@ public class SelectionWidgetFragment extends Fragment {
 
 
     private void queryWidgetClassificationData(){
-        mTipsDialog = WaitDialog.show((AppCompatActivity) getActivity(),"加载中...");
+        WaitDialog.show((AppCompatActivity) getActivity(),"加载中");
         BmobQuery<widgetClassification> query = new BmobQuery<>();
         query.findObjects(new FindListener<widgetClassification>() {
             @Override
             public void done(List<widgetClassification> mDatas, BmobException e) {
-                mTipsDialog.doDismiss();
+                WaitDialog.dismiss();
 //                Log.i("test_req:",String.valueOf(mDatas.size()));
                 if (e == null) {
                     if (mDatas != null && mDatas.size() > 0) {
