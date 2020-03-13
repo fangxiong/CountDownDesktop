@@ -2,6 +2,7 @@ package com.fax.showdt.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -15,6 +16,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.core.app.ActivityCompat;
+
+import com.fax.showdt.AppContext;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -151,5 +154,20 @@ public class CommonUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 跳转应用市场
+     * @param packageName 包名
+     */
+    public static void goAppMarket(String packageName) {
+        //获取包名packageName
+        Uri uri = Uri.parse("market://details?id=" + packageName);
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(AppContext.get(), goToMarket);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

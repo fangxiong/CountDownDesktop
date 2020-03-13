@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import me.jessyan.autosize.AutoSizeCompat;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
@@ -33,17 +34,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected ImmersionBar mImmersionBar;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    //系统字体调节时，所有activity都不做更改
     @Override
     public Resources getResources() {
-        Resources res = super.getResources();
-        if (res!=null) {
-            Configuration config = new Configuration();
-            config.setToDefaults();
-            res.updateConfiguration(config, res.getDisplayMetrics());
-        }
-        return res;
+        AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));
+        return super.getResources();
     }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 当返回false后 状态栏的颜色默认为白色  如需修改颜色调用{@link #initStatusBarColor()}
+     *
      * @return
      */
     protected boolean isEnableImmersionBar() {
@@ -164,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     private void initImmersionBar() {
         mImmersionBar = ImmersionBar.with(this);
-        if(!isEnableImmersionBar()) {
+        if (!isEnableImmersionBar()) {
             //当设置fitsSystemWindows为true和状态栏颜色后就不是沉浸式状态栏了
             mImmersionBar.fitsSystemWindows(true);
             mImmersionBar.statusBarColor(initStatusBarColor());
@@ -178,13 +175,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * 设置状态栏颜色(设置后默认取消沉浸式状态栏)
      * 注意：不设置状态栏颜色则默认为沉浸式状态栏,布局会延伸到屏幕顶部
-     *  (1).当使用封装好的TitleView后 它会识别如果是沉浸式 会将标题栏的高度加上状态栏的高度 保持正常
-     *  (2).当没使用TitleView来充当状态栏 会出现状态栏和标题栏重叠情况,这时候重写isEnableImmersionBar()返回false即可去掉沉浸式
+     * (1).当使用封装好的TitleView后 它会识别如果是沉浸式 会将标题栏的高度加上状态栏的高度 保持正常
+     * (2).当没使用TitleView来充当状态栏 会出现状态栏和标题栏重叠情况,这时候重写isEnableImmersionBar()返回false即可去掉沉浸式
      */
-    protected  @ColorRes
+    protected @ColorRes
     int initStatusBarColor() {
         return R.color.c_171925;
     }
@@ -198,7 +194,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
-    public void addDisponsable(Disposable disposable){
+    public void addDisponsable(Disposable disposable) {
         mCompositeDisposable.add(disposable);
     }
 }

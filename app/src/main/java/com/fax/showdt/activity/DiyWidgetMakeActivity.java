@@ -29,11 +29,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ali.ha.fulltrace.logger.Logger;
+import com.alibaba.sdk.android.push.common.util.JSONUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.fax.showdt.AppContext;
+import com.fax.showdt.BuildConfig;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
@@ -66,6 +68,7 @@ import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
+import com.fax.showdt.manager.widget.WidgetContext;
 import com.fax.showdt.manager.widget.WidgetDownloadManager;
 import com.fax.showdt.manager.widget.WidgetSizeConfig;
 import com.fax.showdt.service.NLService;
@@ -328,35 +331,61 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         initStickerViewBg();
         initBlurView();
         if (isFromSelection) {
-            String widgetjson = intent.getStringExtra(ConstantString.widget_make_data);
-            final WidgetConfig widgetConfig = GsonUtils.parseJsonWithGson(widgetjson,WidgetConfig.class);
-            WidgetDownloadManager.getInstance().startDownloadWidget(widgetConfig, new WidgetDownloadManager.DownloadWidgetCallback() {
-                @Override
-                public void downloadStart() {
-                    WaitDialog.show(DiyWidgetMakeActivity.this,"素材整合中...");
-                }
-
-                @Override
-                public void downloadSuc() {
-                    WaitDialog.show(DiyWidgetMakeActivity.this,"整合完成", TipDialog.TYPE.SUCCESS);
-                    customWidgetConfig = GsonUtils.parseJsonWithGson(widgetConfig.getConfig(),CustomWidgetConfig.class);
-                    Log.i("test_config:",customWidgetConfig.toJSONString());
-                    initStickers();
-                    initStickerViewBg();
-                    initBlurView();
-                }
-
-                @Override
-                public void downloadProgress(int progress) {
-
-                }
-
-                @Override
-                public void downloadFail(String errorMsg) {
-                    WaitDialog.show(DiyWidgetMakeActivity.this,"整合失败", TipDialog.TYPE.ERROR);
-                }
-            });
+            String widgetJson = intent.getStringExtra(ConstantString.widget_make_data);
+            WidgetConfig config = GsonUtils.parseJsonWithGson(widgetJson,WidgetConfig.class);
+            if(Integer.valueOf(config.getSupportVersion()) > ConstantString.WIDGET_SUPPORT_VERSION){
+                showUpdateVersionDialog(config);
+            }else {
+                downloadWidget(config);
+            }
         }
+    }
+
+    private void showUpdateVersionDialog(final WidgetConfig widgetConfig){
+        MessageDialog.show(this, "提示", "你的版本过低,需要更新最新版本才能正常加载插件","立即更新","忽略")
+                .setCancelable(false)
+                .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v) {
+                        CommonUtils.goAppMarket(BuildConfig.APP_ID);
+                        return false;
+                    }
+                }).setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
+            @Override
+            public boolean onClick(BaseDialog baseDialog, View v) {
+                downloadWidget(widgetConfig);
+                return false;
+            }
+        });
+    }
+
+    private void downloadWidget(final WidgetConfig widgetConfig){
+        WidgetDownloadManager.getInstance().startDownloadWidget(widgetConfig, new WidgetDownloadManager.DownloadWidgetCallback() {
+            @Override
+            public void downloadStart() {
+                WaitDialog.show(DiyWidgetMakeActivity.this,"素材整合中...");
+            }
+
+            @Override
+            public void downloadSuc() {
+                WaitDialog.show(DiyWidgetMakeActivity.this,"整合完成", TipDialog.TYPE.SUCCESS);
+                customWidgetConfig = GsonUtils.parseJsonWithGson(widgetConfig.getConfig(),CustomWidgetConfig.class);
+                Log.i("test_config:",customWidgetConfig.toJSONString());
+                initStickers();
+                initStickerViewBg();
+                initBlurView();
+            }
+
+            @Override
+            public void downloadProgress(int progress) {
+
+            }
+
+            @Override
+            public void downloadFail(String errorMsg) {
+                WaitDialog.show(DiyWidgetMakeActivity.this,"整合失败", TipDialog.TYPE.ERROR);
+            }
+        });
     }
 
     private void initStickers() {

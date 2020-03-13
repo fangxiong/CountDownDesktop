@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.EventMsg;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
@@ -43,11 +44,10 @@ import es.dmoral.toasty.Toasty;
 
 public class PushWidgetActivity extends BaseActivity implements View.OnClickListener {
 
-    private final static String supportVersion = "0";
+    private final static String supportVersion = String.valueOf(ConstantString.WIDGET_SUPPORT_VERSION);
     private ImageView mIvCover;
     private EditText editText;
-    private TextView mTvCaterogy;
-    private TextView mTvPUsh;
+    private TextView mTvCategory;
     private CustomWidgetConfig customWidgetConfig;
     private CommonAdapter<widgetClassification> mAdapter;
     private String cid;
@@ -60,8 +60,7 @@ public class PushWidgetActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.push_widget_activity);
         mIvCover = findViewById(R.id.iv_cover);
         editText = findViewById(R.id.et_title);
-        mTvCaterogy = findViewById(R.id.tv_category);
-        mTvPUsh = findViewById(R.id.tv_push);
+        mTvCategory = findViewById(R.id.tv_category);
         initData();
     }
 
@@ -176,7 +175,7 @@ public class PushWidgetActivity extends BaseActivity implements View.OnClickList
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                 dialog.doDismiss();
                 cid = mData.get(position).getCid();
-                mTvCaterogy.setText(mData.get(position).getcName());
+                mTvCategory.setText(mData.get(position).getcName());
             }
 
             @Override
