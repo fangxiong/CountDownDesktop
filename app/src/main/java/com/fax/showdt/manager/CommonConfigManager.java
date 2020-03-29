@@ -39,4 +39,19 @@ public class CommonConfigManager {
        }
        return  null;
     }
+
+    /**
+     * 表示同意了隐私协议
+     */
+    public void setHadAllowedPrivacy(){
+        ConfigManager.getMainConfig().putBool(ConstantString.allow_privacy,true);
+    }
+
+    /**
+     * 获取是否同意了隐私协议
+     * @return
+     */
+    public boolean isHadAllowedPrivacy(){
+        return ConfigManager.getMainConfig().getBool(ConstantString.allow_privacy,false);
+    }
 }

@@ -58,6 +58,11 @@ public interface Constant {
     String WIDGET_GUIDE="http://kwgt.baiduux.com/h5/widget_guide.html";
 
     /**
+     * 隐私协议地址
+     */
+    String WIDGET_PRIVACY_URL = "http://kwgt.baiduux.com/h5/widget_privacy.html";
+
+    /**
      * 插件交流qq群群号
      */
     String QQ_GROUP="1060401437";

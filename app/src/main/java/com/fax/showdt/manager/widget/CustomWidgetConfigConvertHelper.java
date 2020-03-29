@@ -366,12 +366,14 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setCornerRatio(bean.getCornerRatio());
             float adaptRatio = getWidthRatio(baseOnWidth);
             drawableSticker.setScale(bean.getScale() * adaptRatio);
+            drawableSticker.resizeBounds();
             view.addSticker(drawableSticker, Sticker.Position.INITIAL);
             float startX = drawableSticker.getWidth() / 2f;
             float startY = drawableSticker.getHeight() / 2f;
             float offsetX = targetPoint.x - startX;
             float offsetY = targetPoint.y - startY;
-            Log.i("test_center:","x:"+startX+" y:"+startY);
+            Log.i("test_center:","center x:"+targetPoint.x+" center y:"+targetPoint.y);
+            Log.i("test_center:","width:"+startX+" height:"+startY);
             drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
             drawableSticker.getMatrix().postRotate(bean.getAngle(), targetPoint.x, targetPoint.y);
             return drawableSticker;

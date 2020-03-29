@@ -1,22 +1,24 @@
 ext {
     //加固插件路径
-    reinforce_plugin_path = '../reinforce'
+    reinforce_plugin_path = "${project.rootDir}/reinforce"
     //360加固账号密码
     reinforce_plugin_name = '15850451266'
     reinforce_plugin_passward = 'fax15850451266'
     //签名信息
-    key_store_path = 'keystore.jks'
+    key_store_path = "${project.rootDir}/app/keystore.jks"
     key_store_passward = '15850451266'
     alias = 'fax'
     alias_passward = '15850451266'
+    //Release Apk输出路劲
+    release_apk_path = "${project.buildDir}/outputs/apk/release/app-release.apk"
     //加固ApK输出路径
-    reinforce_apk_path = 'build/outputs/apk/release/reinforce/'
+    reinforce_apk_path = "${project.buildDir}/outputs/apk/release/reinforce/"
     //加固包名称
-    reinforce_apk_name = 'build/outputs/apk/release/reinforce/release_encrypted_aligned_signed.apk'
+    reinforce_apk_name = "${project.buildDir}/outputs/apk/release/reinforce/release_encrypted_aligned_signed.apk"
     //渠道配置文件
-    chanel_config_path = reinforce_plugin_path + '/channel.txt'
+    chanel_config_path = "${reinforce_plugin_path}/channel.txt"
     //渠道Apk输出路径
-    channel_apks_path = 'build/outputs/apk/release/channels/'
+    channel_apks_path = "${project.buildDir}/outputs/apk/release/channels/"
 }
 
 /**
@@ -40,6 +42,10 @@ task buildReinforceRelease() {
         renameReinforceApk()
         //第四步：打多渠道包
         buildChannelApks()
+        //清除无用缓存
+        cleanFilesPath(reinforce_plugin_path + "/.cache")
+        cleanFilesPath(reinforce_plugin_path + "/output")
+        cleanFilesPath(reinforce_plugin_path + "/jiagu.db")
     }
 }
 
@@ -60,7 +66,7 @@ def buildChannelApks() {
         channelsPath.mkdir()
     }
     exec {
-        commandLine "powershell", "java -jar", reinforce_plugin_path + "/lib/walle-cli-all.jar batch -f ", chanel_config_path, reinforce_apk_name, channel_apks_path
+        commandLine "bash", "-c", "java -jar ${reinforce_plugin_path}/lib/walle-cli-all.jar batch -f ${chanel_config_path} ${reinforce_apk_name} ${channel_apks_path}"
     }
     println('编译多渠道包成功，生成的渠道包路径:' + channelsPath.getAbsolutePath())
 }
@@ -71,7 +77,7 @@ def buildChannelApks() {
  * 作者：郭翰林
  */
 def renameReinforceApk() {
-    File files = new File('build/outputs/apk/release/reinforce')
+    File files = new File(reinforce_apk_path)
     if (!files.exists()) {
         return
     }
@@ -79,7 +85,7 @@ def renameReinforceApk() {
         String[] content = files.list()//取得当前目录下所有文件和文件夹
         for (String name : content) {
             //由于第一步清空缓存，reinforce文件夹内只会有一个已经加固并且签名的包
-            File signedApk = new File('build/outputs/apk/release/reinforce', name)
+            File signedApk = new File(reinforce_apk_path, name)
             File renameApk = new File(reinforce_apk_name)
             if (signedApk.exists() && signedApk.isFile()) {
                 signedApk.renameTo(renameApk)
@@ -95,25 +101,27 @@ def renameReinforceApk() {
  */
 def reinforceApk() {
     println('开始进行加固操作')
-    File releaseApk = new File('app/build/outputs/apk/release/app-release.apk')
+    File releaseApk = new File(release_apk_path)
     print("release path:"+releaseApk.absolutePath)
     if (!releaseApk.exists()) {
         throw new FileNotFoundException('Release包不存在，无法进行加固操作')
     }
-    String releasePath = 'build/outputs/apk/release/app-release.apk'
     //创建加固文件夹
     File reinforcePath = new File(reinforce_apk_path)
     if (!reinforcePath.exists()) {
         reinforcePath.mkdir()
     }
     exec {
-        commandLine "powershell", "java -jar", reinforce_plugin_path + "/jiagu.jar", "-login", reinforce_plugin_name, reinforce_plugin_passward
+        commandLine "bash", "-c", "chmod +x ${reinforce_plugin_path}/java/bin/*"
     }
     exec {
-        commandLine "powershell", "java -jar", reinforce_plugin_path + "/jiagu.jar", "-importsign", key_store_path, key_store_passward, alias, alias_passward
+        commandLine "bash", "-c", "java -jar ${reinforce_plugin_path}/jiagu.jar -login ${reinforce_plugin_name} ${reinforce_plugin_passward}"
     }
     exec {
-        commandLine "powershell", "java -jar", reinforce_plugin_path + "/jiagu.jar", "-jiagu", releasePath, reinforce_apk_path, "-autosign"
+        commandLine "bash", "-c", "java -jar ${reinforce_plugin_path}/jiagu.jar -importsign ${key_store_path} ${key_store_passward} ${alias} ${alias_passward}"
+    }
+    exec {
+        commandLine "bash", "-c", "java -jar ${reinforce_plugin_path}/jiagu.jar -jiagu ${release_apk_path} ${reinforce_apk_path} -autosign"
     }
     println('加固操作结束，加固包路径' + reinforcePath.getAbsolutePath())
 }

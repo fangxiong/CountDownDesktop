@@ -9,6 +9,7 @@ public interface ConstantString {
     String widget_id = "widget_id";
     String widget_make_data = "widget_make_data";
     String widget_make_data_is_from_selection = "widget_make_data_is_from_selection";
+    String allow_privacy = "allow_privacy";
 
     String BUGLY_APP_ID = "a532c59eaa";
     String BMOB_APP_ID = "23e7b17ff6f23357f71da90537270ef1";

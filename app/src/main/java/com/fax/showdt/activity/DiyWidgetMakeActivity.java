@@ -135,7 +135,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     public static final int EDIT_VECTOR = 2;
     public static final int EDIT_PROGRESS = 3;
     public static final int EDIT_SHAPE = 4;
-    private AlphaTabView tabText,tabSticker,tabVector,tabProgress,tabShape;
+    private AlphaTabView tabText, tabSticker, tabVector, tabProgress, tabShape;
     private StickerView mStickerView;
     private ImageView mStickerViewBg;
     private RelativeLayout mRLEditBody;
@@ -160,15 +160,15 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private boolean isFromSelection = false;
 
 
-    @IntDef({EDIT_TEXT, EDIT_STICKER,EDIT_VECTOR, EDIT_SHAPE, EDIT_PROGRESS})
+    @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_VECTOR, EDIT_SHAPE, EDIT_PROGRESS})
     @Retention(RetentionPolicy.SOURCE)
     public @interface EditType {
     }
 
-    public static void startSelf(Context context, String json,boolean isFromSelection) {
+    public static void startSelf(Context context, String json, boolean isFromSelection) {
         Intent intent = new Intent(context, DiyWidgetMakeActivity.class);
         intent.putExtra(ConstantString.widget_make_data, json);
-        intent.putExtra(ConstantString.widget_make_data_is_from_selection,isFromSelection);
+        intent.putExtra(ConstantString.widget_make_data_is_from_selection, isFromSelection);
         context.startActivity(intent);
     }
 
@@ -214,7 +214,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             Logger.e("onAttachFragment mProgressEditFragment");
             mProgressEditFragment = (WidgetProgressEditFragment) fragment;
             transaction.remove(mProgressEditFragment);
-        } else if(mShapeEditFragment == null && fragment instanceof  WidgetShapeEditFragment){
+        } else if (mShapeEditFragment == null && fragment instanceof WidgetShapeEditFragment) {
             Logger.e("onAttachFragment mShapeEditFragment");
             mShapeEditFragment = (WidgetShapeEditFragment) fragment;
             transaction.remove(mShapeEditFragment);
@@ -230,7 +230,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         customWidgetConfig.setBaseOnHeightPx(mStickerView.getHeight());
         customWidgetConfig.setBaseOnWidthPx(mStickerView.getWidth());
         outState.putString(KEY_RESTORE_DATA, config.toJSONString());
-        Log.i("test_save_state:",config.toJSONString());
+        Log.i("test_save_state:", config.toJSONString());
 
     }
 
@@ -260,8 +260,8 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         indicator.setOnTabChangedListner(new OnTabChangedListner() {
             @Override
             public void onTabSelected(int tabNum) {
-                switch (tabNum){
-                    case 0:{
+                switch (tabNum) {
+                    case 0: {
                         TextSticker textSticker = new TextSticker(System.currentTimeMillis());
                         textSticker.setTextColor("#FFFFFF");
                         textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
@@ -270,15 +270,15 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                         switchToOneFragment(EDIT_TEXT);
                         break;
                     }
-                    case 1:{
+                    case 1: {
                         switchToOneFragment(EDIT_STICKER);
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         switchToOneFragment(EDIT_VECTOR);
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         ProgressSticker progressSticker = new ProgressSticker(System.currentTimeMillis());
                         progressSticker.resize(ViewUtils.dpToPx(150f, DiyWidgetMakeActivity.this), ViewUtils.dpToPx(10f, DiyWidgetMakeActivity.this));
                         progressSticker.setPercent(0.7f);
@@ -289,7 +289,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                         mProgressEditFragment.setProgressSticker(progressSticker);
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
                         drawableSticker.setmPicType(DrawableSticker.SHAPE);
                         mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
@@ -306,9 +306,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private void initData(Bundle savedInstanceState) {
         mStickerList = new LongSparseArray<>();
         Intent intent = getIntent();
-        String json ="";
-        isFromSelection= intent.getBooleanExtra(ConstantString.widget_make_data_is_from_selection,false);
-        if(!isFromSelection){
+        String json = "";
+        isFromSelection = intent.getBooleanExtra(ConstantString.widget_make_data_is_from_selection, false);
+        if (!isFromSelection) {
             json = intent.getStringExtra(ConstantString.widget_make_data);
         }
 
@@ -317,12 +317,12 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         }
         if (savedInstanceState != null) {
             String saveJson = savedInstanceState.getString(KEY_RESTORE_DATA);
-            Log.i("test_save_state:","初始化："+saveJson);
+            Log.i("test_save_state:", "初始化：" + saveJson);
             if (!TextUtils.isEmpty(saveJson)) {
                 customWidgetConfig = GsonUtils.parseJsonWithGson(saveJson, CustomWidgetConfig.class);
             }
         }
-        if(customWidgetConfig == null){
+        if (customWidgetConfig == null) {
             customWidgetConfig = new CustomWidgetConfig();
         }
         initStickers();
@@ -332,17 +332,17 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         initBlurView();
         if (isFromSelection) {
             String widgetJson = intent.getStringExtra(ConstantString.widget_make_data);
-            WidgetConfig config = GsonUtils.parseJsonWithGson(widgetJson,WidgetConfig.class);
-            if(Integer.valueOf(config.getSupportVersion()) > ConstantString.WIDGET_SUPPORT_VERSION){
+            WidgetConfig config = GsonUtils.parseJsonWithGson(widgetJson, WidgetConfig.class);
+            if (Integer.valueOf(config.getSupportVersion()) > ConstantString.WIDGET_SUPPORT_VERSION) {
                 showUpdateVersionDialog(config);
-            }else {
+            } else {
                 downloadWidget(config);
             }
         }
     }
 
-    private void showUpdateVersionDialog(final WidgetConfig widgetConfig){
-        MessageDialog.show(this, "提示", "你的版本过低,需要更新最新版本才能正常加载插件","立即更新","忽略")
+    private void showUpdateVersionDialog(final WidgetConfig widgetConfig) {
+        MessageDialog.show(this, "提示", "你的版本过低,需要更新最新版本才能正常加载插件", "立即更新", "忽略")
                 .setCancelable(false)
                 .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
                     @Override
@@ -359,18 +359,18 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         });
     }
 
-    private void downloadWidget(final WidgetConfig widgetConfig){
+    private void downloadWidget(final WidgetConfig widgetConfig) {
         WidgetDownloadManager.getInstance().startDownloadWidget(widgetConfig, new WidgetDownloadManager.DownloadWidgetCallback() {
             @Override
             public void downloadStart() {
-                WaitDialog.show(DiyWidgetMakeActivity.this,"素材整合中...");
+                WaitDialog.show(DiyWidgetMakeActivity.this, "素材整合中...");
             }
 
             @Override
             public void downloadSuc() {
-                WaitDialog.show(DiyWidgetMakeActivity.this,"整合完成", TipDialog.TYPE.SUCCESS);
-                customWidgetConfig = GsonUtils.parseJsonWithGson(widgetConfig.getConfig(),CustomWidgetConfig.class);
-                Log.i("test_config:",customWidgetConfig.toJSONString());
+                WaitDialog.show(DiyWidgetMakeActivity.this, "整合完成", TipDialog.TYPE.SUCCESS);
+                customWidgetConfig = GsonUtils.parseJsonWithGson(widgetConfig.getConfig(), CustomWidgetConfig.class);
+                Log.i("test_config:", customWidgetConfig.toJSONString());
                 initStickers();
                 initStickerViewBg();
                 initBlurView();
@@ -383,7 +383,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
             @Override
             public void downloadFail(String errorMsg) {
-                WaitDialog.show(DiyWidgetMakeActivity.this,"整合失败", TipDialog.TYPE.ERROR);
+                WaitDialog.show(DiyWidgetMakeActivity.this, "整合失败", TipDialog.TYPE.ERROR);
             }
         });
     }
@@ -433,14 +433,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
             switchToOneFragment(EDIT_PROGRESS);
             mProgressEditFragment.setProgressSticker(progressSticker);
-        }else if(resId == R.id.tv_shape){
+        } else if (resId == R.id.tv_shape) {
             DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
             drawableSticker.setmPicType(DrawableSticker.SHAPE);
             mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
             switchToOneFragment(EDIT_PROGRESS);
             mShapeEditFragment.setDrawableSticker(drawableSticker);
-        }
-        else if (resId == R.id.iv_back) {
+        } else if (resId == R.id.iv_back) {
             if (mStickerList.isEmpty()) {
                 finish();
                 return;
@@ -532,7 +531,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SDCARD) {
                         switchToOneFragment(EDIT_STICKER);
                         mStickerEditFragment.setDrawableSticker((DrawableSticker) sticker);
-                    }  else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SHAPE) {
+                    } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SHAPE) {
                         switchToOneFragment(EDIT_SHAPE);
                         mShapeEditFragment.setDrawableSticker((DrawableSticker) sticker);
                     }
@@ -623,9 +622,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             mIsGetSystemBgSuc = false;
             mEditBitmap = CommonUtils.getAssetPic(this, "file:///android_asset/widgetBg/template00.png");
         }
-        if(customWidgetConfig != null) {
-            if(!TextUtils.isEmpty(customWidgetConfig.getBgPath()) && FileExUtils.exists(customWidgetConfig.getBgPath())) {
-                Log.i("test_config_bgPath:",customWidgetConfig.getBgPath());
+        if (customWidgetConfig != null) {
+            if (!TextUtils.isEmpty(customWidgetConfig.getBgPath()) && FileExUtils.exists(customWidgetConfig.getBgPath())) {
+                Log.i("test_config_bgPath:", customWidgetConfig.getBgPath());
                 mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
             }
         }
@@ -802,7 +801,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             setEditBodySlideInAnimation();
         }
         mEditPaneShowing = true;
-        Log.i("test_show:","visible"+mRLEditBody.getHeight());
+        Log.i("test_show:", "visible" + mRLEditBody.getHeight());
         mRLEditBody.setVisibility(View.VISIBLE);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (editType) {
@@ -1008,8 +1007,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerView.setShowGrid(false);
         mStickerView.requestLayout();
         mStickerView.clearCurrentSticker();
-        Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
-        final Bitmap coverBitmap = BitmapUtils.mergeBitmap(bgBitmap, stickerBitmap, 0);
+        final Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
         final String coverFileName = "widget_cover" + System.currentTimeMillis() + ".png";
         final String bgFileName = "widget_bg" + System.currentTimeMillis() + ".png";
         final String coverDir = Environment.getHomeDir() + File.separator + Constant.WIDGET_DATA_DIR + File.separator + "widget_screenshot";
@@ -1017,7 +1015,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                BitmapUtils.saveFile(coverBitmap, coverFileName, coverDir);
+                BitmapUtils.saveFile(stickerBitmap, coverFileName, coverDir);
                 BitmapUtils.saveFile(bgBitmap, bgFileName, bgDir);
                 customWidgetConfig = new CustomWidgetConfig();
                 if (FileExUtils.exists(customWidgetConfig.getCoverUrl())) {

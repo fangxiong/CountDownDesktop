@@ -133,6 +133,9 @@
     <color name="c_A4A4A4">#A4A4A4</color>
     <color name="c_191930">#191921</color>
     <color name="c_4D000000">#4D000000</color>
+    <color name="c_282828">#282828</color>
+    <color name="c_2585ff">#2585ff</color>
+    <color name="c_9a9a9a">#9a9a9a</color>
 
     <color name="pickerview_timebtn_nor">#057dff</color>
     <color name="pickerview_timebtn_pre">#c2daf5</color>

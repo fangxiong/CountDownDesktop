@@ -99,6 +99,9 @@
     <string name="no_widget">您还没有任何作品⊙__⊙</string>
     <string name="go_to_make_widget">去制作</string>
 
+    <string name="privacy_protocol"><![CDATA[<font color=\"#2585FF\">《隐私条款》</font>]]></string>
+    <string name="service_protocol"><![CDATA[<font color=\"#282828\">查看完整版</font><font color=\"#2585FF\">《服务协议》</font><font color=\"#282828\">和]]></string>
+
 
 
 </resources>

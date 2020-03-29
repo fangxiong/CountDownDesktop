@@ -163,6 +163,10 @@ public class DrawableSticker extends Sticker {
         this.scale = scale;
     }
 
+    public  void resizeBounds(){
+        realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+    }
+
     @Override
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
         canvas.save();
@@ -176,7 +180,6 @@ public class DrawableSticker extends Sticker {
             Log.i("test_drawsticker_ling:",String.valueOf(DEFAULT_DRAWABLE_HEIGHT * strokeRatio));
             drawable.setBounds(realBounds);
             Paint paint = new Paint();
-            paint.setColor(Color.parseColor("#333333"));
             canvas.drawRect(realBounds,paint);
             canvas.translate(DEFAULT_DRAWABLE_HEIGHT * strokeRatio/2f,DEFAULT_DRAWABLE_HEIGHT * (strokeRatio)/2f);
             drawable.draw(canvas);

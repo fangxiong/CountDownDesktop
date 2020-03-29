@@ -165,7 +165,6 @@ public class PushWidgetActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onBind(CustomDialog dialog, View v) {
                 RecyclerView recyclerView = v.findViewById(R.id.rv);
-                recyclerView.setAdapter(mAdapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(PushWidgetActivity.this));
                 recyclerView.setAdapter(mAdapter);
             }
