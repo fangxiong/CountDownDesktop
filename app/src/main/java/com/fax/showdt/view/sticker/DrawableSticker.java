@@ -164,7 +164,9 @@ public class DrawableSticker extends Sticker {
     }
 
     public  void resizeBounds(){
-        realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+        if(drawable instanceof  GradientDrawable){
+            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+        }
     }
 
     @Override
