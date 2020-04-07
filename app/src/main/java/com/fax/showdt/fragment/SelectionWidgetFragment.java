@@ -20,6 +20,8 @@ import com.fax.showdt.utils.ToastShowUtils;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -67,6 +69,12 @@ public class SelectionWidgetFragment extends Fragment {
 //                Log.i("test_req:",String.valueOf(mDatas.size()));
                 if (e == null) {
                     if (mDatas != null && mDatas.size() > 0) {
+                        Collections.sort(mDatas, new Comparator<widgetClassification>() {
+                            @Override
+                            public int compare(widgetClassification o1, widgetClassification o2) {
+                                return o1.getSort() - o2.getSort();
+                            }
+                        });
                         for (widgetClassification ccb : mDatas) {
                             mTabList.add(ccb.getcName());
                             mTabLayout.addTab(mTabLayout.newTab());

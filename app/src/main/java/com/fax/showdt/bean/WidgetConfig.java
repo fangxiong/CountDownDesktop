@@ -12,6 +12,7 @@ public class WidgetConfig extends BmobObject {
     private String userUid;
     private String config;
     private String cid;
+    private long sort;
 
     public String getTitle() {
         return title;
@@ -75,5 +76,13 @@ public class WidgetConfig extends BmobObject {
 
     public void setCid(String cid) {
         this.cid = cid;
+    }
+
+    public long getSort() {
+        return sort;
+    }
+
+    public void setSort(long sort) {
+        this.sort = sort;
     }
 }

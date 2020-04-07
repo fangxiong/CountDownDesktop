@@ -15,12 +15,15 @@ import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.WidgetConfig;
+import com.fax.showdt.bean.widgetClassification;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -36,11 +39,13 @@ import cn.bmob.v3.listener.FindListener;
 
 public class SelectionFragment extends Fragment {
 
+    private static final String CID_KEY = "cid_key";
     private RecyclerView mRv;
     private CommonAdapter<WidgetConfig> mAdapter;
     private List<WidgetConfig> data = new ArrayList<>();
     private SwipeRefreshLayout mRefreshLayout;
     private String mCid;
+
 
     public SelectionFragment(){}
     private SelectionFragment(String cid){
@@ -64,6 +69,16 @@ public class SelectionFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null){
+            mCid = savedInstanceState.getString(CID_KEY);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CID_KEY,mCid);
 
     }
 
@@ -73,11 +88,23 @@ public class SelectionFragment extends Fragment {
         query.addWhereEqualTo("cid",mCid);
         query.findObjects(new FindListener<WidgetConfig>() {
             @Override
-            public void done(List<WidgetConfig> list, BmobException e) {
+            public void done(List<WidgetConfig> list, final BmobException e) {
                 mRefreshLayout.setRefreshing(false);
                 if(e == null) {
                     WaitDialog.dismiss();
                     data.clear();
+                    Collections.sort(list,new Comparator<WidgetConfig>() {
+                        @Override
+                        public int compare(WidgetConfig o1, WidgetConfig o2) {
+                            long result =  o2.getSort() - o1.getSort();
+                            if(result > 0){
+                                return 1;
+                            }else if(result< 0){
+                                return -1;
+                            }else
+                            return  0;
+                        }
+                    } );
                     data.addAll(list);
                     mAdapter.notifyDataSetChanged();
                 }else {

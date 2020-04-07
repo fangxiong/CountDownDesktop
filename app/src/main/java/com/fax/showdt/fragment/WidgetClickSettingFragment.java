@@ -206,6 +206,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
     public void initActionUI(String actionType, String actionContent,String appName) {
         if (TextUtils.isEmpty(actionType)) {
             mTvClickAction.setText(actions[0]);
+            llClickContent.setVisibility(View.GONE);
             return;
         }
         switch (actionType) {
@@ -292,7 +293,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 tvMusicCtl.setOnClickListener(WidgetClickSettingFragment.this);
                 tvUrl.setOnClickListener(WidgetClickSettingFragment.this);
             }
-        });
+        }).setCancelable(true);
         clickActionDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
     }
 
@@ -320,7 +321,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 tvVoiceMuiti.setOnClickListener(WidgetClickSettingFragment.this);
                 tvOpenApp.setOnClickListener(WidgetClickSettingFragment.this);
             }
-        });
+        }).setCancelable(true);
         musicControlDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
     }
 

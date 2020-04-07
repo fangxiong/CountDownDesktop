@@ -121,6 +121,7 @@ public class ProgressSticker extends Sticker {
 
     public void setScale(float scale) {
         getMatrix().reset();
+        Log.i("ProgressSticker:","scale:"+scale);
         PointF pointF = this.getMappedCenterPoint();
         getMatrix().postScale(scale, scale, pointF.x, pointF.y);
     }
@@ -192,6 +193,7 @@ public class ProgressSticker extends Sticker {
 
     public void setStickerConfig(ProgressPlugBean bean) {
         setId(Long.valueOf(bean.getId()));
+        setScale(bean.getScale());
         setProgressHeight(bean.getProgressHeight());
         setBgColor(bean.getBgColor());
         setForeColor(bean.getForeColor());

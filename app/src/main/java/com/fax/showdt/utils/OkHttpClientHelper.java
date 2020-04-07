@@ -37,15 +37,16 @@ public class OkHttpClientHelper {
                         JSONArray jsonArray = new JSONArray(message);
                         message = jsonArray.toString(JSON_INDENT);
                     }
+                    messages.append(message);
+                    messages.append("\n");
+                    if (message.startsWith("<-- END HTTP")) {
+                        Logger.i("test_http:",messages.toString());
+                        messages.delete(0, messages.length());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                messages.append(message);
-                messages.append("\n");
-                if (message.startsWith("<-- END HTTP")) {
-                    Logger.i("test_http:",messages.toString());
-                    messages.delete(0, messages.length());
-                }
+
             }
         });
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

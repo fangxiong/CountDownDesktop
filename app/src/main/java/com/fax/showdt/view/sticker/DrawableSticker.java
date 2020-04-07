@@ -181,8 +181,6 @@ public class DrawableSticker extends Sticker {
             ((GradientDrawable) drawable).setStroke((int) (DEFAULT_DRAWABLE_HEIGHT * strokeRatio), Color.parseColor(strokeColor));
             Log.i("test_drawsticker_ling:",String.valueOf(DEFAULT_DRAWABLE_HEIGHT * strokeRatio));
             drawable.setBounds(realBounds);
-            Paint paint = new Paint();
-            canvas.drawRect(realBounds,paint);
             canvas.translate(DEFAULT_DRAWABLE_HEIGHT * strokeRatio/2f,DEFAULT_DRAWABLE_HEIGHT * (strokeRatio)/2f);
             drawable.draw(canvas);
         } else {

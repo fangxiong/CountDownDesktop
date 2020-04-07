@@ -127,12 +127,18 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
                 transaction.hide(mTouchEditFragment);
                 transaction.show(propertiesEditFragment);
                 transaction.commitAllowingStateLoss();
+                if (drawableSticker != null){
+                    propertiesEditFragment.initActionUI();
+                }
                 break;
             }
             case TOUCH: {
                 transaction.hide(propertiesEditFragment);
                 transaction.show(mTouchEditFragment);
                 transaction.commitAllowingStateLoss();
+                if (drawableSticker != null){
+                    mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),drawableSticker.getJumpContent(),drawableSticker.getAppName());
+                }
                 break;
             }
         }
@@ -142,6 +148,9 @@ public class WidgetShapeEditFragment extends Fragment implements View.OnClickLis
         this.drawableSticker = drawableSticker;
         if (propertiesEditFragment != null) {
             propertiesEditFragment.setDrawableSticker(drawableSticker);
+        }
+        if (mTouchEditFragment != null) {
+            mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),drawableSticker.getJumpContent(),drawableSticker.getAppName());
         }
     }
 

@@ -150,7 +150,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
                     }
                     case R.id.nav_share: {
-                        ShareUtils.shareText(MainActivity.this, "我正在使用《魔秀插件》,很好用哦,推荐给你", "我正在使用《魔秀插件》,很好用哦,推荐给你哦\n https://fir.im/x12w");
+                        ShareUtils.shareText(MainActivity.this, "我正在使用《魔秀插件》,很好用哦,推荐给你", "我正在使用《魔秀插件》,很好用哦,推荐给你哦\n http://fir.kwgt.top/x12w");
                         break;
                     }
                     case R.id.nav_permission: {

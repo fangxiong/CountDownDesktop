@@ -139,9 +139,9 @@ public class CustomWidgetConfigConvertHelper {
                 drawablePlugBean.setShapeHeightRatio(((DrawableSticker) sticker).getShapeHeightRatio());
                 drawablePlugBean.setCornerRatio(((DrawableSticker) sticker).getCornerRatio());
                 drawablePlugBean.setStrokeRatio(((DrawableSticker) sticker).getStrokeRatio());
-
                 PointF point = sticker.getMappedCenterPoint();
                 drawablePlugBean.setLocation(new PlugLocation(point.x, point.y));
+                Log.i("CustomWidgetHelper:","init center:"+point.x+" "+point.y);
                 mDrawableList.add(drawablePlugBean);
             }
 
@@ -368,12 +368,12 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setScale(bean.getScale() * adaptRatio);
             drawableSticker.resizeBounds();
             view.addSticker(drawableSticker, Sticker.Position.INITIAL);
-            float startX = drawableSticker.getWidth() / 2f;
-            float startY = drawableSticker.getHeight() / 2f;
-            float offsetX = targetPoint.x - startX;
-            float offsetY = targetPoint.y - startY;
+
+            PointF center = drawableSticker.getMappedCenterPoint();
+            float offsetX = targetPoint.x - center.x;
+            float offsetY = targetPoint.y - center.y;
             Log.i("test_center:","center x:"+targetPoint.x+" center y:"+targetPoint.y);
-            Log.i("test_center:","width:"+startX+" height:"+startY);
+            Log.i("test_center:","width:"+center.x+" height:"+center.y);
             drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
             drawableSticker.getMatrix().postRotate(bean.getAngle(), targetPoint.x, targetPoint.y);
             return drawableSticker;
@@ -433,7 +433,6 @@ public class CustomWidgetConfigConvertHelper {
         float offsetX = targetPoint.x - startX;
         float offsetY = targetPoint.y - startY;
         progressSticker.setStickerConfig(bean);
-        progressSticker.setScale(bean.getScale());
         progressSticker.getMatrix().postTranslate(offsetX, offsetY);
         progressSticker.getMatrix().postRotate(bean.getAngle(), targetPoint.x, targetPoint.y);
         progressSticker.draw(canvas, -1, false);
@@ -489,10 +488,11 @@ public class CustomWidgetConfigConvertHelper {
         drawableSticker.setCornerRatio(bean.getCornerRatio());
         float adaptRatio = getWidthRatio(baseOnWidth);
         drawableSticker.setScale(bean.getScale() * adaptRatio);
-        float startX = drawableSticker.getWidth() / 2f;
-        float startY = drawableSticker.getHeight() / 2f;
-        float offsetX = targetPoint.x - startX;
-        float offsetY = targetPoint.y - startY;
+        drawableSticker.resizeBounds();
+
+        PointF center = drawableSticker.getMappedCenterPoint();
+        float offsetX = targetPoint.x - center.x;
+        float offsetY = targetPoint.y - center.y;
         drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
         drawableSticker.getMatrix().postRotate(bean.getAngle(), targetPoint.x, targetPoint.y);
         drawableSticker.draw(canvas, -1, false);

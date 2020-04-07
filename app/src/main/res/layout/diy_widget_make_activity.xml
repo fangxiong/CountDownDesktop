@@ -41,6 +41,16 @@
             android:layout_toStartOf="@id/iv_save"
             android:onClick="onClick"
             android:src="@drawable/widget_make_bg_change_btn" />
+        <ImageView
+            android:id="@+id/iv_guide"
+            android:layout_width="@dimen/margin_35"
+            android:layout_height="@dimen/margin_35"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:layout_toStartOf="@id/iv_change_bg"
+            android:onClick="onClick"
+            android:src="@drawable/widget_make_guide_btn" />
     </RelativeLayout>
 
     <FrameLayout

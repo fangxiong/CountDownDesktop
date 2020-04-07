@@ -190,7 +190,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         intent.putExtra("switch_flag", false);
         intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
         sendBroadcast(intent);
-        unregisterReceiver(mUpdateLrcReceiver);
         LocationManager.getInstance().stopLocation();
     }
 
@@ -456,6 +455,10 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             showEditBgPanel();
         } else if (resId == R.id.iv_save) {
             saveConfig();
+        } else if(resId == R.id.iv_guide){
+            Intent intent = new Intent(DiyWidgetMakeActivity.this, WebActivity.class);
+            intent.putExtra(WebActivity.URL_KEY, Constant.WIDGET_GUIDE);
+            startActivity(intent);
         }
     }
 

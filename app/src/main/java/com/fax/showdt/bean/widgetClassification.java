@@ -6,6 +6,7 @@ public class widgetClassification extends BmobObject {
 
     private String cName;
     private String cid;
+    private int sort;
 
     public widgetClassification(){
         this.setTableName("widgetClassification");
@@ -25,5 +26,13 @@ public class widgetClassification extends BmobObject {
 
     public void setCid(String cid) {
         this.cid = cid;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
     }
 }
