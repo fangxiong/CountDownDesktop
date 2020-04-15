@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -12,11 +13,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.text.LoginFilter;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.fax.showdt.AppContext;
+import com.fax.showdt.R;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
@@ -30,6 +33,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 public class DrawableSticker extends Sticker {
 
@@ -189,6 +193,17 @@ public class DrawableSticker extends Sticker {
             } else {
                 drawable.setBounds(realBounds);
                 drawable.draw(canvas);
+//                String  test = "M972.8 153.6h-921.6c-28.262 0-51.2 22.886-51.2 51.2v614.4c0 28.314 22.938 51.2 51.2 51.2h921.6c28.262 0 51.2-22.886 51.2-51.2v-614.4c0-28.314-22.886-51.2-51.2-51.2zM921.6 768h-819.2v-512h819.2v512z";
+//                Path path = com.fax.showdt.androidsvg.SVG.parsePath(test);
+//                RectF rectF = new RectF();
+//                path.computeBounds(rectF,false);
+//                Log.i("Drawsticker:",rectF.width()+"  "+rectF.height());
+//                RectF rectF1 = new RectF(realBounds.left,realBounds.top,realBounds.right,realBounds.bottom);
+////                path.addRect(rectF, Path.Direction.CW);
+//                Paint paint = new Paint();
+////                paint.setStyle(Paint.Style.FILL);
+//                paint.setColor(AppContext.get().getColor(R.color.c_1E1D1D));
+//                canvas.drawPath(path,paint);
             }
         }
         canvas.restore();
@@ -313,6 +328,7 @@ public class DrawableSticker extends Sticker {
         Canvas mCanvas = new Canvas(mAlphaBitmap);
         Paint mPaint = new Paint();
         mPaint.setColor(Color.parseColor(strokeColor));
+        Log.e("test_strokeColor:",strokeColor);
         Bitmap alphaBitmap = bitmap.extractAlpha();
         mCanvas.drawBitmap(alphaBitmap, 0, 0, mPaint);
         return mAlphaBitmap;
@@ -348,6 +364,7 @@ public class DrawableSticker extends Sticker {
 
     public void setStrokeColor(String strokeColor) {
         this.strokeColor = strokeColor;
+        Log.e("test_strokeColor_set:",strokeColor);
     }
 
     public int getmPicType() {

@@ -1,6 +1,7 @@
 package com.fax.showdt.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.bean.CustomWidgetConfig;
@@ -63,6 +64,8 @@ public class WidgetDataHandlerUtils {
         Map map = getHashMapData(mapKey);
         map.put(mKey, mValue);
         putHashMapData(map,mapKey);
+        Log.e("test_put1:",mValue);
+        Log.e("test_put2:",getWidgetDataFromId(mKey,mapKey).toJSONString());
     }
 
     public static void deleteWidgetDataFromId(String mKey,String mapKey) {

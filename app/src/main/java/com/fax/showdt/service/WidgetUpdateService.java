@@ -199,7 +199,7 @@ public class WidgetUpdateService extends Service {
         @Override
         public void run() {
             if(isAllowRefreshAllWidget) {
-                int allWidgetId[] = WidgetManager.getAllProviderWidgetIds(WidgetUpdateService.this);
+                int[] allWidgetId = WidgetManager.getAllProviderWidgetIds(WidgetUpdateService.this);
                 for(int i =0;i<allWidgetId.length;i++) {
                     Log.i("test_draw_bitmap:", "秒刷新所有插件:"+allWidgetId[i]);
                     updateWidget(String.valueOf(allWidgetId[i]));
@@ -222,6 +222,7 @@ public class WidgetUpdateService extends Service {
         while (map1it.hasNext()) {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) map1it.next();
             Log.i("test_draw_bitmap:", "widgetId:" + entry.getKey());
+            Log.i("test_draw_bitmap:", "widgetConfig:" + entry.getValue());
 
             CustomWidgetConfig config = GsonUtils.parseJsonWithGson(entry.getValue(), CustomWidgetConfig.class);
             if(isAllowRefreshAllWidget){

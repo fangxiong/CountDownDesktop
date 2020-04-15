@@ -160,7 +160,7 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
                 final CustomWidgetConfig config = mData.get(position);
                 config.setDrawWithBg(false);
                 if (!TextUtils.isEmpty(mWidgetId)) {
-                    Log.i("test_widget", "put widget" + mWidgetId);
+                    Log.i("test_put0",  config.toJSONString());
                     sendConfigChangedBroadcast();
                     WidgetDataHandlerUtils.putWidgetDataWithId(mWidgetId, config.toJSONString(), ConstantString.widget_map_data_key);
                     ToastShowUtils.showCommonToast(WidgetSelectedActivity.this, "设置成功", Toasty.LENGTH_SHORT);

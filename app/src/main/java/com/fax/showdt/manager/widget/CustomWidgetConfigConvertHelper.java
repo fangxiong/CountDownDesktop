@@ -255,6 +255,7 @@ public class CustomWidgetConfigConvertHelper {
         for (int i = 0; i < mStickerBeanList.size(); i++) {
             BasePlugBean bean = mStickerBeanList.get(key[i]);
             if (bean instanceof DrawablePlugBean) {
+                Log.i("test_input:",bean.toJSONString());
                 drawDrawableSticker(canvas, (DrawablePlugBean) bean, mCustomWidgetConfig.getBaseOnWidthPx(), mCustomWidgetConfig.getBaseOnHeightPx());
             }
         }
@@ -273,7 +274,9 @@ public class CustomWidgetConfigConvertHelper {
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
         textSticker.setStickerConfig(bean);
         textSticker.resizeText();
-        view.addSticker(textSticker, Sticker.Position.INITIAL);
+        if(view != null) {
+            view.addSticker(textSticker, Sticker.Position.INITIAL);
+        }
         RectF rectF = textSticker.getMappedRectF();
         float offsetX = 0;
         if (bean.getAlignment() == null) {
@@ -312,7 +315,9 @@ public class CustomWidgetConfigConvertHelper {
         float startY = progressSticker.getHeight() / 2f;
         float offsetX = targetPoint.x - startX;
         float offsetY = targetPoint.y - startY;
-        view.addSticker(progressSticker, Sticker.Position.INITIAL);
+        if(view != null) {
+            view.addSticker(progressSticker, Sticker.Position.INITIAL);
+        }
         progressSticker.setStickerConfig(bean);
         progressSticker.getMatrix().postTranslate(offsetX, offsetY);
         progressSticker.getMatrix().postRotate(bean.getAngle(), targetPoint.x, targetPoint.y);
@@ -360,14 +365,15 @@ public class CustomWidgetConfigConvertHelper {
             drawableSticker.setDrawableColor(bean.getDrawableColor());
             drawableSticker.setmPicType(bean.getmPicType());
             drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
-            drawableSticker.setStrokeColor(bean.getStrokeColor());
             drawableSticker.setStrokeRatio(bean.getStrokeRatio());
             drawableSticker.setShapeHeightRatio(bean.getShapeHeightRatio());
             drawableSticker.setCornerRatio(bean.getCornerRatio());
             float adaptRatio = getWidthRatio(baseOnWidth);
             drawableSticker.setScale(bean.getScale() * adaptRatio);
             drawableSticker.resizeBounds();
-            view.addSticker(drawableSticker, Sticker.Position.INITIAL);
+            if(view != null) {
+                view.addSticker(drawableSticker, Sticker.Position.INITIAL);
+            }
 
             PointF center = drawableSticker.getMappedCenterPoint();
             float offsetX = targetPoint.x - center.x;
@@ -481,8 +487,9 @@ public class CustomWidgetConfigConvertHelper {
         drawableSticker.setDrawableColor(bean.getDrawableColor());
         drawableSticker.setClipType(bean.getClipType());
         drawableSticker.setmPicType(bean.getmPicType());
-        drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
         drawableSticker.setStrokeColor(bean.getStrokeColor());
+        drawableSticker.addMaskBitmap(AppContext.get(), bean.getClipType());
+        Log.i("test_draw_drawable:", bean.getStrokeColor());
         drawableSticker.setStrokeRatio(bean.getStrokeRatio());
         drawableSticker.setShapeHeightRatio(bean.getShapeHeightRatio());
         drawableSticker.setCornerRatio(bean.getCornerRatio());

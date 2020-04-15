@@ -42,9 +42,9 @@ public class AppIconUtils {
                     info.isUser = false;
                 } else {
                     info.isUser = true;
+                    list.add(info);
                 }
 
-                list.add(info);
             }
             return list;
         } catch (Exception e) {
