@@ -18,6 +18,7 @@ import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditVectorElementSelectedCallback;
 import com.fax.showdt.utils.FileExUtils;
@@ -36,8 +37,8 @@ import java.util.List;
  * Description:
  */
 public class WidgetVectorElementEditFragment1 extends Fragment {
-    private CommonAdapter<WidgetShapeBean> mListAdapter;
-    private List<WidgetShapeBean> mList;
+    private CommonAdapter<SvgIconBean> mListAdapter;
+    private List<SvgIconBean> mList;
     private RecyclerView mRv;
     private WidgetEditVectorElementSelectedCallback mCallback;
 
@@ -57,21 +58,21 @@ public class WidgetVectorElementEditFragment1 extends Fragment {
 
     private void initTextPlugSelectUI() {
         mList = new ArrayList<>();
-        String str = FileExUtils.getJsonFromAssest(getActivity(), "widget_shape.json");
-        mList = GsonUtils.parseJsonArrayWithGson(str, WidgetShapeBean.class);
+        String str = FileExUtils.getJsonFromAssest(getActivity(), "material.json");
+        mList = GsonUtils.parseJsonArrayWithGson(str, SvgIconBean.class);
         final GridLayoutManager manager = new GridLayoutManager(getActivity(), 4, RecyclerView.VERTICAL, false);
 
         mRv.setLayoutManager(manager);
-        mListAdapter = new CommonAdapter<WidgetShapeBean>(getActivity(),R.layout.widget_shape_element_item, mList) {
+        mListAdapter = new CommonAdapter<SvgIconBean>(getActivity(),R.layout.widget_shape_element_item, mList) {
             @Override
-            protected void convert(ViewHolder holder, WidgetShapeBean bean, int position) {
+            protected void convert(ViewHolder holder, SvgIconBean bean, int position) {
                 ImageView mIv = holder.getView(R.id.iv_element);
-                try {
-                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.c_A0A0A0), PorterDuff.Mode.SRC_IN))
-                            .readFromAsset(mContext.getAssets(), bean.getSvgPath()).build();
-                    mIv.setImageDrawable(svg.getDrawable());
-                }catch (IOException e){
-                }
+//                try {
+//                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.c_A0A0A0), PorterDuff.Mode.SRC_IN))
+//                            .readFromAsset(mContext.getAssets(), bean.getSvgPath()).build();
+//                    mIv.setImageDrawable(svg.getDrawable());
+//                }catch (IOException e){
+//                }
             }
         };
         mListAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {

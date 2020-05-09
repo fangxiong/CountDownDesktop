@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/widget_edit_top_dialog_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_copy"
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginEnd="@dimen/margin_10"
+        android:layout_weight="1"
+        android:layout_width="@dimen/margin_60"
+        android:layout_height="@dimen/margin_50"
+        android:drawableStart="@drawable/longpress_duplicate"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="复制"/>
+
+    <TextView
+        android:id="@+id/tv_top"
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginEnd="@dimen/margin_10"
+        android:layout_weight="1"
+        android:layout_width="@dimen/margin_60"
+        android:layout_height="@dimen/margin_50"
+        android:drawableStart="@drawable/longpress_totop"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="置顶"/>
+
+
+    <TextView
+        android:id="@+id/tv_bottom"
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginEnd="@dimen/margin_10"
+        android:layout_weight="1"
+        android:layout_width="@dimen/margin_60"
+        android:layout_height="@dimen/margin_50"
+        android:drawableStart="@drawable/longpress_tobottom"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="置底"/>
+
+</LinearLayout>

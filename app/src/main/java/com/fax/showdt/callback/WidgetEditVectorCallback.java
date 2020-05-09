@@ -1,5 +1,6 @@
 package com.fax.showdt.callback;
 
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.bean.WidgetShapeBean;
 
 /**
@@ -9,6 +10,6 @@ import com.fax.showdt.bean.WidgetShapeBean;
  * Description:
  */
 public interface WidgetEditVectorCallback {
-    void onAddVectorSticker(WidgetShapeBean widgetShapeBean);
+    void onAddVectorSticker(SvgIconBean widgetShapeBean);
     void closePanel();
 }

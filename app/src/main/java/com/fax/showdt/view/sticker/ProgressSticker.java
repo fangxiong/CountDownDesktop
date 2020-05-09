@@ -9,6 +9,7 @@ import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.manager.widget.WidgetProgressPercentHandler;
+import com.fax.showdt.utils.TimeUtils;
 import com.fax.showdt.utils.ViewUtils;
 
 import androidx.annotation.NonNull;
@@ -41,7 +42,7 @@ public class ProgressSticker extends Sticker {
     private Drawable mDrawable;
 
     private float percent = 0.5f;
-    private String foreColor = "#80FF0000";
+    private String foreColor = "#6abc6d";
     private String bgColor = "#90FFFFFF";
     @ProgressDrawType
     private String drawType = SOLID;
@@ -99,6 +100,20 @@ public class ProgressSticker extends Sticker {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    public ProgressSticker copy(){
+        ProgressSticker progressSticker = new ProgressSticker(TimeUtils.currentTimeMillis());
+        progressSticker.setScale(getCurrentScale());
+        progressSticker.setDrawable(getDrawable());
+        progressSticker.setDrawType(getDrawType());
+        progressSticker.setForeColor(getForeColor());
+        progressSticker.setBgColor(getBgColor());
+        progressSticker.setPercent(getPercent());
+        progressSticker.setProgressHeight(getProgressHeight());
+        progressSticker.setProgressType(getProgressType());
+        progressSticker.setProgress(getProgress());
+        return progressSticker;
     }
 
     @Override

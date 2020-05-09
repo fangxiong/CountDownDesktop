@@ -13,13 +13,17 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.VectorDrawable;
-import android.text.LoginFilter;
+import android.graphics.drawable.ShapeDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringDef;
+
 import com.fax.showdt.AppContext;
-import com.fax.showdt.R;
+import com.fax.showdt.utils.TimeUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
@@ -28,12 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringDef;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrawableSticker extends Sticker {
 
@@ -42,14 +42,17 @@ public class DrawableSticker extends Sticker {
     public static final String RECT = "rect";
     public static final String LOVE = "love";
     public static final String PENTAGON = "pentagon";
-    private static final int DEFAULT_DRAWABLE_HEIGHT = ViewUtils.dpToPx(100, AppContext.get());
+    public static final int DEFAULT_DRAWABLE_HEIGHT = ViewUtils.dpToPx(100, AppContext.get());
     private Drawable drawable;
     private Rect realBounds;
     private String drawablePath;
     private float scale;
     private Bitmap mMaskBitmap;
     private String clipType = RECT;
+    private Paint paint;
     private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+
+    private Path path;
     /**
      * 图片是否显示描边
      */
@@ -67,9 +70,9 @@ public class DrawableSticker extends Sticker {
      */
     private String strokeColor = "#FFFFFF";
     /**
-     * 图片描边的宽度(用ratio来计算),默认为高度的0.05f
+     * 图片描边的宽度(用ratio来计算),默认为高度的0f
      */
-    private float strokeRatio = 0.05f;
+    private float strokeRatio = 0f;
 
     /**
      * 图片圆角(用ratio来计算),默认为高度的0.5f
@@ -84,6 +87,21 @@ public class DrawableSticker extends Sticker {
      * 图片的颜色(用于svg和背景板)
      */
     private String drawableColor = "#FFFFFF";
+
+    /**
+     * 渐变色
+     */
+    private List<Integer> gradientColors = new ArrayList<>();
+
+    /**
+     * 是否渐变
+     */
+    private boolean isGradient = false;
+
+    /**
+     * 渐变色的方向
+     */
+    private int gradientOrientation = LEFT_RIGHT;
     /**
      * 来自asset文件夹下的图片
      */
@@ -101,6 +119,39 @@ public class DrawableSticker extends Sticker {
      */
     public static final int SHAPE = 3;
 
+    /**
+     * draw the gradient from the top to the bottom
+     */
+    public static final int TOP_BOTTOM = 0;
+    /**
+     * draw the gradient from the top-right to the bottom-left
+     */
+    public static final int TR_BL = 1;
+    /**
+     * draw the gradient from the right to the left
+     */
+    public static final int RIGHT_LEFT = 2;
+    /**
+     * draw the gradient from the bottom-right to the top-left
+     */
+    public static final int BR_TL = 3;
+    /**
+     * draw the gradient from the bottom to the top
+     */
+    public static final int BOTTOM_TOP = 4;
+    /**
+     * draw the gradient from the bottom-left to the top-right
+     */
+    public static final int BL_TR = 5;
+    /**
+     * draw the gradient from the left to the right
+     */
+    public static final int LEFT_RIGHT = 6;
+    /**
+     * draw the gradient from the top-left to the bottom-right
+     */
+    public static final int TL_BR = 7;
+
     @PicType
     private int mPicType = ASSET;
 
@@ -114,13 +165,23 @@ public class DrawableSticker extends Sticker {
     public @interface PicClip {
     }
 
+    @IntDef({TOP_BOTTOM, TR_BL, RIGHT_LEFT, BR_TL, BOTTOM_TOP, BL_TR, LEFT_RIGHT, TL_BR})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface GradientOrientation {
+    }
+
     public DrawableSticker(Drawable drawable, long id, int defaultWidth) {
         super(id);
         this.drawable = drawable;
-        if(drawable == null || drawable instanceof  GradientDrawable){
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        if (drawable == null || drawable instanceof GradientDrawable) {
             this.drawable = new GradientDrawable();
-            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
-        }else {
+            realBounds = new Rect((int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (DEFAULT_DRAWABLE_HEIGHT + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)), (int) ((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio) + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)));
+        } else if(drawable instanceof ShapeDrawable) {
+
+            realBounds = drawable.getBounds();
+        }else{
             realBounds = new Rect(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         }
         int maxLength = getWidth() > getHeight() ? getWidth() : getHeight();
@@ -128,6 +189,8 @@ public class DrawableSticker extends Sticker {
         PointF pointF = new PointF();
         getCenterPoint(pointF);
         getMatrix().postScale(ratio, ratio, pointF.x, pointF.y);
+        gradientColors.add(0, Color.parseColor("#005AA7"));
+        gradientColors.add(1, Color.parseColor("#FFFDE4"));
         mRatio = ratio;
     }
 
@@ -167,9 +230,15 @@ public class DrawableSticker extends Sticker {
         this.scale = scale;
     }
 
-    public  void resizeBounds(){
-        if(drawable instanceof  GradientDrawable){
-            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+    public void resizeBounds() {
+        if (drawable instanceof GradientDrawable) {
+            realBounds = new Rect((int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (DEFAULT_DRAWABLE_HEIGHT + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)), (int) ((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio) + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)));
+        }else  if(drawable instanceof ShapeDrawable){
+            path = com.caverock.androidsvg1.SVG.parsePath(getDrawablePath());
+            RectF rectF = new RectF();
+            path.computeBounds(rectF, false);
+            realBounds = new Rect(0, 0, (int) (rectF.right + rectF.left), (int) (rectF.bottom + rectF.top));
+
         }
     }
 
@@ -177,34 +246,42 @@ public class DrawableSticker extends Sticker {
     public void draw(@NonNull Canvas canvas, int index, boolean showNumber) {
         canvas.save();
         canvas.concat(getMatrix());
+
         if (mPicType == SHAPE) {
-            realBounds = new Rect((int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(0 - (DEFAULT_DRAWABLE_HEIGHT*strokeRatio)/2f), (int)(DEFAULT_DRAWABLE_HEIGHT+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)), (int)((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio)+(DEFAULT_DRAWABLE_HEIGHT*strokeRatio/2f)));
+            realBounds = new Rect((int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (0 - (DEFAULT_DRAWABLE_HEIGHT * strokeRatio) / 2f), (int) (DEFAULT_DRAWABLE_HEIGHT + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)), (int) ((DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio) + (DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f)));
+
+            if (isGradient) {
+                int[] colors = new int[gradientColors.size()];
+                for (int i = 0; i < gradientColors.size(); i++) {
+                    colors[i] = gradientColors.get(i);
+                }
+                ((GradientDrawable) drawable).setOrientation(getGradientOrientation(gradientOrientation));
+                ((GradientDrawable) drawable).setColors(colors);
+            } else {
+                ((GradientDrawable) drawable).setColor(Color.parseColor(drawableColor));
+            }
+            ((GradientDrawable) drawable).setStroke((int) (DEFAULT_DRAWABLE_HEIGHT * strokeRatio), Color.parseColor(strokeColor));
             ((GradientDrawable) drawable).setShape(GradientDrawable.RECTANGLE);
             ((GradientDrawable) drawable).setCornerRadius(DEFAULT_DRAWABLE_HEIGHT * shapeHeightRatio * cornerRatio);
-            ((GradientDrawable) drawable).setColor(Color.parseColor(drawableColor));
-            ((GradientDrawable) drawable).setStroke((int) (DEFAULT_DRAWABLE_HEIGHT * strokeRatio), Color.parseColor(strokeColor));
-            Log.i("test_drawsticker_ling:",String.valueOf(DEFAULT_DRAWABLE_HEIGHT * strokeRatio));
             drawable.setBounds(realBounds);
-            canvas.translate(DEFAULT_DRAWABLE_HEIGHT * strokeRatio/2f,DEFAULT_DRAWABLE_HEIGHT * (strokeRatio)/2f);
+            canvas.translate(DEFAULT_DRAWABLE_HEIGHT * strokeRatio / 2f, DEFAULT_DRAWABLE_HEIGHT * (strokeRatio) / 2f);
             drawable.draw(canvas);
-        } else {
+        } else if (mPicType == SDCARD) {
             if (mMaskBitmap != null) {
                 canvas.drawBitmap(mMaskBitmap, 0, 0, null);
-            } else {
-                drawable.setBounds(realBounds);
-                drawable.draw(canvas);
-//                String  test = "M972.8 153.6h-921.6c-28.262 0-51.2 22.886-51.2 51.2v614.4c0 28.314 22.938 51.2 51.2 51.2h921.6c28.262 0 51.2-22.886 51.2-51.2v-614.4c0-28.314-22.886-51.2-51.2-51.2zM921.6 768h-819.2v-512h819.2v512z";
-//                Path path = com.fax.showdt.androidsvg.SVG.parsePath(test);
-//                RectF rectF = new RectF();
-//                path.computeBounds(rectF,false);
-//                Log.i("Drawsticker:",rectF.width()+"  "+rectF.height());
-//                RectF rectF1 = new RectF(realBounds.left,realBounds.top,realBounds.right,realBounds.bottom);
-////                path.addRect(rectF, Path.Direction.CW);
-//                Paint paint = new Paint();
-////                paint.setStyle(Paint.Style.FILL);
-//                paint.setColor(AppContext.get().getColor(R.color.c_1E1D1D));
-//                canvas.drawPath(path,paint);
             }
+        } else if (mPicType == ASSET) {
+            drawable.setBounds(realBounds);
+            drawable.draw(canvas);
+        } else if (mPicType == SVG) {
+            if(path == null) {
+                path = com.caverock.androidsvg1.SVG.parsePath(getDrawablePath());
+            }
+            paint.setColor(Color.parseColor(drawableColor));
+//            paint.setStyle(Paint.Style.STROKE);
+//            paint.setStrokeWidth(ViewUtils.dpToPx(10,AppContext.get()));
+            canvas.drawPath(path, paint);
+
         }
         canvas.restore();
     }
@@ -218,7 +295,7 @@ public class DrawableSticker extends Sticker {
 
     @Override
     public int getWidth() {
-        Log.i("test_drawsticker_width:",String.valueOf(realBounds.width()));
+//        Log.i("test_drawsticker_width:", String.valueOf(realBounds.width()));
         return realBounds.width();
     }
 
@@ -328,10 +405,31 @@ public class DrawableSticker extends Sticker {
         Canvas mCanvas = new Canvas(mAlphaBitmap);
         Paint mPaint = new Paint();
         mPaint.setColor(Color.parseColor(strokeColor));
-        Log.e("test_strokeColor:",strokeColor);
+        Log.e("test_strokeColor:", strokeColor);
         Bitmap alphaBitmap = bitmap.extractAlpha();
         mCanvas.drawBitmap(alphaBitmap, 0, 0, mPaint);
         return mAlphaBitmap;
+    }
+
+    public DrawableSticker copy() {
+        DrawableSticker copySticker = new DrawableSticker(getDrawable(), TimeUtils.currentTimeMillis());
+        copySticker.setJumpAppPath(getJumpAppPath());
+        copySticker.setShowFrame(isShowFrame());
+        copySticker.setmPicType(getmPicType());
+        copySticker.setDrawablePath(getDrawablePath());
+        copySticker.mMaskBitmap = mMaskBitmap;
+        copySticker.setScale(getScale());
+        copySticker.setMatrix(getMatrix());
+        copySticker.setGradientOrientation(getGradientOrientation());
+        copySticker.setGradient(isGradient());
+        copySticker.setGradientColors(getGradientColors());
+        copySticker.setCornerRatio(getCornerRatio());
+        copySticker.setDrawableColor(getDrawableColor());
+        copySticker.setShapeHeightRatio(getShapeHeightRatio());
+        copySticker.setStrokeRatio(getStrokeRatio());
+        copySticker.setStrokeColor(getStrokeColor());
+        copySticker.resizeBounds();
+        return copySticker;
     }
 
     public void setShowFrame(boolean isAddFrame) {
@@ -364,7 +462,7 @@ public class DrawableSticker extends Sticker {
 
     public void setStrokeColor(String strokeColor) {
         this.strokeColor = strokeColor;
-        Log.e("test_strokeColor_set:",strokeColor);
+        Log.e("test_strokeColor_set:", strokeColor);
     }
 
     public int getmPicType() {
@@ -397,5 +495,66 @@ public class DrawableSticker extends Sticker {
 
     public void setShapeHeightRatio(float shapeHeightRatio) {
         this.shapeHeightRatio = shapeHeightRatio;
+    }
+
+    public void setGradientColors(List<Integer> gradientColors) {
+        this.gradientColors = gradientColors;
+    }
+
+    public List<Integer> getGradientColors() {
+        if (gradientColors == null || gradientColors.size() == 0) {
+            gradientColors.add(0, Color.parseColor("#005AA7"));
+            gradientColors.add(1, Color.parseColor("#FFFDE4"));
+        }
+        return gradientColors;
+    }
+
+    public void setGradient(boolean gradient) {
+        isGradient = gradient;
+        if (!isGradient && drawable instanceof GradientDrawable) {
+            drawable = new GradientDrawable();
+        }
+    }
+
+    public boolean isGradient() {
+        return isGradient;
+    }
+
+    public void setGradientOrientation(int gradientOrientation) {
+        this.gradientOrientation = gradientOrientation;
+    }
+
+    public int getGradientOrientation() {
+        return gradientOrientation;
+    }
+
+    private GradientDrawable.Orientation getGradientOrientation(int type) {
+        switch (type) {
+            case 0: {
+                return GradientDrawable.Orientation.TOP_BOTTOM;
+            }
+            case 1: {
+                return GradientDrawable.Orientation.TR_BL;
+            }
+            case 2: {
+                return GradientDrawable.Orientation.RIGHT_LEFT;
+            }
+            case 3: {
+                return GradientDrawable.Orientation.BR_TL;
+            }
+            case 4: {
+                return GradientDrawable.Orientation.BOTTOM_TOP;
+            }
+            case 5: {
+                return GradientDrawable.Orientation.BL_TR;
+            }
+            case 6: {
+                return GradientDrawable.Orientation.LEFT_RIGHT;
+            }
+            case 7: {
+                return GradientDrawable.Orientation.TL_BR;
+            }
+        }
+        return GradientDrawable.Orientation.LEFT_RIGHT;
     }
 }

@@ -1,29 +1,24 @@
 package com.fax.showdt.fragment.widgetVectorEdit;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
-import com.fax.showdt.bean.WidgetShapeBean;
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.callback.ShapeElementCallback;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GsonUtils;
-import com.fax.showdt.view.svg.SVG;
-import com.fax.showdt.view.svg.SVGBuilder;
+import com.fax.showdt.view.androipathview.PathImageView;
+import com.fax.showdt.view.androipathview.PathView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +36,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class VectorElementFragment extends Fragment {
-    private CommonAdapter<WidgetShapeBean> mStickerAdapter;
-    private List<WidgetShapeBean> mCurrentStickerBean = new ArrayList<>();
+    private CommonAdapter<SvgIconBean> mStickerAdapter;
+    private List<SvgIconBean> mCurrentStickerBean = new ArrayList<>();
     private RecyclerView mStickerContentRv;
-    private List<Drawable> mDrawables = new ArrayList<>();
+    private List<Path> mPaths = new ArrayList<>();
     private Disposable disposable;
     private String jsonPath;
     private ShapeElementCallback elementCallback;
@@ -59,6 +54,7 @@ public class VectorElementFragment extends Fragment {
         View view = inflater.inflate(R.layout.vector_element_fragment, container, false);
         mStickerContentRv = view.findViewById(R.id.rv_content);
         initTextPlugSelectUI();
+        reqData(getContext());
         return view;
     }
 
@@ -73,22 +69,22 @@ public class VectorElementFragment extends Fragment {
     }
 
     private void reqData(final Context context) {
-        if(TextUtils.isEmpty(jsonPath)){
+        if(TextUtils.isEmpty(jsonPath) || mCurrentStickerBean.size() > 0){
             return;
         }
         String str = FileExUtils.getJsonFromAssest(context, jsonPath);
-        final List<WidgetShapeBean> mDatas = GsonUtils.parseJsonArrayWithGson(str, WidgetShapeBean.class);
+        final List<SvgIconBean> mDatas = GsonUtils.parseJsonArrayWithGson(str, SvgIconBean.class);
+        Log.e("test_icon_path:",jsonPath);
+        Log.e("test_icon_size0:",String.valueOf(mDatas.size()));
         Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
-                for (WidgetShapeBean stickerBean : mDatas) {
-                    try {
-                        SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.c_A0A0A0), PorterDuff.Mode.SRC_IN))
-                                .readFromAsset(context.getAssets(), stickerBean.getSvgPath()).build();
-                        mDrawables.add(svg.getDrawable());
-                    } catch (IOException e) {
-
-                    }
+                mPaths.clear();
+                for (SvgIconBean stickerBean : mDatas) {
+                        String pathStr = stickerBean.getIcon().getPaths().get(0);
+                        Log.i("test_time_path:",stickerBean.getIcon().getPaths().size() > 1 ? stickerBean.getProperties().getName() : "");
+                        Path path = com.caverock.androidsvg1.SVG.parsePath(pathStr);
+                        mPaths.add(path);
                 }
                 emitter.onNext(true);
             }
@@ -102,12 +98,14 @@ public class VectorElementFragment extends Fragment {
 
                     @Override
                     public void onNext(Boolean aBoolean) {
+                        Log.e("test_icon_adapter:","刷新adapter2");
+                        Log.e("test_icon_size1:",String.valueOf(mPaths.size()));
+
                         if (mStickerAdapter != null) {
                             mCurrentStickerBean.clear();
                             mCurrentStickerBean.addAll(mDatas);
                             mStickerAdapter.notifyDataSetChanged();
                         }
-                        Log.i("test_init:", "setCurrentStickerBean" + "size:" + mDrawables.size());
 
                         if (disposable != null && !disposable.isDisposed()) {
                             disposable.dispose();
@@ -127,21 +125,16 @@ public class VectorElementFragment extends Fragment {
     }
 
     private void initTextPlugSelectUI() {
-        Log.i("test_init:", "initTextPlugSelectUI" + "draw size:" + mDrawables.size());
-        mStickerAdapter = new CommonAdapter<WidgetShapeBean>(getActivity(), R.layout.widget_sticker_content_item, mCurrentStickerBean) {
+//        Log.i("test_init:", "initTextPlugSelectUI" + "draw size:" + mDrawables.size());
+        mStickerAdapter = new CommonAdapter<SvgIconBean>(getActivity(), R.layout.widget_sticker_content_item, mCurrentStickerBean) {
             @Override
-            protected void convert(ViewHolder holder, final WidgetShapeBean stickerBean, int position) {
-                final ImageView mIv = holder.getView(R.id.iv_element);
-                Log.i("test_time0:", System.currentTimeMillis() + "");
-                mIv.setImageDrawable(mDrawables.get(position));
-                Log.i("test_time1:", System.currentTimeMillis() + "");
+            protected void convert(ViewHolder holder, final SvgIconBean stickerBean, int position) {
+                try {
+                    final PathImageView mIv = holder.getView(R.id.iv_element);
+                    mIv.setPath(mPaths.get(position));
+                }catch (IndexOutOfBoundsException e){
 
-
-//                    com.caverock.androidsvg.SVG mSVG = com.caverock.androidsvg.SVG.getFromAsset(mContext.getAssets(), stickerBean.getSvgPath());
-//                    Picture picture = mSVG.renderToPicture();
-//                    PictureDrawable pictureDrawable = new PictureDrawable(picture);
-//                    pictureDrawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.c_A0A0A0), PorterDuff.Mode.SRC_IN));
-//                    mIv.setImageDrawable(pictureDrawable);
+                }
 
             }
         };
@@ -158,7 +151,7 @@ public class VectorElementFragment extends Fragment {
                 return false;
             }
         });
-        final GridLayoutManager manager = new GridLayoutManager(getActivity(), 8, RecyclerView.VERTICAL, false);
+        final GridLayoutManager manager = new GridLayoutManager(getActivity(), 7, RecyclerView.VERTICAL, false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -169,6 +162,7 @@ public class VectorElementFragment extends Fragment {
 
         mStickerContentRv.setLayoutManager(manager);
         mStickerContentRv.setAdapter(mStickerAdapter);
+        Log.e("test_icon_adapter:","初始化adapter");
 
     }
 

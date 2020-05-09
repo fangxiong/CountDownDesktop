@@ -2,8 +2,10 @@ package com.fax.showdt.view.sticker;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.Log;
 
 import com.fax.showdt.AppContext;
@@ -62,7 +64,7 @@ public class ProgressStickerDrawHelper {
 //        paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setDither(true);
         paint.setColor(Color.parseColor(config.getProgressBgColor()));
-        canvas.drawLine(0, config.getHeight() / 2, config.getWidth(), config.getHeight() / 2, paint);
+        canvas.drawLine(config.getWidth() * config.getPercent(), config.getHeight() / 2, config.getWidth(), config.getHeight() / 2, paint);
         paint.setColor(Color.parseColor(config.getProgressForeColor()));
         canvas.drawLine(0, config.getHeight() / 2, config.getWidth() * config.getPercent(), config.getHeight() / 2, paint);
     }

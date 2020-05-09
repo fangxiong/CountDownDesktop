@@ -1,0 +1,162 @@
+[
+  {
+    "svgPath": "svg/content/ic_add_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_add_box_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_add_circle_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_add_circle_outline_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_archive_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_backspace_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_block_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_clear_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_content_copy_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_content_cut_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_content_paste_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_create_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_delete_sweep_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_drafts_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_filter_list_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_flag_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_font_download_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_forward_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_inbox_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_link_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_low_priority_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_mail_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_markunread_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_move_to_inbox_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_next_week_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_redo_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_remove_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_remove_circle_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_remove_circle_outline_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_reply_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_reply_all_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_report_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_save_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_select_all_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_send_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_sort_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_text_format_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_unarchive_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_undo_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/content/ic_weekend_24px.svg",
+    "svgColor": "#A0A0A0"
+  }
+]

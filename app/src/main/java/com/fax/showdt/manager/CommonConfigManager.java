@@ -54,4 +54,19 @@ public class CommonConfigManager {
     public boolean isHadAllowedPrivacy(){
         return ConfigManager.getMainConfig().getBool(ConstantString.allow_privacy,false);
     }
+
+    /**
+     * 表示知道如何使用插件教程
+     */
+    public void setHadKnowUseWidget(){
+        ConfigManager.getMainConfig().putBool(ConstantString.had_know_use_widget,true);
+    }
+
+    /**
+     * 是否知道使用插件教程
+     * @return
+     */
+    public boolean isHadKnowUseWidget(){
+        return ConfigManager.getMainConfig().getBool(ConstantString.had_know_use_widget,false);
+    }
 }

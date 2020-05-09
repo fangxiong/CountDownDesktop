@@ -1,15 +1,28 @@
 package com.fax.showdt.manager.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.bean.PlugLocation;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
+import com.fax.showdt.utils.BitmapUtils;
+import com.fax.showdt.view.sticker.DrawableSticker;
 import com.fax.showdt.view.sticker.TextSticker;
+import com.fax.showdt.view.svg.SVG;
+import com.fax.showdt.view.svg.SVGBuilder;
 
+import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -23,12 +36,12 @@ import androidx.annotation.NonNull;
 public class CustomWidgetScreenAdaptHelper {
     private CustomWidgetConfig mResultConfig;
     private Context mContext;
-    private int mAdaptWidth,mAdaptHeight;
+    private int mAdaptWidth, mAdaptHeight;
 
 
     public CustomWidgetScreenAdaptHelper(Context context) {
         this.mContext = context;
-        mAdaptWidth =  WidgetSizeConfig.getWidgetWidth();
+        mAdaptWidth = WidgetSizeConfig.getWidgetWidth();
         mAdaptHeight = WidgetSizeConfig.getWidgetWidth();
     }
 
@@ -61,11 +74,13 @@ public class CustomWidgetScreenAdaptHelper {
         }
         for (int i = 0; i < mProgressList.size(); i++) {
             ProgressPlugBean bean = mProgressList.get(i);
-            initProgressSticker(bean,config.getBaseOnWidthPx(),config.getBaseOnHeightPx());
+            initProgressSticker(bean, config.getBaseOnWidthPx(), config.getBaseOnHeightPx());
         }
         mResultConfig.setTextPlugList(mTextList);
         mResultConfig.setDrawablePlugList(mDrawableList);
         mResultConfig.setProgressPlugList(mProgressList);
+        Log.e("test_adapt_config:", mResultConfig.toJSONString());
+        Log.e("test_adapt_config1:", String.valueOf(mResultConfig.getBaseOnWidthPx()));
         return mResultConfig;
 
     }
@@ -80,9 +95,11 @@ public class CustomWidgetScreenAdaptHelper {
     private void initTextSticker(TextPlugBean bean, int baseOnWidth, int baseOnHeight) {
         PlugLocation plugLocation = bean.getLocation();
         Point targetPoint = reSizeWidthAndHeight(plugLocation.getX(), plugLocation.getY(), baseOnWidth, baseOnHeight);
+        Log.e("test_center_point:", bean.getId() + " x1:" + plugLocation.getX() + " y1:" + plugLocation.getY());
         plugLocation.setX(targetPoint.x);
         plugLocation.setY(targetPoint.y);
         bean.setLocation(plugLocation);
+        Log.e("test_center_point:", bean.getId() + " x2:" + plugLocation.getX() + " y2:" + plugLocation.getY());
         float adaptHeightRatio = getHeightRatio(baseOnHeight);
         float adaptWidthRatio = getWidthRatio(baseOnWidth);
         float width = bean.getRight() - bean.getLeft();
@@ -92,6 +109,7 @@ public class CustomWidgetScreenAdaptHelper {
         bean.setTop((plugLocation.getY() - (height / 2) * adaptHeightRatio));
         bean.setBottom((plugLocation.getY() + (height / 2) * adaptHeightRatio));
         bean.setText(bean.getText());
+        bean.setAlignment(bean.getAlignment());
     }
 
     private void initDrawableSticker(DrawablePlugBean bean, int baseOnWidth, int baseOnHeight) {
@@ -101,11 +119,25 @@ public class CustomWidgetScreenAdaptHelper {
         plugLocation.setY(targetPoint.y);
         bean.setLocation(plugLocation);
         float adaptRatio = getWidthRatio(baseOnWidth);
-        bean.setScale(bean.getScale() * adaptRatio);
-        bean.setLeft(plugLocation.getX() - bean.getWidth() * bean.getScale() / 2);
-        bean.setRight(plugLocation.getX() + bean.getWidth() * bean.getScale() / 2);
-        bean.setTop(plugLocation.getY() - bean.getHeight() * bean.getScale() / 2);
-        bean.setBottom(plugLocation.getY() + bean.getHeight() * bean.getScale() / 2);
+//        bean.setScale(bean.getScale() * adaptRatio);
+        bean.setLeft(plugLocation.getX() - bean.getWidth() * bean.getScale() / 2f);
+        bean.setRight(plugLocation.getX() + bean.getWidth() * bean.getScale() / 2f);
+        bean.setTop(plugLocation.getY() - bean.getHeight() * bean.getScale() / 2f);
+        bean.setBottom(plugLocation.getY() + bean.getHeight() * bean.getScale() / 2f);
+        if (bean.getmPicType() == DrawableSticker.SVG) {
+            bean.setScale(bean.getScale() * adaptRatio);
+
+        } else if (bean.getmPicType() == DrawableSticker.SDCARD) {
+//           bean.setScale(bean.getScale() * adaptRatio);
+
+        } else if (bean.getmPicType() == DrawableSticker.ASSET) {
+
+        } else if (bean.getmPicType() == DrawableSticker.SHAPE) {
+            float originalWidth = bean.getWidth() * bean.getScale();
+            float resultWidth = originalWidth * adaptRatio;
+            float scale = resultWidth / DrawableSticker.DEFAULT_DRAWABLE_HEIGHT;
+            bean.setScale(scale);
+        }
     }
 
     private void initProgressSticker(ProgressPlugBean bean, int baseOnWidth, int baseOnHeight) {
@@ -116,7 +148,7 @@ public class CustomWidgetScreenAdaptHelper {
         plugLocation.setY(targetPoint.y);
         bean.setLocation(plugLocation);
         bean.setWidth((int) (bean.getWidth() * ratio));
-        bean.setHeight((int)(bean.getHeight() * ratio));
+        bean.setHeight((int) (bean.getHeight() * ratio));
         bean.setLeft(plugLocation.getX() - bean.getWidth() / 2f);
         bean.setRight(plugLocation.getX() + bean.getWidth() / 2f);
         bean.setTop(plugLocation.getY() - bean.getHeight() / 2f);
@@ -132,6 +164,8 @@ public class CustomWidgetScreenAdaptHelper {
     }
 
     private float getWidthRatio(int baseWidth) {
+        Log.e("test_widget_screen:", String.valueOf(mAdaptWidth));
+        Log.e("test_widget_base:", String.valueOf(baseWidth));
         return mAdaptWidth * 1.0f / baseWidth;
     }
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="@dimen/margin_200"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_01"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="上 -> 下"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_02"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="右上 -> 左下"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_03"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="右 -> 左"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_04"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="右下 -> 左上"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_05"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="下 -> 上"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+
+        <TextView
+            android:id="@+id/tv_06"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="左下 -> 右上"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_07"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="左 -> 右"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+        <TextView
+            android:id="@+id/tv_08"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_50"
+            android:background="@drawable/view_click_bg_selector"
+            android:gravity="center"
+            android:text="左上 -> 右下"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_17" />
+
+    </LinearLayout>
+</LinearLayout>

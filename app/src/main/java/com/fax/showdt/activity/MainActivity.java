@@ -1,26 +1,47 @@
 package com.fax.showdt.activity;
 
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI;
+import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.BuildConfig;
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.EventMsg;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonViewPagerAdapter;
 import com.fax.showdt.bean.User;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
+import com.fax.showdt.dialog.ios.interfaces.OnInputDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
+import com.fax.showdt.dialog.ios.util.InputInfo;
 import com.fax.showdt.dialog.ios.util.ShareUtils;
+import com.fax.showdt.dialog.ios.util.TextInfo;
+import com.fax.showdt.dialog.ios.v3.InputDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.fragment.MyWidgetFragment;
 import com.fax.showdt.fragment.SelectionWidgetFragment;
@@ -29,31 +50,22 @@ import com.fax.showdt.permission.GrantResult;
 import com.fax.showdt.permission.Permission;
 import com.fax.showdt.permission.PermissionRequestListener;
 import com.fax.showdt.permission.PermissionUtils;
-import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.Constant;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
+import com.fax.showdt.view.ComboCounter;
 import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
-import com.gyf.barlibrary.ImmersionBar;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
-import com.just.agentweb.AgentWeb;
+import com.meituan.android.walle.WalleChannelReader;
 import com.tencent.bugly.beta.Beta;
+import com.umeng.commonsdk.statistics.common.DeviceConfig;
 
 import java.util.ArrayList;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import cn.bmob.v3.BmobUser;
 import es.dmoral.toasty.Toasty;
@@ -70,6 +82,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView mIvAvatar;
     private TextView mTvNick, mTvLogin;
     private ArrayList<Fragment> fragments = new ArrayList<>();
+    private ComboCounter comboCounter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +96,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         alphaTabsIndicator.setViewPager(viewPager);
         initDrawerLayout();
         initNavigationView();
+        comeInManageMode();
     }
 
     @Override
@@ -256,7 +270,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             }
                         }
                         if (isEnableNext) {
-                            Beta.checkUpgrade();
+//                            Beta.checkUpgrade();
                         } else {
                             checkPermission();
                         }
@@ -276,8 +290,101 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (!PermissionUtils.isHasElfPermission(this)) {
             showPermissionReqDialog(perms);
         } else {
-            Beta.checkUpgrade();
+//            Beta.checkUpgrade();
         }
+    }
+
+    /**
+     * 点击首页标题 进入管理模式
+     */
+    private void comeInManageMode() {
+        findViewById(R.id.titleView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(comboCounter == null){
+                    comboCounter = new ComboCounter().setMaxComboCount(5)
+                            .setOnComboListener(new ComboCounter.OnComboListener() {
+                                @Override
+                                public void onCombo(ComboCounter counter, int comboCount, int maxCount) {}
+
+                                @Override
+                                public void onComboReach(ComboCounter counter, int comboCount, int maxCount) {
+//                            String channel = "渠道：" + WalleChannelReader.getChannel(MainActivity.this);
+//                            String message = "包类型：" + BuildConfig.BUILD_TYPE +
+//                                    "\n版本号：" + BuildConfig.VERSION_CODE +
+//                                    "(" + BuildConfig.VERSION_NAME + ")" +
+//                                    "\n" +channel;
+//                            new AlertDialog.Builder(MainActivity.this)
+//                                    .setMessage(message)
+//                                    .setCancelable(false)
+//                                    .setPositiveButton("好的", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialog, int which) {
+//
+//                                        }
+//                                    })
+//                                    .setNegativeButton("复制友盟信息", (dialog, which) -> {
+//                                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+//                                        ClipData mClipData = ClipData.newPlainText("umeng", umengJson);
+//                                        cm.setPrimaryClip(mClipData);
+//                                        dialog.dismiss();
+//                                    })
+//                                    .create()
+//                                    .show();
+                                    InputDialog.build(((AppCompatActivity)MainActivity.this))
+                                            .setButtonTextInfo(new TextInfo().setFontColor(getResources().getColor(R.color.c_A0A0A0)))
+                                            .setTitle("提示").setMessage("请输入管理员密码")
+                                            .setOkButton("进入管理员模式", new OnInputDialogButtonClickListener() {
+                                                @Override
+                                                public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
+                                                    if(!TextUtils.isEmpty(inputStr) && inputStr.equals("15850451266")) {
+                                                        ConfigManager.getMainConfig().putBool("can_contribute",true);
+                                                        Log.e("umeng_device_info1:",getTestDeviceInfo(MainActivity.this)[0]);
+                                                        Log.e("umeng_device_info2:",getTestDeviceInfo(MainActivity.this)[1]);
+                                                        ToastShowUtils.showCommonToast(MainActivity.this,"可以投稿了",Toasty.LENGTH_SHORT);
+                                                    }
+                                                    return false;
+
+                                                }
+                                            })
+                                            .setCancelButton("取消")
+                                            .setHintText("请输入密码")
+                                            .setInputInfo(new InputInfo()
+                                                    .setInputType(InputType.TYPE_CLASS_NUMBER)
+                                                    .setTextInfo(new TextInfo()
+                                                            .setFontColor(getResources().getColor(R.color.c_A0A0A0))
+                                                    )
+                                            )
+                                            .setCancelable(false)
+                                            .show();
+                                }
+                            });
+                    comboCounter.setEnable(true);
+                }
+                comboCounter.click();
+            }
+        });
+        findViewById(R.id.titleView).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(BuildConfig.DEBUG){
+                    startActivity(new Intent(MainActivity.this,TestActivity.class));
+                }
+                return false;
+            }
+        });
+    }
+
+    public static String[] getTestDeviceInfo(Context context){
+        String[] deviceInfo = new String[2];
+        try {
+            if(context != null){
+                deviceInfo[0] = DeviceConfig.getDeviceIdForGeneral(context);
+                deviceInfo[1] = DeviceConfig.getMac(context);
+            }
+        } catch (Exception e){
+        }
+        return deviceInfo;
     }
 
     @Override

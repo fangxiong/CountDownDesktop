@@ -2,7 +2,6 @@ package com.fax.showdt.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,16 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.fax.showdt.R;
-import com.fax.showdt.utils.ScreenUtils;
-import com.gyf.barlibrary.ImmersionBar;
-import com.hwangjr.rxbus.RxBus;
-
-import java.util.Arrays;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.fax.showdt.R;
+import com.fax.showdt.utils.ScreenUtils;
+import com.gyf.immersionbar.ImmersionBar;
+import com.hwangjr.rxbus.RxBus;
+import com.umeng.analytics.MobclickAgent;
+
+import java.util.Arrays;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -56,6 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
     }
 
     @Override
@@ -67,18 +68,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (imm != null) {
             imm.hideSoftInputFromWindow(this.getWindow().getDecorView().getWindowToken(), 0);
         }
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ScreenUtils.cancelAdaptScreen(this);
-
-        if (mImmersionBar != null) {
-            //必须调用该方法，防止内存泄漏，不调用该方法，如果界面bar发生改变，在不关闭app的情况下，退出此界面再进入将记忆最后一次bar改变的状态
-            mImmersionBar.destroy();
-        }
-
         mCompositeDisposable.clear();
         RxBus.get().unregister(this);
     }

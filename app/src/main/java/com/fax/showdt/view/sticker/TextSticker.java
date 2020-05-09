@@ -23,6 +23,7 @@ import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.FileUtil;
 import com.fax.showdt.utils.FontCache;
+import com.fax.showdt.utils.TimeUtils;
 import com.fax.showdt.utils.ViewUtils;
 
 import androidx.annotation.Dimension;
@@ -62,7 +63,11 @@ public class TextSticker extends Sticker {
     private String mFontPath = "";
     private boolean isShimmerText;
     private String shimmerColor;
-//    private Shimmer mShimmer;
+    private boolean isShadow = false;
+    private float shadowRadius = 0;
+    private float shadowX = 0;
+    private float shadowY = 0;
+    private String shadowColor = "#000000";
 
     /**
      * 文本的对齐方式(在屏幕中的对齐方式)
@@ -128,7 +133,7 @@ public class TextSticker extends Sticker {
         }
         textPaint.setLetterSpacing(letterSpacing);
 
-
+//        textPaint.setShadowLayer(20,6,6,Color.parseColor("#FF4321"));
         resultText = CustomPlugUtil.getPlugTextFromSigns(text);
 
         StaticLayout staticLayout = new StaticLayout(resultText, textPaint, AppContext.get().getResources().getDisplayMetrics().widthPixels * 4, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
@@ -342,6 +347,25 @@ public class TextSticker extends Sticker {
 
     public float getLineSpacingMultiplier() {
         return lineSpacingMultiplier;
+    }
+
+    public TextSticker copy(){
+        TextSticker copySticker = new TextSticker(TimeUtils.currentTimeMillis());
+        copySticker.setFontPath(getFontPath());
+        copySticker.setAlignment(getAlignment());
+        copySticker.setSupportBg(isSupportBg());
+        copySticker.setBgColor(getBgColor());
+        copySticker.setBgCorner(getBgCorner());
+        copySticker.setText(getText());
+        copySticker.setTextColor(getTextColor());
+        copySticker.setShimmerColor(getShimmerColor());
+        copySticker.setShimmerText(isShimmerText());
+        copySticker.setDrawable(getDrawable());
+        copySticker.setMatrix(getMatrix());
+        copySticker.setScaleParam(getScaleParam());
+        copySticker.setLetterSpacing(getLetterSpacing());
+        copySticker.setLineSpacingMultiplier(getLineSpacingMultiplier());
+        return copySticker;
     }
 
     @NonNull

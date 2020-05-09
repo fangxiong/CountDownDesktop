@@ -11,6 +11,7 @@ import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.ShapeElementCallback;
 import com.fax.showdt.callback.WidgetEditVectorElementSelectedCallback;
@@ -30,8 +31,8 @@ public class WidgetVectorElementEditFragment extends Fragment {
 
     private CommonAdapter<String> mListAdapter;
     private RecyclerView mStickerListRv;
-    private String[] titles = new String[]{"形状", "表情", "音乐", "天气", "logo"};
-    private String[] jsonPathArray = new String[]{"widget_shape.json", "widget_emoji.json", "widget_media.json", "widget_weather.json", "widget_logo.json"};
+    private String[] titles = new String[]{"entypo", "emoji", "media", "weather"};
+    private String[] jsonPathArray = new String[]{"entypo.json", "fontawesome.json", "material.json", "meteo.json"};
     private int mCurrentSelectedPos = 0;
     private WidgetEditVectorElementSelectedCallback mElementSelectedCallback;
     private LongSparseArray<Fragment> mFragments = new LongSparseArray<>();
@@ -90,7 +91,7 @@ public class WidgetVectorElementEditFragment extends Fragment {
             VectorElementFragment fragment = new VectorElementFragment();
             fragment.setElementCallback(new ShapeElementCallback() {
                 @Override
-                public void selectShapeElement(WidgetShapeBean widgetShapeBean) {
+                public void selectShapeElement(SvgIconBean widgetShapeBean) {
                     if(mElementSelectedCallback != null){
                         mElementSelectedCallback.selectVectorElement(widgetShapeBean);
                     }

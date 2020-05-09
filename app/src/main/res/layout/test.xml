@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.fax.showdt.view.androipathview.PathView
+        android:id="@+id/pathView"
+        android:layout_width="158dp"
+        android:layout_height="158dp"
+        android:background="@color/c_A0A0A0"
+        android:layout_centerInParent="true"
+        app:pathColor="@android:color/holo_red_dark"
+        app:pathWidth="2dp" />
+</RelativeLayout>

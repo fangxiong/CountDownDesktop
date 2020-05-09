@@ -1,0 +1,266 @@
+[
+  {
+    "svgPath": "svg/editor/ic_attach_file_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_attach_money_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_all_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_bottom_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_clear_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_color_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_horizontal_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_inner_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_left_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_outer_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_right_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_style_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_top_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_border_vertical_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_bubble_chart_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_drag_handle_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_align_center_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_align_justify_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_align_left_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_align_right_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_bold_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_clear_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_color_fill_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_color_reset_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_color_text_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_indent_decrease_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_indent_increase_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_italic_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_line_spacing_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_list_bulleted_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_paint_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_quote_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_shapes_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_size_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_strikethrough_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_textdirection_l_to_r_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_textdirection_r_to_l_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_format_underlined_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_functions_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_highlight_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_chart_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_comment_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_drive_file_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_emoticon_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_invitation_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_link_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_insert_photo_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_linear_scale_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_merge_type_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_mode_comment_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_mode_edit_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_monetization_on_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_money_off_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_multiline_chart_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_pie_chart_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_pie_chart_outlined_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_publish_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_short_text_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_show_chart_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_space_bar_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_text_fields_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_title_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_vertical_align_bottom_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_vertical_align_center_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_vertical_align_top_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/editor/ic_wrap_text_24px.svg",
+    "svgColor": "#A0A0A0"
+  }
+]

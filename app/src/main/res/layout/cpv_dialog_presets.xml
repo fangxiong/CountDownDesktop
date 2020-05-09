@@ -29,8 +29,14 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
             android:background="?android:attr/dividerVertical" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="浅-深:"
+            android:layout_marginBottom="12dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSize_16"/>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -51,6 +57,47 @@
             </LinearLayout>
 
         </HorizontalScrollView>
+        <LinearLayout
+            android:id="@+id/ll_latest_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <View
+            android:id="@+id/shades_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="?android:attr/dividerVertical" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最近使用:"
+            android:layout_marginBottom="12dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textSize_16"/>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/latest_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:orientation="horizontal">
+
+                <!-- views added dynamically -->
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/transparency_title"

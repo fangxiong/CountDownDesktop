@@ -3,6 +3,9 @@ package com.fax.showdt.bean;
 
 import com.fax.showdt.view.sticker.DrawableSticker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by fax on 19-4-25.
  */
@@ -19,6 +22,9 @@ public class DrawablePlugBean extends BasePlugBean {
     private float shapeHeightRatio;
     private float cornerRatio;
     private float strokeRatio;
+    private boolean isGradient;
+    private List<Integer> gradientColors = new ArrayList<>();
+    private int gradientOrientation;
 
     public String getDrawablePath() {
         return drawablePath;
@@ -98,5 +104,29 @@ public class DrawablePlugBean extends BasePlugBean {
 
     public void setStrokeRatio(float strokeRatio) {
         this.strokeRatio = strokeRatio;
+    }
+
+    public boolean isGradient() {
+        return isGradient;
+    }
+
+    public void setGradient(boolean gradient) {
+        isGradient = gradient;
+    }
+
+    public List<Integer> getGradientColors() {
+        return gradientColors;
+    }
+
+    public void setGradientColors(List<Integer> gradientColors) {
+        this.gradientColors = gradientColors;
+    }
+
+    public int getGradientOrientation() {
+        return gradientOrientation;
+    }
+
+    public void setGradientOrientation(int gradientOrientation) {
+        this.gradientOrientation = gradientOrientation;
     }
 }

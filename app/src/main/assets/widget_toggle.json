@@ -1,0 +1,34 @@
+[
+  {
+    "svgPath": "svg/toggle/ic_check_box_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_check_box_outline_blank_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_indeterminate_check_box_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_radio_button_checked_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_radio_button_unchecked_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_star_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_star_border_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/toggle/ic_star_half_24px.svg",
+    "svgColor": "#A0A0A0"
+  }
+]

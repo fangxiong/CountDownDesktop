@@ -191,7 +191,7 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                 tvHour.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
             }
         });
-        progressdialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
+        progressdialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(true).show();
     }
 
     private void showProgressStyleDialog() {
@@ -206,7 +206,7 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                 tvCircle.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
             }
         });
-        progressStyleDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
+        progressStyleDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(true).show();
     }
 
     private void showProgressModeDialog() {
@@ -221,7 +221,7 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                 tvDegree.setOnClickListener(WidgetProgressPropertiesEditFragment.this);
             }
         });
-        progressModeDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
+        progressModeDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(true).show();
     }
 
     private void showColorPickDialog(String color, final int id) {

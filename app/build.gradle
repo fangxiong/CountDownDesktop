@@ -127,7 +127,7 @@ dependencies {
     //bugly
     implementation 'com.just.agentweb:agentweb:4.1.2'
     //webview封装
-    implementation 'cn.bmob.android:bmob-sdk:3.7.3-rc1'
+    implementation 'cn.bmob.android:bmob-sdk:3.7.8'
     //bmob云数据库
     implementation 'me.jessyan:autosize:1.1.2'
     //头条UI适配
@@ -135,4 +135,12 @@ dependencies {
     //微博登录
     implementation 'com.sina.weibo.sdk:core:4.1.0:openDefaultRelease@aar'
     implementation files('libs/zip4j_1.3.2.jar')
+
+    // 友盟基础组件库（所有友盟业务SDK都依赖基础组件库）
+    implementation 'com.umeng.umsdk:common:2.1.0'
+
+    // 下面各SDK根据宿主App是否使用相关业务按需引入。
+    // 友盟统计SDK
+    implementation 'com.umeng.umsdk:analytics:8.1.3'
+
 }

@@ -7,12 +7,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,28 +35,34 @@ import android.widget.RelativeLayout;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.LongSparseArray;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ali.ha.fulltrace.logger.Logger;
-import com.alibaba.sdk.android.push.common.util.JSONUtils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.caverock.androidsvg1.SVG;
 import com.fax.showdt.AppContext;
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
+import com.fax.showdt.UmengEvent;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.CustomWidgetConfig;
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.bean.WidgetConfig;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditProgressCallback;
 import com.fax.showdt.callback.WidgetEditShapeCallback;
-import com.fax.showdt.callback.WidgetEditVectorCallback;
 import com.fax.showdt.callback.WidgetEditStickerCallback;
 import com.fax.showdt.callback.WidgetEditTextCallback;
+import com.fax.showdt.callback.WidgetEditVectorCallback;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.interfaces.OnShowListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
@@ -58,17 +72,19 @@ import com.fax.showdt.dialog.ios.v3.FullScreenDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
 import com.fax.showdt.dialog.ios.v3.TipDialog;
 import com.fax.showdt.dialog.ios.v3.WaitDialog;
+import com.fax.showdt.dialog.pop.EverywherePopup;
 import com.fax.showdt.fragment.WidgetProgressEditFragment;
 import com.fax.showdt.fragment.WidgetShapeEditFragment;
-import com.fax.showdt.fragment.WidgetVectorEditFragment;
 import com.fax.showdt.fragment.WidgetStickerEditFragment;
 import com.fax.showdt.fragment.WidgetTextEditFragment;
+import com.fax.showdt.fragment.WidgetVectorEditFragment;
+import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
-import com.fax.showdt.manager.widget.WidgetContext;
+import com.fax.showdt.manager.widget.CustomWidgetScreenAdaptHelper;
 import com.fax.showdt.manager.widget.WidgetDownloadManager;
 import com.fax.showdt.manager.widget.WidgetSizeConfig;
 import com.fax.showdt.service.NLService;
@@ -81,6 +97,9 @@ import com.fax.showdt.utils.Environment;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
+import com.fax.showdt.utils.RomUtils;
+import com.fax.showdt.utils.ScreenUtils;
+import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.BitmapStickerIcon;
 import com.fax.showdt.view.sticker.DeleteIconEvent;
@@ -90,12 +109,12 @@ import com.fax.showdt.view.sticker.Sticker;
 import com.fax.showdt.view.sticker.StickerView;
 import com.fax.showdt.view.sticker.TextSticker;
 import com.fax.showdt.view.sticker.ZoomIconEvent;
-import com.fax.showdt.view.svg.SVG;
 import com.fax.showdt.view.svg.SVGBuilder;
 import com.fax.showdt.view.tab.AlphaTabView;
 import com.fax.showdt.view.tab.AlphaTabsIndicator;
 import com.fax.showdt.view.tab.OnTabChangedListner;
-import com.gyf.barlibrary.ImmersionBar;
+import com.gyf.immersionbar.ImmersionBar;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,13 +125,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import androidx.collection.LongSparseArray;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import cn.bmob.v3.helper.GsonUtil;
+import es.dmoral.toasty.Toasty;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -158,6 +172,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     private UpdateLrcReceiver mUpdateLrcReceiver;
     private boolean selectBgFromAlbum = false;
     private boolean isFromSelection = false;
+    private ConstraintLayout mFirstPermission, mSecondPermission;
 
 
     @IntDef({EDIT_TEXT, EDIT_STICKER, EDIT_VECTOR, EDIT_SHAPE, EDIT_PROGRESS})
@@ -176,10 +191,18 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.diy_widget_make_activity);
+        ScreenUtils.adaptScreen4VerticalSlide(this, 360);
         WeatherManager.getInstance().starGetWeather();
         initStatusBar();
         intervalRefreshStickerView();
         initData(savedInstanceState);
+        MobclickAgent.onEvent(this, UmengEvent.COME_IN_WIDGET_EDIT_PAGE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initPermissionUI();
     }
 
     @Override
@@ -190,6 +213,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         intent.putExtra("switch_flag", false);
         intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
         sendBroadcast(intent);
+        if(mUpdateLrcReceiver != null) {
+            unregisterReceiver(mUpdateLrcReceiver);
+        }
         LocationManager.getInstance().stopLocation();
     }
 
@@ -250,11 +276,15 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         tabVector = findViewById(R.id.tv_vector);
         tabSticker = findViewById(R.id.tv_sticker);
         tabShape = findViewById(R.id.tv_shape);
+        mFirstPermission = findViewById(R.id.cl_first_permission);
+        mSecondPermission = findViewById(R.id.cl_second_permission);
         tabText.setOnClickListener(this);
         tabProgress.setOnClickListener(this);
         tabVector.setOnClickListener(this);
         tabSticker.setOnClickListener(this);
         tabShape.setOnClickListener(this);
+        mFirstPermission.setOnClickListener(this);
+        mSecondPermission.setOnClickListener(this);
         AlphaTabsIndicator indicator = findViewById(R.id.alphaIndicator);
         indicator.setOnTabChangedListner(new OnTabChangedListner() {
             @Override
@@ -265,7 +295,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                         textSticker.setTextColor("#FFFFFF");
                         textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
                         mTextEditFragment.setWidgetEditTextSticker(textSticker);
-                        mStickerView.addSticker(textSticker, Sticker.Position.TOP);
+                        mStickerView.addSticker(textSticker, Sticker.Position.TOP, false);
                         switchToOneFragment(EDIT_TEXT);
                         break;
                     }
@@ -283,7 +313,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                         progressSticker.setPercent(0.7f);
                         progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
                         progressSticker.setDrawType(ProgressSticker.SOLID);
-                        mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
+                        mStickerView.addSticker(progressSticker, Sticker.Position.TOP, false);
                         switchToOneFragment(EDIT_PROGRESS);
                         mProgressEditFragment.setProgressSticker(progressSticker);
                         break;
@@ -291,7 +321,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                     case 4: {
                         DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
                         drawableSticker.setmPicType(DrawableSticker.SHAPE);
-                        mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+                        mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
                         switchToOneFragment(EDIT_SHAPE);
                         mShapeEditFragment.setDrawableSticker(drawableSticker);
                         break;
@@ -324,7 +354,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         if (customWidgetConfig == null) {
             customWidgetConfig = new CustomWidgetConfig();
         }
-        initStickers();
         initAllEditFragments();
         initStickerView();
         initStickerViewBg();
@@ -337,6 +366,9 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             } else {
                 downloadWidget(config);
             }
+        } else {
+            initStickers();
+
         }
     }
 
@@ -389,9 +421,47 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
     private void initStickers() {
         if (customWidgetConfig != null) {
-            CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
-            mStickerList.clear();
-            mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
+            final CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
+//            mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    mStickerList.clear();
+                    mStickerView.removeAllStickers();
+                    mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
+                }
+            });
+            initPermissionUI();
+
+        }
+    }
+
+
+    private void gotoOpen() {
+        try {
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            }
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void jumpToBackgroundPopPermissionPage() {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        else
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.fromParts("package", getPackageName(), null));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            ToastShowUtils.showCommonToast(this, "请去设置中打开后台开启界面权限", Toasty.LENGTH_LONG);
         }
     }
 
@@ -417,7 +487,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             textSticker.setTextColor("#FFFFFF");
             textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
             mTextEditFragment.setWidgetEditTextSticker(textSticker);
-            mStickerView.addSticker(textSticker, Sticker.Position.TOP);
+            mStickerView.addSticker(textSticker, Sticker.Position.CENTER, false);
             switchToOneFragment(EDIT_TEXT);
         } else if (resId == R.id.tv_sticker) {
             switchToOneFragment(EDIT_STICKER);
@@ -429,13 +499,13 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             progressSticker.setPercent(0.7f);
             progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
             progressSticker.setDrawType(ProgressSticker.SOLID);
-            mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
+            mStickerView.addSticker(progressSticker, Sticker.Position.CENTER, false);
             switchToOneFragment(EDIT_PROGRESS);
             mProgressEditFragment.setProgressSticker(progressSticker);
         } else if (resId == R.id.tv_shape) {
             DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
             drawableSticker.setmPicType(DrawableSticker.SHAPE);
-            mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+            mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
             switchToOneFragment(EDIT_PROGRESS);
             mShapeEditFragment.setDrawableSticker(drawableSticker);
         } else if (resId == R.id.iv_back) {
@@ -454,11 +524,28 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         } else if (resId == R.id.iv_change_bg) {
             showEditBgPanel();
         } else if (resId == R.id.iv_save) {
-            saveConfig();
-        } else if(resId == R.id.iv_guide){
+            showConfirmDialog();
+        } else if (resId == R.id.iv_guide) {
             Intent intent = new Intent(DiyWidgetMakeActivity.this, WebActivity.class);
             intent.putExtra(WebActivity.URL_KEY, Constant.WIDGET_GUIDE);
             startActivity(intent);
+        } else if (resId == R.id.cl_first_permission) {
+            gotoOpen();
+        } else if (resId == R.id.cl_second_permission) {
+            jumpToBackgroundPopPermissionPage();
+        }
+    }
+
+    private void initPermissionUI() {
+        if (CustomPlugUtil.showApplyNotificationPermissonDialog(customWidgetConfig) && !NLService.isNotificationListenerEnabled(this)) {
+            mFirstPermission.setVisibility(View.VISIBLE);
+        } else {
+            mFirstPermission.setVisibility(View.GONE);
+        }
+        if (CustomPlugUtil.showApplyOpenAppPermissionDialog(customWidgetConfig) && RomUtils.isVivo()) {
+            mSecondPermission.setVisibility(View.VISIBLE);
+        } else {
+            mSecondPermission.setVisibility(View.GONE);
         }
     }
 
@@ -501,8 +588,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
             @Override
             public void onStickerClicked(@NonNull Sticker sticker) {
-                Log.i("test_click:", "click");
-
             }
 
             @Override
@@ -583,6 +668,34 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             @Override
             public void onUnlock() {
 
+            }
+
+            @Override
+            public void onStickerLongClick(@NonNull Sticker sticker, float x, float y) {
+                EverywherePopup everywherePopup = EverywherePopup.create(DiyWidgetMakeActivity.this).apply();
+                everywherePopup.showEverywhere(mStickerView, (int) x, (int) y);
+                everywherePopup.setOnClickCallback(new EverywherePopup.OnClickCallback() {
+                    @Override
+                    public void copy() {
+                        if (mHandlingSticker instanceof TextSticker) {
+                            mStickerView.addSticker(((TextSticker) mHandlingSticker).copy(), true);
+                        } else if (mHandlingSticker instanceof DrawableSticker) {
+                            mStickerView.addSticker(((DrawableSticker) mHandlingSticker).copy(), true);
+                        } else if (mHandlingSticker instanceof ProgressSticker) {
+                            mStickerView.addSticker(((ProgressSticker) mHandlingSticker).copy(), true);
+                        }
+                    }
+
+                    @Override
+                    public void top() {
+                        mStickerView.sendToLayerTop(mHandlingSticker);
+                    }
+
+                    @Override
+                    public void bottom() {
+                        mStickerView.sendToLayerBottom(mHandlingSticker);
+                    }
+                });
             }
         });
     }
@@ -676,7 +789,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 textSticker.setTextColor("#FFFFFF");
                 textSticker.setFontPath("fonts/xindixiaowanzi.ttf");
                 mTextEditFragment.setWidgetEditTextSticker(textSticker);
-                mStickerView.addSticker(textSticker, Sticker.Position.TOP);
+                mStickerView.addSticker(textSticker, Sticker.Position.CENTER, false);
 
             }
 
@@ -693,7 +806,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
                 drawableSticker.setmPicType(DrawableSticker.ASSET);
                 drawableSticker.setDrawablePath(path);
-                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
             }
 
             @Override
@@ -709,20 +822,21 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         });
         mVectorEditFragment.setWidgetEditShapeCallback(new WidgetEditVectorCallback() {
             @Override
-            public void onAddVectorSticker(WidgetShapeBean widgetShapeBean) {
-                try {
-                    SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN))
-                            .readFromAsset(getAssets(), widgetShapeBean.getSvgPath()).build();
-                    PictureDrawable drawable = svg.getDrawable();
-                    DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
-                    drawableSticker.setmPicType(DrawableSticker.SVG);
-                    drawableSticker.setDrawablePath(widgetShapeBean.getSvgPath());
-                    mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
-                    Log.i("test_add_sticker:", "添加DrawSticker成功");
-                    mVectorEditFragment.setWidgetEditShapeSticker(drawableSticker);
-                } catch (IOException e) {
+            public void onAddVectorSticker(SvgIconBean widgetShapeBean) {
+                String pathStr = widgetShapeBean.getIcon().getPaths().get(0);
+                ShapeDrawable drawable = new ShapeDrawable();
+                Path path = com.caverock.androidsvg1.SVG.parsePath(pathStr);
+                RectF rectF = new RectF();
+                path.computeBounds(rectF, false);
+                Rect realBounds = new Rect(0, 0, (int) (rectF.right + rectF.left), (int) (rectF.bottom + rectF.top));
+                drawable.setBounds(realBounds);
+                DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
+                drawableSticker.setmPicType(DrawableSticker.SVG);
+                Log.e("test_icon_path:", GsonUtil.toJson(widgetShapeBean));
+                drawableSticker.setDrawablePath(pathStr);
+                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
+                mVectorEditFragment.setWidgetEditShapeSticker(drawableSticker);
 
-                }
 
             }
 
@@ -741,7 +855,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 progressSticker.setPercent(0.7f);
                 progressSticker.setProgressType(ProgressSticker.HORIZONTAL);
                 progressSticker.setDrawType(ProgressSticker.SOLID);
-                mStickerView.addSticker(progressSticker, Sticker.Position.TOP);
+                mStickerView.addSticker(progressSticker, Sticker.Position.TOP, false);
                 switchToOneFragment(EDIT_PROGRESS);
                 mProgressEditFragment.setProgressSticker(progressSticker);
             }
@@ -758,7 +872,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             public void onAddShapeSticker() {
                 DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
                 drawableSticker.setmPicType(DrawableSticker.SHAPE);
-                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+                mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
                 switchToOneFragment(EDIT_SHAPE);
                 mShapeEditFragment.setDrawableSticker(drawableSticker);
             }
@@ -1005,6 +1119,32 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         sendBroadcast(intent);
     }
 
+    private void showConfirmDialog() {
+        if (!CommonConfigManager.getInstance().isHadKnowUseWidget()) {
+            MessageDialog.show(this, "提示", "插件使用教程>>", "去看看", "我知道了")
+                    .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                        @Override
+                        public boolean onClick(BaseDialog baseDialog, View v) {
+                            Intent intent = new Intent(DiyWidgetMakeActivity.this, WebActivity.class);
+                            intent.putExtra(WebActivity.URL_KEY, Constant.WIDGET_GUIDE);
+                            startActivity(intent);
+                            return false;
+                        }
+                    })
+                    .setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
+                        @Override
+                        public boolean onClick(BaseDialog baseDialog, View v) {
+                            CommonConfigManager.getInstance().setHadKnowUseWidget();
+                            saveConfig();
+                            return false;
+                        }
+                    });
+        } else {
+            saveConfig();
+        }
+    }
+
+
     private void saveConfig() {
         final Bitmap bgBitmap = BitmapUtils.viewToBitmap(mStickerViewBg);
         mStickerView.setShowGrid(false);
@@ -1109,7 +1249,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
             drawableSticker.setmPicType(DrawableSticker.SDCARD);
             drawableSticker.setDrawablePath(path);
-            mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER);
+            mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
             if (mStickerEditFragment != null) {
                 mStickerEditFragment.setDrawableSticker(drawableSticker);
             }

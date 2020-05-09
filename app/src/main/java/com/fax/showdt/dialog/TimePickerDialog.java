@@ -23,7 +23,7 @@ import com.fax.showdt.bean.Countdown;
 import com.fax.showdt.view.timepickdialog.TimePickerView;
 import com.fax.showdt.view.timepickdialog.lib.WheelView;
 import com.fax.showdt.view.timepickdialog.view.WheelTime;
-import com.gyf.barlibrary.ImmersionBar;
+import com.gyf.immersionbar.ImmersionBar;
 
 import org.jetbrains.annotations.Nullable;
 

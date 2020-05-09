@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_color_content"
@@ -17,15 +23,138 @@
             android:layout_marginStart="@dimen/margin_10"
             android:src="@drawable/widget_progress_color_icon" />
 
-        <LinearLayout
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_shape_solid_color"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="@dimen/margin_30">
+
+            <FrameLayout
+                android:visibility="visible"
+                android:id="@+id/fl_one_color"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_30"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_marginEnd="@dimen/margin_5"
+                android:layout_toStartOf="@id/ll_switch"
+                android:background="@color/c_F7F6F6"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_solidColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/margin_2"
+                    android:onClick="onClick" />
+            </FrameLayout>
+
 
             <LinearLayout
+                android:id="@+id/ll_more_color"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_30"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_toStartOf="@id/ll_switch">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:layout_marginEnd="@dimen/margin_5"
+                    android:background="@color/c_F7F6F6"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_gradientColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_2"
+                        android:gravity="center"
+                        android:onClick="onClick"
+                        android:text=""
+                        android:textColor="@color/c_696969" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:layout_marginEnd="@dimen/margin_5"
+                    android:layout_weight="1"
+                    android:background="@color/c_F7F6F6"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_gradientColor1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_2"
+                        android:gravity="center"
+                        android:onClick="onClick"
+                        android:text=""
+                        android:textColor="@color/c_696969" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_color3"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:layout_marginEnd="@dimen/margin_5"
+                    android:layout_weight="1"
+                    android:background="@color/c_F7F6F6"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/tv_gradientColor2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_2"
+                        android:gravity="center"
+                        android:onClick="onClick"
+                        android:textColor="@color/c_696969" />
+
+                </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/fl_color_operate"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:layout_marginEnd="@dimen/margin_5"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/iv_color_operate"
+                        android:src="@drawable/widget_shape_color_add_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_5"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:onClick="onClick" />
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_alignParentEnd="true"
                 android:orientation="horizontal">
 
                 <TextView
@@ -34,59 +163,102 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_5"
                     android:gravity="center"
-                    android:text="@string/widget_shape_solid_color"
+                    android:text="渐变"
                     android:textColor="@color/c_A0A0A0"
                     android:textSize="@dimen/textSize_15" />
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/margin_30"
-                    android:background="@color/c_F7F6F6"
-                    android:layout_marginStart="@dimen/margin_15"
-                    android:layout_marginEnd="@dimen/margin_15"
-                    android:gravity="center">
-                    <TextView
-                        android:id="@+id/tv_solidColor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="onClick"
-                        android:layout_margin="@dimen/margin_2" />
-                </FrameLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/margin_30"
+                <com.kyleduo.switchbutton.SwitchButton
+                    android:id="@+id/switch_btn"
+                    android:layout_width="@dimen/margin_40"
+                    android:layout_height="@dimen/margin_25"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_5"
-                    android:gravity="center"
-                    android:text="@string/widget_shape_stroke_color"
-                    android:textColor="@color/c_A0A0A0"
-                    android:textSize="@dimen/textSize_15" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/margin_30"
-                    android:background="@color/c_F7F6F6"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/margin_15"
-                    android:layout_marginEnd="@dimen/margin_15"
-                    android:gravity="center">
-                    <TextView
-                        android:id="@+id/tv_strokeColor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:onClick="onClick"
-                        android:layout_margin="@dimen/margin_2" />
-                </FrameLayout>
+                    app:kswBackColor="@color/c_F7F6F6"
+                    app:kswThumbColor="@color/c_FCF43C" />
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_orientation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_click_setting_action" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_shape_gradient_orientation"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <TextView
+            android:id="@+id/tv_orientation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:background="@color/c_F7F6F6"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_16" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:layout_marginBottom="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_progress_color_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_shape_stroke_color"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:background="@color/c_F7F6F6"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_strokeColor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_2"
+                android:onClick="onClick" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -124,6 +296,7 @@
             android:onClick="onClick" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,6 +332,7 @@
             android:onClick="onClick" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -196,3 +370,4 @@
     </LinearLayout>
 
 </LinearLayout>
+</ScrollView>

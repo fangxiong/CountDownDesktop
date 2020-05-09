@@ -16,6 +16,7 @@ import com.simple.spiderman.SpiderMan;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.umeng.commonsdk.UMConfigure;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import androidx.annotation.NonNull;
@@ -75,6 +76,11 @@ public class AppContext extends Application {
             public void accept(Throwable throwable) throws Exception {
             }
         });
+
+        //初始化组件化基础库, 所有友盟业务SDK都必须调用此初始化接口。
+        //建议在宿主App的Application.onCreate函数中调用基础组件库初始化函数。
+        UMConfigure.init(this, ConstantString.UMENG_APP_KEY, WalleChannelReader.getChannel(this,"home"), UMConfigure.DEVICE_TYPE_PHONE, "");
+        UMConfigure.setLogEnabled(BuildConfig.DEBUG);
 
     }
 

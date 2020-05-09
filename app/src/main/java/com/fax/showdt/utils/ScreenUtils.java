@@ -3,18 +3,18 @@ package com.fax.showdt.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
-
+import android.view.WindowManager;
 import com.fax.showdt.AppContext;
-import com.gyf.barlibrary.ImmersionBar;
+import com.gyf.immersionbar.ImmersionBar;
 
 import androidx.annotation.NonNull;
-
 import static android.view.View.NO_ID;
 
 public class ScreenUtils {
@@ -165,6 +165,44 @@ public class ScreenUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * Return the width of screen, in pixel.
+     *
+     * @return the width of screen, in pixel
+     */
+    public static int getScreenWidth() {
+        WindowManager wm = (WindowManager) AppContext.get().getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return AppContext.get().getResources().getDisplayMetrics().widthPixels;
+        }
+        Point point = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            wm.getDefaultDisplay().getRealSize(point);
+        } else {
+            wm.getDefaultDisplay().getSize(point);
+        }
+        return point.x;
+    }
+
+    /**
+     * Return the height of screen, in pixel.
+     *
+     * @return the height of screen, in pixel
+     */
+    public static int getScreenHeight() {
+        WindowManager wm = (WindowManager) AppContext.get().getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return AppContext.get().getResources().getDisplayMetrics().heightPixels;
+        }
+        Point point = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            wm.getDefaultDisplay().getRealSize(point);
+        } else {
+            wm.getDefaultDisplay().getSize(point);
+        }
+        return point.y;
     }
 
 

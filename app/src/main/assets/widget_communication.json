@@ -1,0 +1,186 @@
+[
+  {
+    "svgPath": "svg/communication/ic_business_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_end_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_made_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_merge_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_missed_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_missed_outgoing_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_received_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_call_split_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_chat_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_chat_bubble_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_clear_all_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_comment_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_contact_mail_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_contact_phone_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_contacts_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_dialer_sip_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_dialpad_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_email_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_forum_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_import_contacts_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_import_export_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_invert_colors_off_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_live_help_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_location_off_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_location_on_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_mail_outline_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_message_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_no_sim_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_phonelink_erase_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_phonelink_lock_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_phonelink_ring_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_phonelink_setup_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_portable_wifi_off_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_present_to_all_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_rss_feed_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_screen_share_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_speaker_phone_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_stay_current_landscape_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_stay_current_portrait_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_stay_primary_landscape_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_stay_primary_portrait_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_stop_screen_share_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_swap_calls_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_textsms_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_voicemail_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/communication/ic_vpn_key_24px.svg",
+    "svgColor": "#A0A0A0"
+  }
+]

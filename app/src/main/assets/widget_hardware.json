@@ -1,0 +1,190 @@
+[
+  {
+    "svgPath": "svg/hardware/ic_cast_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_cast_connected_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_computer_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_desktop_mac_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_desktop_windows_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_developer_board_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_device_hub_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_devices_other_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_dock_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_gamepad_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_headset_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_headset_mic_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_arrow_down_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_arrow_left_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_arrow_right_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_arrow_up_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_backspace_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_capslock_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_hide_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_return_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_tab_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_keyboard_voice_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_laptop_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_laptop_chromebook_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_laptop_mac_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_laptop_windows_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_memory_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_mouse_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_phone_android_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_phone_iphone_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_phonelink_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_phonelink_off_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_power_input_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_router_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_scanner_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_security_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_sim_card_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_smartphone_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_speaker_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_tablet_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_tablet_android_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_tablet_mac_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_toys_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_tv_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_videogame_asset_24px.svg",
+    "svgColor": "#A0A0A0"
+  },
+  {
+    "svgPath": "svg/hardware/ic_watch_24px.svg",
+    "svgColor": "#A0A0A0"
+  }
+]

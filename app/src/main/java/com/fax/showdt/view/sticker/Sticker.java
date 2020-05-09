@@ -107,14 +107,14 @@ public abstract class Sticker {
     public void getBoundPoints(@NonNull float[] points) {
         if (!isFlippedHorizontally) {
             if (!isFlippedVertically) {
-                points[0] = 0f;
-                points[1] = 0f;
-                points[2] = getWidth();
-                points[3] = 0f;
-                points[4] = 0f;
-                points[5] = getHeight();
-                points[6] = getWidth();
-                points[7] = getHeight();
+                points[0] = -5f;
+                points[1] = -5f;
+                points[2] = getWidth()+5f;
+                points[3] = -5f;
+                points[4] = -5f;
+                points[5] = getHeight()+5f;
+                points[6] = getWidth()+5f;
+                points[7] = getHeight()+5f;
                 Log.i("test_bound:","width:"+getWidth()+" height:"+getHeight());
             } else {
                 points[0] = 0f;

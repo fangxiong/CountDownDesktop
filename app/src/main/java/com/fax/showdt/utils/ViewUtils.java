@@ -531,7 +531,21 @@ public class ViewUtils {
             e.printStackTrace();
         }
     }
+    /**
+     * 手动测量摆放View
+     * 对于手动 inflate 或者其他方式代码生成加载的View进行测量，避免该View无尺寸
+     * PS: 在填充数据以后调用，否则数据无法正常显示
+     */
+    public static void layoutView(View v, int width, int height) {
+        // validate view.width and view.height
+        v.layout(0, 0, width, height);
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
 
+        // validate view.measurewidth and view.measureheight
+        v.measure(measuredWidth, measuredHeight);
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+    }
 
 
 }

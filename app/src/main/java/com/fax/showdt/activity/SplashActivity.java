@@ -5,19 +5,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.fax.showdt.R;
 import com.fax.showdt.dialog.ios.v3.CustomDialog;
 import com.fax.showdt.manager.CommonConfigManager;
 import com.fax.showdt.utils.Constant;
 import com.fax.showdt.utils.NotchUtils;
-import com.gyf.barlibrary.ImmersionBar;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity implements View.OnClickListener {
     private CustomDialog privacyDialog;

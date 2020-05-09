@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fax.showdt.R;
+import com.fax.showdt.bean.SvgIconBean;
 import com.fax.showdt.bean.WidgetShapeBean;
 import com.fax.showdt.callback.WidgetEditClickCallback;
 import com.fax.showdt.callback.WidgetEditVectorCallback;
@@ -152,7 +153,7 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
         transaction.commitAllowingStateLoss();
         mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditVectorElementSelectedCallback() {
             @Override
-            public void selectVectorElement(WidgetShapeBean widgetShapeBean) {
+            public void selectVectorElement(SvgIconBean widgetShapeBean) {
                 mWidgetEditShapeCallback.onAddVectorSticker(widgetShapeBean);
             }
         });

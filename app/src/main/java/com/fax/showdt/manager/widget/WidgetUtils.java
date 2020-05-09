@@ -19,6 +19,8 @@ import com.fax.showdt.utils.IntentUtils;
 
 import java.util.List;
 
+import static com.fax.showdt.utils.CommonUtils.QQ_APP_ID;
+
 
 /**
  * Author: fax
@@ -69,6 +71,10 @@ public class WidgetUtils {
                     pendingIntent = getGoToWebUrl(bean.getJumpContent());
                     break;
                 }
+                case WidgetClickType.CLICK_QQ_CONTACT:{
+                    pendingIntent = goQQContactPage(bean.getJumpContent());
+                    break;
+                }
             }
             if (pendingIntent != null) {
                 remoteViews2.setOnClickPendingIntent(R.id.touch_area, pendingIntent);
@@ -96,6 +102,13 @@ public class WidgetUtils {
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         Log.i("test_click:","target:"+path);
         return PendingIntent.getActivity(AppContext.get(), 6, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    }
+
+    public static PendingIntent goQQContactPage(String qqnum){
+        String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qqnum;
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(QQ_APP_ID);
+        return PendingIntent.getActivity(AppContext.get(), 8, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 

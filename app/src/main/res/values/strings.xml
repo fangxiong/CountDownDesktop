@@ -76,7 +76,7 @@
     <string name="widget_progress_week">一周</string>
     <string name="widget_progress_day">一天</string>
     <string name="widget_progress_hour">一小时</string>
-    <string name="widget_sticker_clip_shape">形状</string>
+    <string name="widget_sticker_clip_shape">形\u3000\u3000状</string>
     <string name="widget_sticker_stroke_color">描边颜色</string>
     <string name="widget_sticker_stroke_switch">描边开关</string>
     <string name="widget_clip_circle">圆形</string>
@@ -84,12 +84,13 @@
     <string name="widget_clip_love">心形</string>
     <string name="widget_clip_rect">正方形</string>
     <string name="widget_clip_pentagon">五边形</string>
-    <string name="widget_text_color">颜色</string>
+    <string name="widget_text_color">颜\u3000色</string>
     <string name="widget_text_letter_spacing">字间距</string>
     <string name="widget_text_line_spacing">行间距</string>
-    <string name="widget_shape_height">高度</string>
-    <string name="widget_shape_line_width">线宽</string>
-    <string name="widget_shape_corner_width">圆角</string>
+    <string name="widget_shape_height">高\u3000度</string>
+    <string name="widget_shape_line_width">线\u3000宽</string>
+    <string name="widget_shape_corner_width">圆\u3000角</string>
+    <string name="widget_shape_gradient_orientation">方\u3000向</string>
     <string name="widget_shape_stroke_color">边框色</string>
     <string name="widget_shape_solid_color">实心色</string>
 

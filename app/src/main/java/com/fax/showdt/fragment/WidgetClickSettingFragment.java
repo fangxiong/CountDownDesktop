@@ -42,10 +42,12 @@ import com.fax.showdt.dialog.ios.v3.InputDialog;
 import com.fax.showdt.manager.widget.WidgetClickType;
 import com.fax.showdt.manager.widget.WidgetMusicActionType;
 import com.fax.showdt.utils.AppIconUtils;
+import com.fax.showdt.utils.ToastShowUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -66,8 +68,8 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
 
     private TextView mTvClickAction, mTvClickTypeTitle, mTvClickTypeContent;
     private LinearLayout llClickContent;
-    private String[] actions = {"无", "启动应用程序", "音乐控制", "打开链接"};
-    private String[] actionTypes = {"应用", "音乐", "网址"};
+    private String[] actions = {"无", "启动应用程序", "音乐控制", "打开链接","QQ联系人"};
+    private String[] actionTypes = {"应用", "音乐", "网址","qq"};
     private String[] musicActions = {"播放/暂停", "下一首", "上一首", "音量+", "音量-", "打开播放器"};
     private CustomDialog clickActionDialog, musicControlDialog;
     private FullScreenDialog appIconDialog;
@@ -114,6 +116,8 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 showMusicActionDialog();
             } else if (actions[3].equals(mTvClickAction.getText().toString())) {
                 showInputUrlDialog(mTvClickTypeContent.getText().toString());
+            } else if (actions[4].equals(mTvClickAction.getText().toString())){
+                showQQDialog(mTvClickTypeContent.getText().toString());
             }
         } else if (v.getId() == R.id.tv_none) {
             mTvClickAction.setText(actions[0]);
@@ -162,7 +166,22 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
             if (editClickCallback != null) {
                 editClickCallback.onActionType(WidgetClickType.CLICK_URL);
             }
-        } else if (v.getId() == R.id.tv_playOrPause) {
+        }  else if (v.getId() == R.id.tv_qq_contact) {
+            if(actions[4].equals(mTvClickAction.getText().toString())){
+                clickActionDialog.doDismiss();
+                return;
+            }
+            mTvClickAction.setText(actions[4]);
+            mTvClickTypeTitle.setText(actionTypes[3]);
+            clickActionDialog.doDismiss();
+            mTvClickTypeContent.setText("");
+            llClickContent.setVisibility(View.VISIBLE);
+            if (editClickCallback != null) {
+                editClickCallback.onActionType(WidgetClickType.CLICK_QQ_CONTACT);
+            }
+        }
+
+        else if (v.getId() == R.id.tv_playOrPause) {
             mTvClickTypeContent.setText(musicActions[0]);
             musicControlDialog.doDismiss();
             if (editClickCallback != null) {
@@ -232,6 +251,12 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 mTvClickTypeContent.setText(actionContent);
                 break;
             }
+            case WidgetClickType.CLICK_QQ_CONTACT: {
+                mTvClickAction.setText(actions[4]);
+                mTvClickTypeTitle.setText(actionTypes[3]);
+                mTvClickTypeContent.setText(actionContent);
+                break;
+            }
         }
         if (!TextUtils.isEmpty(actionContent)) {
             llClickContent.setVisibility(View.VISIBLE);
@@ -284,17 +309,20 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 TextView tvApp = v.findViewById(R.id.tv_application);
                 TextView tvMusicCtl = v.findViewById(R.id.tv_music_controller);
                 TextView tvUrl = v.findViewById(R.id.tv_open_url);
+                TextView tvQQ = v.findViewById(R.id.tv_qq_contact);
                 tvNone.setText(actions[0]);
                 tvApp.setText(actions[1]);
                 tvMusicCtl.setText(actions[2]);
                 tvUrl.setText(actions[3]);
+                tvQQ.setText(actions[4]);
                 tvNone.setOnClickListener(WidgetClickSettingFragment.this);
                 tvApp.setOnClickListener(WidgetClickSettingFragment.this);
                 tvMusicCtl.setOnClickListener(WidgetClickSettingFragment.this);
                 tvUrl.setOnClickListener(WidgetClickSettingFragment.this);
+                tvQQ.setOnClickListener(WidgetClickSettingFragment.this);
             }
-        }).setCancelable(true);
-        clickActionDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
+        });
+        clickActionDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(true).show();
     }
 
     private void showMusicActionDialog() {
@@ -321,8 +349,8 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 tvVoiceMuiti.setOnClickListener(WidgetClickSettingFragment.this);
                 tvOpenApp.setOnClickListener(WidgetClickSettingFragment.this);
             }
-        }).setCancelable(true);
-        musicControlDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(false).show();
+        });
+        musicControlDialog.setAlign(CustomDialog.ALIGN.DEFAULT).setCancelable(true).show();
     }
 
     private void showInputUrlDialog(final String initText) {
@@ -334,7 +362,7 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                     @Override
                     public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
                         if (!Patterns.WEB_URL.matcher(inputStr).matches()) {
-//                            ToastShowUtils.showCommonToast(getActivity(),"链接格式错误", Toasty.LENGTH_SHORT);
+                            ToastShowUtils.showCommonToast(getActivity(),"输入格式错误", Toasty.LENGTH_SHORT);
                             return true;
                         }
                         mTvClickTypeContent.setText(inputStr);
@@ -348,6 +376,37 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                 .setHintText("请输入链接")
                 .setInputInfo(new InputInfo()
                         .setInputType(InputType.TYPE_TEXT_VARIATION_URI)
+                        .setTextInfo(new TextInfo()
+                                .setFontColor(getResources().getColor(R.color.c_A0A0A0))
+                        )
+                )
+                .setCancelable(true)
+                .show();
+    }
+
+    private void showQQDialog(final String initText) {
+        InputDialog.build(((AppCompatActivity) getActivity()))
+                .setButtonTextInfo(new TextInfo().setFontColor(getResources().getColor(R.color.c_A0A0A0)))
+                .setTitle("提示").setMessage("请输入联系人qq号")
+                .setInputText(initText)
+                .setOkButton("确定", new OnInputDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
+                      if(!TextUtils.isDigitsOnly(inputStr)){
+                          ToastShowUtils.showCommonToast(getContext(),"格式错误", Toasty.LENGTH_SHORT);
+                          return true;
+                      }
+                        mTvClickTypeContent.setText(inputStr);
+                        if (editClickCallback != null) {
+                            editClickCallback.onActionContent(inputStr,"");
+                        }
+                        return false;
+                    }
+                })
+                .setCancelButton("取消")
+                .setHintText("请输入qq号")
+                .setInputInfo(new InputInfo()
+                        .setInputType(InputType.TYPE_CLASS_NUMBER)
                         .setTextInfo(new TextInfo()
                                 .setFontColor(getResources().getColor(R.color.c_A0A0A0))
                         )

@@ -16,13 +16,16 @@ import android.text.TextUtils;
 import com.fax.showdt.AppContext;
 import com.fax.showdt.R;
 import com.fax.showdt.bean.CustomWidgetConfig;
+import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.bean.ProgressPlugBean;
 import com.fax.showdt.bean.TextPlugBean;
 import com.fax.showdt.manager.location.LocationManager;
 import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.weather.WeatherManager;
+import com.fax.showdt.manager.widget.WidgetClickType;
 import com.fax.showdt.manager.widget.WidgetProgressPercentHandler;
 import com.fax.showdt.service.WidgetUpdateService;
+import com.fax.showdt.view.sticker.DrawableSticker;
 import com.fax.showdt.view.sticker.ProgressStickerDrawHelper;
 
 import org.apache.commons.lang3.StringUtils;
@@ -152,6 +155,7 @@ public class CustomPlugUtil {
 
     /**
      * 获取歌手名字
+     *
      * @return
      */
     public static String getSingerName() {
@@ -169,6 +173,7 @@ public class CustomPlugUtil {
 
     /**
      * 获取歌名
+     *
      * @return
      */
     public static String getSongName() {
@@ -184,7 +189,7 @@ public class CustomPlugUtil {
         return result;
     }
 
-    public static long getDuration(){
+    public static long getDuration() {
         long result = 0L;
         if (duration == 0L) {
             result = KLWPSongUpdateManager.duration;
@@ -193,7 +198,8 @@ public class CustomPlugUtil {
         }
         return result;
     }
-    public static long getCurrentDuration(){
+
+    public static long getCurrentDuration() {
         long result = 0L;
         if (currentDuration == 0L) {
             result = KLWPSongUpdateManager.currentDuration;
@@ -205,6 +211,7 @@ public class CustomPlugUtil {
 
     /**
      * 获取专辑名称
+     *
      * @return
      */
     public static String getAlbum() {
@@ -519,24 +526,24 @@ public class CustomPlugUtil {
                 progress = String.valueOf(battery);
                 break;
             }
-            case "B01":{
-                progress = String.valueOf((int)(WidgetProgressPercentHandler.getMusicDurationPercent()*100));
+            case "B01": {
+                progress = String.valueOf((int) (WidgetProgressPercentHandler.getMusicDurationPercent() * 100));
                 break;
             }
-            case "B02":{
-                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentMonthPercent()*100));
+            case "B02": {
+                progress = String.valueOf((int) (WidgetProgressPercentHandler.getCurrentMonthPercent() * 100));
                 break;
             }
-            case "B03":{
-                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentWeekPercent()*100));
+            case "B03": {
+                progress = String.valueOf((int) (WidgetProgressPercentHandler.getCurrentWeekPercent() * 100));
                 break;
             }
-            case "B04":{
-                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentDayPercent()*100));
+            case "B04": {
+                progress = String.valueOf((int) (WidgetProgressPercentHandler.getCurrentDayPercent() * 100));
                 break;
             }
-            case "B05":{
-                progress = String.valueOf((int)(WidgetProgressPercentHandler.getCurrentHourPercent()*100));
+            case "B05": {
+                progress = String.valueOf((int) (WidgetProgressPercentHandler.getCurrentHourPercent() * 100));
                 break;
             }
             default: {
@@ -560,7 +567,7 @@ public class CustomPlugUtil {
                 break;
             }
             case "L01": {
-                result =getAlbum();
+                result = getAlbum();
                 break;
             }
             case "L02": {
@@ -575,7 +582,7 @@ public class CustomPlugUtil {
                 result = TimeUtils.timeParse(getDuration());
                 break;
             }
-            case "L05":{
+            case "L05": {
                 result = TimeUtils.timeParse(getCurrentDuration());
                 break;
             }
@@ -1085,7 +1092,7 @@ public class CustomPlugUtil {
     public static Bitmap getBitmapFromText(String code, Context context) {
         String str = "[" + code + "]";
         Paint paint = new Paint();
-        paint.setTextSize(ViewUtils.sp2px(16,context));
+        paint.setTextSize(ViewUtils.sp2px(16, context));
         paint.setTextAlign(Paint.Align.LEFT);
         paint.setColor(context.getResources().getColor(R.color.c_FCF43C));
         paint.setAntiAlias(true);
@@ -1111,26 +1118,84 @@ public class CustomPlugUtil {
     }
 
 
-
-    public static @WidgetUpdateService.RefreshGap int getWidgetRefreshGap(CustomWidgetConfig config){
-        if(config == null){
+    public static @WidgetUpdateService.RefreshGap
+    int getWidgetRefreshGap(CustomWidgetConfig config) {
+        if (config == null) {
             return WidgetUpdateService.REFRESH_WITH_ONE_SECOND;
         }
-        List<ProgressPlugBean> progressPlugBeanList= config.getProgressPlugList();
-        List<TextPlugBean> textPlugBeanList= config.getTextPlugList();
-        if(progressPlugBeanList.isEmpty()&&textPlugBeanList.isEmpty()){
+        List<ProgressPlugBean> progressPlugBeanList = config.getProgressPlugList();
+        List<TextPlugBean> textPlugBeanList = config.getTextPlugList();
+        if (progressPlugBeanList.isEmpty() && textPlugBeanList.isEmpty()) {
             return WidgetUpdateService.REFRESH_WITH_JUST_ONCE;
-        }else{
-            if(!textPlugBeanList.isEmpty()){
-                for(TextPlugBean bean:textPlugBeanList){
+        } else {
+            if (!textPlugBeanList.isEmpty()) {
+                for (TextPlugBean bean : textPlugBeanList) {
                     //包含歌词插件和天时分秒的倒计时插件则按每秒更新
-                    if(isContainMusicPlug(bean.getText()) || checkContainSpecialTimerCode(bean.getText())){
+                    if (isContainMusicPlug(bean.getText()) || checkContainSpecialTimerCode(bean.getText())) {
                         return WidgetUpdateService.REFRESH_WITH_ONE_SECOND;
                     }
                 }
             }
             return WidgetUpdateService.REFRESH_WITH_SIXTY_SECOND;
         }
+    }
+
+    /**
+     * 是否需要开启读取通知栏权限
+     * @param config
+     * @return
+     */
+    public static boolean showApplyNotificationPermissonDialog(CustomWidgetConfig config) {
+        if (config == null) {
+            return false;
+        }
+        List<TextPlugBean> textPlugBeanList = config.getTextPlugList();
+        List<DrawablePlugBean> drawablePlugBeanList = config.getDrawablePlugList();
+        if (!textPlugBeanList.isEmpty()) {
+            for (TextPlugBean bean : textPlugBeanList) {
+                //包含歌词插件和天时分秒的倒计时插件则按每秒更新
+                if (isContainMusicPlug(bean.getText()) || WidgetClickType.CLICK_MUSIC.equals(bean.getJumpAppPath())) {
+                    return true;
+                }
+            }
+        }
+        if (!textPlugBeanList.isEmpty()) {
+            for (DrawablePlugBean bean : drawablePlugBeanList) {
+                //包含歌词插件和天时分秒的倒计时插件则按每秒更新
+                if (WidgetClickType.CLICK_MUSIC.equals(bean.getJumpAppPath())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * vivo手机跳转到app需要开启后台开启界面权限
+     * @param config
+     * @return
+     */
+    public static boolean showApplyOpenAppPermissionDialog(CustomWidgetConfig config) {
+        if (config == null) {
+            return false;
+        }
+        List<TextPlugBean> textPlugBeanList = config.getTextPlugList();
+        List<DrawablePlugBean> drawablePlugBeanList = config.getDrawablePlugList();
+        if (!textPlugBeanList.isEmpty()) {
+            for (TextPlugBean bean : textPlugBeanList) {
+                if (!TextUtils.isEmpty(bean.getJumpAppPath())) {
+                    return true;
+                }
+            }
+        }
+        if (!textPlugBeanList.isEmpty()) {
+            for (DrawablePlugBean bean : drawablePlugBeanList) {
+                if (!TextUtils.isEmpty(bean.getJumpAppPath())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fax.lib.config.ConfigManager;
 import com.fax.showdt.BuildConfig;
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.EventMsg;
@@ -142,7 +143,8 @@ public class MyWidgetFragment extends Fragment {
 
             @Override
             public boolean onItemLongClick(View view, RecyclerView.ViewHolder holder, int position) {
-                if(BuildConfig.DEBUG) {
+                boolean canContribute = ConfigManager.getMainConfig().getBool("can_contribute",false);
+                if(canContribute) {
                     CustomWidgetConfig config = mData.get(position);
                     Intent intent = new Intent(getActivity(), PushWidgetActivity.class);
                     intent.putExtra(EventMsg.widget_data_to_push, config.toJSONString());

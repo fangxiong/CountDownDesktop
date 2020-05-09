@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,20 +38,20 @@ import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 
 public class StickerView extends FrameLayout {
+    private static final int COPY_STICKER_TRANS_OFFSET = ViewUtils.dpToPx(30F, AppContext.get());
     private final int MIN_DRAWABLE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(10f, AppContext.get());
-    private final int MIN_LINE_WIDTH_OR_HEIGHT = ViewUtils.dpToPx(20f, AppContext.get());
     private static final int STICKER_BORDER_PADDING = 0;
+    private final long LONG_CLICK_TIME_GAP = 300L;
+    private boolean isContineTouch = false;
     private boolean showIcons;
     private boolean showBorder;
     private boolean showGrid = false;
     private boolean mLockScreenMode;
-    private boolean supportLineZoom;
-
-    private float initalLineLength;
-    private float initalProgressLength;
     private final float CENTER_GAP = 3F;
     private final boolean bringToFrontCurrentSticker;
     private boolean showNumber = false;
+    private Handler mHandler = new Handler();
+    private Runnable runnable = null;
 
 
     @IntDef({
@@ -186,6 +187,26 @@ public class StickerView extends FrameLayout {
         }
     }
 
+    /**
+     * 置顶
+     * @param sticker
+     */
+    public void sendToLayerTop(Sticker sticker) {
+        stickers.remove(sticker);
+        stickers.add(sticker);
+        invalidate();
+    }
+
+    /**
+     * 置底
+     * @param sticker
+     */
+    public void sendToLayerBottom(Sticker sticker) {
+        stickers.remove(sticker);
+        stickers.add(0,sticker);
+        invalidate();
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -291,14 +312,14 @@ public class StickerView extends FrameLayout {
             getStickerPoints(handlingSticker, bitmapPoints);
             float[] resultPoints = handlingSticker.getMappedLinePoints(bitmapPoints);
 
-            float x1 = resultPoints[0] - STICKER_BORDER_PADDING;
-            float y1 = resultPoints[1] - STICKER_BORDER_PADDING;
-            float x2 = resultPoints[2] + STICKER_BORDER_PADDING;
-            float y2 = resultPoints[3] - STICKER_BORDER_PADDING;
-            float x3 = resultPoints[4] - STICKER_BORDER_PADDING;
-            float y3 = resultPoints[5] + STICKER_BORDER_PADDING;
-            float x4 = resultPoints[6] + STICKER_BORDER_PADDING;
-            float y4 = resultPoints[7] + STICKER_BORDER_PADDING;
+            float x1 = resultPoints[0];
+            float y1 = resultPoints[1];
+            float x2 = resultPoints[2];
+            float y2 = resultPoints[3];
+            float x3 = resultPoints[4];
+            float y3 = resultPoints[5];
+            float x4 = resultPoints[6];
+            float y4 = resultPoints[7];
 
             if (showBorder) {
                 canvas.drawLine(x1, y1, x2, y2, borderPaint);
@@ -397,6 +418,11 @@ public class StickerView extends FrameLayout {
 
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
+                isContineTouch = false;
+                Log.i("test_long_click;","ACTION_POINTER_DOWN");
+                if(runnable != null){
+                    mHandler.removeCallbacks(runnable);
+                }
                 if (!mLockScreenMode) {
                     oldDistance = calculateDistance(event);
                     oldRotation = calculateRotation(event);
@@ -428,11 +454,20 @@ public class StickerView extends FrameLayout {
 
             case MotionEvent.ACTION_UP:
                 onTouchUp(event);
-                initalLineLength = 0;
-                initalProgressLength = 0;
+                isContineTouch = false;
+                Log.i("test_long_click;","ACTION_UP");
+
+                if(runnable != null){
+                    mHandler.removeCallbacks(runnable);
+                }
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
+                isContineTouch = false;
+                Log.i("test_long_click;","ACTION_POINTER_UP");
+                if(runnable != null){
+                    mHandler.removeCallbacks(runnable);
+                }
                 if (!mLockScreenMode) {
                     if (currentMode == ActionMode.ZOOM_WITH_TWO_FINGER && handlingSticker != null) {
                         if (onStickerOperationListener != null) {
@@ -453,7 +488,7 @@ public class StickerView extends FrameLayout {
      * @param event MotionEvent received from {@link #onTouchEvent)
      * @return true if has touch something
      */
-    protected boolean onTouchDown(@NonNull MotionEvent event) {
+    protected boolean onTouchDown(@NonNull final MotionEvent event) {
         showGrid = true;
         currentMode = ActionMode.DRAG;
 
@@ -485,6 +520,21 @@ public class StickerView extends FrameLayout {
             if (onStickerOperationListener != null) {
                 onStickerOperationListener.onStickerTouchedDown(handlingSticker);
             }
+            if(currentIcon == null) {
+                isContineTouch = true;
+                mHandler.postDelayed(runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i("test_long_click;", "handler");
+                        if (isContineTouch) {
+                            if (onStickerOperationListener != null) {
+                                onStickerOperationListener.onStickerLongClick(handlingSticker, event.getRawX(), event.getRawY());
+                            }
+                        }
+                    }
+                }, LONG_CLICK_TIME_GAP);
+            }
+
         }
 
         if (currentIcon == null && handlingSticker == null) {
@@ -496,6 +546,10 @@ public class StickerView extends FrameLayout {
 
     protected void onTouchUp(@NonNull MotionEvent event) {
         showGrid = false;
+        isContineTouch = false;
+        if(runnable != null){
+            mHandler.removeCallbacks(runnable);
+        }
         long currentTime = SystemClock.uptimeMillis();
         if (currentMode == ActionMode.ICON && currentIcon != null && handlingSticker != null) {
             currentIcon.onActionUp(this, event);
@@ -576,6 +630,12 @@ public class StickerView extends FrameLayout {
                     handlingSticker.setMatrix(moveMatrix);
                     if (constrained) {
                         constrainSticker(handlingSticker);
+                    }
+                    if(blankMoveMode ||event.getX() != downX || event.getY() != downY){
+                        isContineTouch = false;
+                        if(runnable != null){
+                            mHandler.removeCallbacks(runnable);
+                        }
                     }
                 }
                 break;
@@ -899,27 +959,27 @@ public class StickerView extends FrameLayout {
     }
 
     @NonNull
-    public StickerView addSticker(@NonNull Sticker sticker) {
-        return addSticker(sticker, Sticker.Position.CENTER);
+    public StickerView addSticker(@NonNull Sticker sticker,boolean copy) {
+        return addSticker(sticker, Sticker.Position.CENTER,copy);
     }
 
     public StickerView addSticker(@NonNull final Sticker sticker,
-                                  final @Sticker.Position int position) {
+                                  final @Sticker.Position int position,final boolean copy) {
         if (ViewCompat.isLaidOut(this)) {
-            addStickerImmediately(sticker, position);
+            addStickerImmediately(sticker, position,copy);
         } else {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    addStickerImmediately(sticker, position);
+                    addStickerImmediately(sticker, position,copy);
                 }
             });
         }
         return this;
     }
 
-    protected void addStickerImmediately(@NonNull Sticker sticker, @Sticker.Position int position) {
-        setStickerPosition(sticker, position);
+    protected void addStickerImmediately(@NonNull Sticker sticker, @Sticker.Position int position,boolean copy) {
+        setStickerPosition(sticker, position,copy);
 
 
 //        float scaleFactor, widthScaleFactor, heightScaleFactor;
@@ -939,11 +999,12 @@ public class StickerView extends FrameLayout {
         invalidate();
     }
 
-    protected void setStickerPosition(@NonNull Sticker sticker, @Sticker.Position int position) {
+    protected void setStickerPosition(@NonNull Sticker sticker, @Sticker.Position int position, boolean isCopy) {
         float width = getWidth();
         float height = getHeight();
         float offsetX = width - sticker.getWidth();
         float offsetY = height - sticker.getHeight();
+
         if ((position & Sticker.Position.TOP) > 0) {
             offsetY /= 4f;
         } else if ((position & Sticker.Position.BOTTOM) > 0) {
@@ -959,9 +1020,21 @@ public class StickerView extends FrameLayout {
             offsetX /= 2f;
         }
         if (position != Sticker.Position.INITIAL) {
-            sticker.getMatrix().postTranslate(offsetX, offsetY);
+            if (!isCopy) {
+                sticker.getMatrix().postTranslate(offsetX, offsetY);
+            }
         }
+
+        if (isCopy) {
+            PointF pointF = sticker.getMappedCenterPoint();
+            // todo: 这里处理没有写全
+            if (pointF.x + COPY_STICKER_TRANS_OFFSET < width && pointF.y + COPY_STICKER_TRANS_OFFSET < height) {
+                sticker.getMatrix().postTranslate(COPY_STICKER_TRANS_OFFSET, COPY_STICKER_TRANS_OFFSET);
+            }
+        }
+
     }
+
 
     @NonNull
     public float[] getStickerPoints(@Nullable Sticker sticker) {
@@ -1092,38 +1165,10 @@ public class StickerView extends FrameLayout {
         return stickers;
     }
 
-    public void setShowNumber(boolean showNumber) {
-        this.showNumber = showNumber;
-    }
-
-    public void setMaskArray(float[] array) {
-        this.batchArray = array;
-    }
-
-    public void setMaskSticker(DrawableSticker sticker, int offsetX, int offsetY) {
-        this.batchSticker = sticker;
-        batchSticker.getMatrix().postTranslate(offsetX, offsetY);
-    }
-
-    public void setBorder(boolean show) {
-        this.showBorder = show;
-    }
-
-    public void setShowIcons(boolean show) {
-        this.showIcons = show;
-    }
-
-    public void setLockScreen(boolean lockScreenMode) {
-        this.mLockScreenMode = lockScreenMode;
-    }
-
     public void setShowGrid(boolean show) {
         this.showGrid = show;
     }
 
-    public void setSupportLineZoom(boolean supportLineZoom) {
-        this.supportLineZoom = supportLineZoom;
-    }
 
     public interface OnStickerOperationListener {
         void onStickerAdded(@NonNull Sticker sticker);
@@ -1149,5 +1194,7 @@ public class StickerView extends FrameLayout {
         void onCopySticker(@NonNull Sticker sticker);
 
         void onUnlock();
+
+        void onStickerLongClick(@NonNull Sticker sticker,float downX,float downY);
     }
 }
