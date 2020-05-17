@@ -16,6 +16,7 @@ import com.fax.showdt.R;
 import com.fax.showdt.dialog.ios.v3.CustomDialog;
 import com.fax.showdt.fragment.widgetStickerEdit.WidgetStickerPropertiesEditFragment;
 import com.fax.showdt.utils.CommonUtils;
+import com.fax.showdt.view.bubbleseekbar.BubbleSeekBar;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.showdt.view.sticker.DrawableSticker;
@@ -30,8 +31,8 @@ import java.util.List;
 
 public class WidgetShapePropertiesEditFragment extends Fragment implements View.OnClickListener {
 
-    private TextView mTvStrokeColor, mTvSolidColor, mTvGradientColor, mTvGradientColor1, mTvGradientColor2,mTvOrientation;
-    private SeekBar mShapeHeightSeekBar, mShapeLineWidthSeekBar, mShapeCornerWidthSeekBar;
+    private TextView mTvStrokeColor, mTvSolidColor, mTvGradientColor, mTvGradientColor1, mTvGradientColor2,mTvOrientation,mTvHeightProgress,mTvLineProgress,mTvCornerProgress,mTvWidthProgress;
+    private BubbleSeekBar mShapeLineWidthSeekBar,mShapeHeightSeekBar, mShapeCornerWidthSeekBar,mShapeWidthSeekBar;
     private DrawableSticker drawableSticker;
     private boolean isInitSuccessed = false;
     private SwitchButton switchButton;
@@ -55,6 +56,7 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
         mShapeHeightSeekBar = view.findViewById(R.id.shape_height_seekbar);
         mShapeLineWidthSeekBar = view.findViewById(R.id.shape_line_seekbar);
         mShapeCornerWidthSeekBar = view.findViewById(R.id.shape_corner_seekbar);
+        mShapeWidthSeekBar = view.findViewById(R.id.shape_width_seekbar);
         switchButton = view.findViewById(R.id.switch_btn);
         moreColor = view.findViewById(R.id.ll_more_color);
         orientation = view.findViewById(R.id.ll_orientation);
@@ -62,6 +64,10 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
         flColor3 = view.findViewById(R.id.fl_color3);
         flColorOperate = view.findViewById(R.id.fl_color_operate);
         ivOperateColor = view.findViewById(R.id.iv_color_operate);
+        mTvHeightProgress = view.findViewById(R.id.tv_progress_height);
+        mTvLineProgress = view.findViewById(R.id.tv_progress_line);
+        mTvCornerProgress = view.findViewById(R.id.tv_progress_corner);
+        mTvWidthProgress = view.findViewById(R.id.tv_progress_width);
         mTvStrokeColor.setOnClickListener(this);
         mTvSolidColor.setOnClickListener(this);
         switchButton.setOnClickListener(this);
@@ -80,7 +86,9 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
     }
 
     private void initSwitchBtn() {
-        switchButton.setChecked(drawableSticker.isGradient());
+        if(drawableSticker != null) {
+            switchButton.setChecked(drawableSticker.isGradient());
+        }
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -176,57 +184,82 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
     }
 
     private void initSeekBar() {
-        mShapeHeightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        mShapeHeightSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 if (drawableSticker != null) {
                     drawableSticker.setShapeHeightRatio(progress / 100f);
                 }
+                mTvHeightProgress.setText(String.valueOf(progress));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
-        mShapeLineWidthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mShapeLineWidthSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 if (drawableSticker != null) {
                     drawableSticker.setStrokeRatio(progress / 100f);
                 }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                mTvLineProgress.setText(String.valueOf(progress));
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
-        mShapeCornerWidthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        mShapeCornerWidthSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 if (drawableSticker != null) {
                     drawableSticker.setCornerRatio(progress / 100f);
                 }
+                mTvCornerProgress.setText(String.valueOf(progress));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
+        mShapeWidthSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                if (drawableSticker != null) {
+                    drawableSticker.setShapeWidthRatio(progress / 100f);
+                }
+                mTvWidthProgress.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
@@ -333,6 +366,11 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
             mShapeHeightSeekBar.setProgress((int) (drawableSticker.getShapeHeightRatio() * 100));
             mShapeLineWidthSeekBar.setProgress((int) (drawableSticker.getStrokeRatio() * 100));
             mShapeCornerWidthSeekBar.setProgress((int) (drawableSticker.getCornerRatio() * 100));
+            mShapeWidthSeekBar.setProgress((int) (drawableSticker.getShapeWidthRatio() * 100));
+            mTvHeightProgress.setText(String.valueOf((int)(drawableSticker.getShapeHeightRatio() * 100)));
+            mTvLineProgress.setText(String.valueOf((int)(drawableSticker.getStrokeRatio() * 100)));
+            mTvCornerProgress.setText(String.valueOf((int)(drawableSticker.getCornerRatio() * 100)));
+            mTvWidthProgress.setText(String.valueOf((int)(drawableSticker.getShapeWidthRatio() * 100)));
 
         }
     }

@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Size;
 
+import androidx.core.view.DragStartHelper;
+
 import com.fax.showdt.ConstantString;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.manager.CommonConfigManager;
@@ -36,7 +38,7 @@ public class WidgetContext {
         map.clear();
     }
 
-    public HashMap<String,CustomWidgetConfig>  getCustomWidgetConfig() {
+    public HashMap<String, CustomWidgetConfig> getCustomWidgetConfig() {
         return map;
     }
 
@@ -51,8 +53,8 @@ public class WidgetContext {
         if (map.containsKey(widgetId)) {
             mCustomWidgetConfig = map.get(widgetId);
         } else {
-            mCustomWidgetConfig= WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
-            map.put(widgetId,mCustomWidgetConfig);
+            mCustomWidgetConfig = WidgetDataHandlerUtils.getWidgetDataFromId(widgetId, ConstantString.widget_map_data_key);
+            map.put(widgetId, mCustomWidgetConfig);
         }
         if (mCustomWidgetConfig != null) {
             int width = mCustomWidgetConfig.getBaseOnWidthPx();
@@ -66,9 +68,9 @@ public class WidgetContext {
                 return null;
             }
             Canvas canvas = new Canvas(bm);
-            CustomWidgetConfigConvertHelper helper = new CustomWidgetConfigConvertHelper();
-            helper.drawStaticOnBitmapFromConfig(mCustomWidgetConfig,canvas);
-            helper.drawDynamicOnBitmapFromConfig(mCustomWidgetConfig, canvas);
+            WidgetDrawHelper.getInstance().drawStickers(widgetId,mCustomWidgetConfig, canvas);
+//            helper.drawStaticOnBitmapFromConfig(mCustomWidgetConfig,canvas);
+//            helper.drawDynamicOnBitmapFromConfig(mCustomWidgetConfig, canvas);
             return bm;
         }
         return null;

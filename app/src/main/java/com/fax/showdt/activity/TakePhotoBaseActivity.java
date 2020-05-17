@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fax.lib_photo.photopick.Matisse;
@@ -13,6 +14,7 @@ import com.fax.lib_photo.photopick.filter.Filter;
 import com.fax.lib_photo.photopick.listener.OnCheckedListener;
 import com.fax.lib_photo.photopick.listener.OnSelectedListener;
 import com.fax.showdt.BuildConfig;
+import com.fax.showdt.ConstantString;
 import com.fax.showdt.R;
 import com.fax.showdt.callback.OnCropImgCallback;
 import com.fax.showdt.utils.Constant;
@@ -31,14 +33,20 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import es.dmoral.toasty.Toasty;
+import top.zibin.luban.CompressionPredicate;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
+
+import static com.yalantis.ucrop.UCrop.EXTRA_INPUT_URI;
+import static com.yalantis.ucrop.UCrop.Options.EXTRA_IS_JUMP_OVER;
 
 public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCropImgCallback {
     private File mTmpUCropDir;
     private UCrop.Options mUCropOption;
     private String mCompressPath;
     private static final int REQUEST_CODE_CHOOSE = 23;
-    private static final String COMPRESS_DIR = "compress";
-    private static final String CROP_IMG_DIR = "crop";
+    private static final String COMPRESS_DIR = ".compress";
+    private static final String CROP_IMG_DIR = ".crop";
     private static final float ratioX = 1.0f;
     private static final float ratioY = 1.0f;
 
@@ -105,7 +113,7 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
             mCompressPath = getFilesDir() + File.separator + COMPRESS_DIR;
         }
         FileExUtils.checkDir(mTmpUCropDir);
-//        FileExUtils.checkDir(mCompressPath);
+        FileExUtils.checkDir(mCompressPath);
 
         if (mUCropOption == null){
             mUCropOption = new UCrop.Options();
@@ -116,6 +124,7 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
 //            mUCropOption.setCircleDimmedLayer(true);
             mUCropOption.setShowCropFrame(false);
             mUCropOption.setShowCropGrid(false);
+            mUCropOption.setJumpOver(true);
         }
     }
     protected Uri getDestinationUri(){
@@ -136,7 +145,46 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
         return mUCropOption;
     }
 
+    protected void addCompressListener(@NonNull String picPath, final CompressCallback callback) {
+        if (!TextUtils.isEmpty(picPath)) {
+            Luban.with(this)
+                    .load(picPath)
+                    .ignoreBy(ConstantString.CROP_IMG_MIN_SIZE)
+                    .setTargetDir(getCompressPath())
+                    .filter(new CompressionPredicate() {
+                        @Override
+                        public boolean apply(String path) {
+                            return !(TextUtils.isEmpty(path) || path.toLowerCase().endsWith(".gif"));
+                        }
+                    })
+                    .setCompressListener(new OnCompressListener() {
+                        @Override
+                        public void onStart() {
+//                            ToastShowUtils.showCommonToast(TakePhotoBaseActivity.this,"图片压缩中...",Toasty.LENGTH_SHORT);
+                        }
 
+                        @Override
+                        public void onSuccess(File file) {
+                            if (callback != null) {
+                                callback.compressResult(file);
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+//                            ToastShowUtils.showCommonToast(TakePhotoBaseActivity.this,"图片压缩失败"+e.getMessage(),Toasty.LENGTH_SHORT);
+                            if (callback != null) {
+                                callback.compressResult(null);
+                            }
+                        }
+                    }).launch();
+        }
+    }
+
+    public interface CompressCallback {
+        void compressResult(File file);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,7 +195,17 @@ public abstract class TakePhotoBaseActivity extends BaseActivity implements OnCr
         else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
             if (resultUri != null) {
-                cropSuc(resultUri.getPath());
+                addCompressListener(resultUri.getPath(), new CompressCallback() {
+                    @Override
+                    public void compressResult(File file) {
+                        if(file != null) {
+                            cropSuc(file.getPath());
+                            Log.e("test_compress_path:",file.getAbsolutePath());
+                        }else {
+                            cropSuc(resultUri.getPath());
+                        }
+                    }
+                });
             }
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);

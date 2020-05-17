@@ -9,6 +9,7 @@
         android:id="@+id/touch_area"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/widget_click_bg_selector"
         android:layout_margin="0dp"
         android:padding="0dp" />
 </FrameLayout>

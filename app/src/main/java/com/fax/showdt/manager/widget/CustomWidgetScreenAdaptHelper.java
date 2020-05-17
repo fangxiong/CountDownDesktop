@@ -119,7 +119,6 @@ public class CustomWidgetScreenAdaptHelper {
         plugLocation.setY(targetPoint.y);
         bean.setLocation(plugLocation);
         float adaptRatio = getWidthRatio(baseOnWidth);
-//        bean.setScale(bean.getScale() * adaptRatio);
         bean.setLeft(plugLocation.getX() - bean.getWidth() * bean.getScale() / 2f);
         bean.setRight(plugLocation.getX() + bean.getWidth() * bean.getScale() / 2f);
         bean.setTop(plugLocation.getY() - bean.getHeight() * bean.getScale() / 2f);
@@ -128,15 +127,13 @@ public class CustomWidgetScreenAdaptHelper {
             bean.setScale(bean.getScale() * adaptRatio);
 
         } else if (bean.getmPicType() == DrawableSticker.SDCARD) {
-//           bean.setScale(bean.getScale() * adaptRatio);
+           bean.setScale(bean.getScale() * adaptRatio);
+
 
         } else if (bean.getmPicType() == DrawableSticker.ASSET) {
 
         } else if (bean.getmPicType() == DrawableSticker.SHAPE) {
-            float originalWidth = bean.getWidth() * bean.getScale();
-            float resultWidth = originalWidth * adaptRatio;
-            float scale = resultWidth / DrawableSticker.DEFAULT_DRAWABLE_HEIGHT;
-            bean.setScale(scale);
+            bean.setWidth((int)((bean.getRight()-bean.getLeft())*adaptRatio));
         }
     }
 

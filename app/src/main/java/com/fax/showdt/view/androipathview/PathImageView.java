@@ -64,6 +64,13 @@ public class PathImageView extends View  {
         }
     }
 
+    public void setColor(int color){
+        if(paint != null){
+            paint.setColor(color);
+        }
+        invalidate();
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -87,7 +94,6 @@ public class PathImageView extends View  {
 
 
     }
-
 
 
     @Override

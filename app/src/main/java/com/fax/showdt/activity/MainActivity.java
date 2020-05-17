@@ -164,11 +164,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
                     }
                     case R.id.nav_share: {
-                        ShareUtils.shareText(MainActivity.this, "我正在使用《魔秀插件》,很好用哦,推荐给你", "我正在使用《魔秀插件》,很好用哦,推荐给你哦\n http://fir.kwgt.top/x12w");
+                        ShareUtils.shareText(MainActivity.this, "我正在使用《魔秀插件》,很好用哦,推荐给你", "我正在使用《魔秀插件》,很好用哦,推荐给你哦\n https://www.coolapk.com/apk/com.fax.showdt#tt_daymode=1&tt_font=m");
                         break;
                     }
                     case R.id.nav_permission: {
-                        showOpenNotificationPermissionDialog();
+                        startActivity(new Intent(MainActivity.this,SettingActivity.class));
                         break;
                     }
                 }
@@ -226,34 +226,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
-    }
-
-    /**
-     * 弹出通知监听权限开启提示框
-     */
-    private void showOpenNotificationPermissionDialog() {
-        MessageDialog.show(this, "提示", "开通通知监听权限可更大程度保证你桌面插件运行更加稳定哦!", "推荐开启")
-                .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
-                    @Override
-                    public boolean onClick(BaseDialog baseDialog, View v) {
-                        gotoOpen();
-                        return false;
-                    }
-                });
-    }
-
-    private void gotoOpen() {
-        try {
-            Intent intent;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            } else {
-                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            }
-            startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void requestPermission(String[] perms) {

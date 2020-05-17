@@ -43,7 +43,7 @@ public class ProgressSticker extends Sticker {
 
     private float percent = 0.5f;
     private String foreColor = "#6abc6d";
-    private String bgColor = "#90FFFFFF";
+    private String bgColor = "#FFFFFF";
     @ProgressDrawType
     private String drawType = SOLID;
     @ProgressType

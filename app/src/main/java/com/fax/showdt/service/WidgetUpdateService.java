@@ -6,23 +6,30 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.util.Log;
 
+import com.fax.showdt.AppContext;
 import com.fax.showdt.bean.CustomWidgetConfig;
 import com.fax.showdt.manager.location.LocationManager;
+import com.fax.showdt.manager.widget.WidgetClickType;
 import com.fax.showdt.manager.widget.WidgetManager;
 import com.fax.showdt.utils.CustomPlugUtil;
 import com.fax.showdt.utils.GsonUtils;
+import com.fax.showdt.utils.IntentUtils;
+import com.fax.showdt.utils.ToastShowUtils;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.RequiresApi;
@@ -36,6 +43,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
+
+import static com.fax.showdt.manager.widget.WidgetUtils.ACTION_WIDGET_ICON_CLICK;
+import static com.fax.showdt.utils.CommonUtils.QQ_APP_ID;
 
 
 public class WidgetUpdateService extends Service {
@@ -55,6 +67,7 @@ public class WidgetUpdateService extends Service {
     public final static String WIDGET_CONFIG_CHANGED = "widget_config_changed";
     private WidgetUpdateReceiver mWidgetUpdateReceiver;
     private volatile static WidgetUpdateService service;
+    private UpdateRunnable updateRunnable;
 
     @IntDef({REFRESH_WITH_ONE_SECOND, REFRESH_WITH_SIXTY_SECOND, REFRESH_WITH_JUST_ONCE})
     @Retention(RetentionPolicy.SOURCE)
@@ -65,7 +78,7 @@ public class WidgetUpdateService extends Service {
         try {
             Intent intent = new Intent(context, WidgetUpdateService.class);
             ContextCompat.startForegroundService(context, intent);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -95,7 +108,8 @@ public class WidgetUpdateService extends Service {
         }
         if (mHandler == null) {
             mHandler = new Handler(handlerThread.getLooper());
-            mHandler.post(new mRunnable());
+            updateRunnable = new UpdateRunnable();
+            mHandler.post(updateRunnable);
         }
     }
 
@@ -143,6 +157,7 @@ public class WidgetUpdateService extends Service {
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        intentFilter.addAction(ACTION_WIDGET_ICON_CLICK);
         mWidgetUpdateReceiver = new WidgetUpdateReceiver();
         this.registerReceiver(mWidgetUpdateReceiver, intentFilter);
         //当服务开启后通知 通知监听器刷新歌曲信息
@@ -171,6 +186,7 @@ public class WidgetUpdateService extends Service {
         alarmManager.cancel(getPendingIntent());
         if (handlerThread != null) {
             handlerThread.quit();
+            mHandler.removeCallbacks(updateRunnable);
             Log.i("test_widget:", "handlerThread被杀");
         }
         //当服务被杀后需要关掉定位服务,避免消耗资源
@@ -187,7 +203,6 @@ public class WidgetUpdateService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void updateWidget(String widgetId) {
         try {
-
             WidgetManager.getInstance().updateAppWidget(this, widgetId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,18 +210,18 @@ public class WidgetUpdateService extends Service {
     }
 
 
-    class mRunnable implements Runnable {
+    class UpdateRunnable implements Runnable {
         @Override
         public void run() {
-            if(isAllowRefreshAllWidget) {
+            if (isAllowRefreshAllWidget) {
                 int[] allWidgetId = WidgetManager.getAllProviderWidgetIds(WidgetUpdateService.this);
-                for(int i =0;i<allWidgetId.length;i++) {
-                    Log.i("test_draw_bitmap:", "秒刷新所有插件:"+allWidgetId[i]);
+                for (int i = 0; i < allWidgetId.length; i++) {
+                    Log.i("test_draw_bitmap:", "秒刷新所有插件:" + allWidgetId[i]);
                     updateWidget(String.valueOf(allWidgetId[i]));
                 }
-            }else {
-                for(int i =0;i<widgetIdWithOneSec.size();i++) {
-                    Log.i("test_draw_bitmap:", "秒刷新匹配的插件:"+widgetIdWithOneSec.get(i));
+            } else {
+                for (int i = 0; i < widgetIdWithOneSec.size(); i++) {
+                    Log.i("test_draw_bitmap:", "秒刷新匹配的插件:" + widgetIdWithOneSec.get(i));
                     updateWidget(String.valueOf(widgetIdWithOneSec.get(i)));
                 }
             }
@@ -214,8 +229,8 @@ public class WidgetUpdateService extends Service {
         }
     }
 
-    private List<String> getWidgetIdsRefreshWithOneSec(){
-        List<String> result =new ArrayList<>();
+    private List<String> getWidgetIdsRefreshWithOneSec() {
+        List<String> result = new ArrayList<>();
         HashMap<String, String> map = WidgetManager.getInstance().getAllBindDataWidgetIds();
         Iterator map1it = map.entrySet().iterator();
         Log.i("test_draw_bitmap:", "秒刷新map size:" + map.size());
@@ -225,9 +240,9 @@ public class WidgetUpdateService extends Service {
             Log.i("test_draw_bitmap:", "widgetConfig:" + entry.getValue());
 
             CustomWidgetConfig config = GsonUtils.parseJsonWithGson(entry.getValue(), CustomWidgetConfig.class);
-            if(isAllowRefreshAllWidget){
+            if (isAllowRefreshAllWidget) {
                 result.add(entry.getKey());
-            }else {
+            } else {
                 mCurrentRefreshGap = CustomPlugUtil.getWidgetRefreshGap(config);
                 if (mCurrentRefreshGap == REFRESH_WITH_ONE_SECOND) {
                     result.add(entry.getKey());
@@ -237,14 +252,14 @@ public class WidgetUpdateService extends Service {
         return result;
     }
 
-    private void updateWidgetRefreshWithSixtySec(){
+    private void updateWidgetRefreshWithSixtySec() {
         HashMap<String, CustomWidgetConfig> map = WidgetManager.getInstance().getCustomWidgetConfig();
         Iterator map1it = map.entrySet().iterator();
-        Log.i("test_draw_bitmap:", "map size::"+ map.size());
+        Log.i("test_draw_bitmap:", "map size::" + map.size());
         while (map1it.hasNext()) {
             Map.Entry<String, CustomWidgetConfig> entry = (Map.Entry<String, CustomWidgetConfig>) map1it.next();
             mCurrentRefreshGap = CustomPlugUtil.getWidgetRefreshGap(entry.getValue());
-            Log.i("test_draw_bitmap:", "刷新Gap:"+mCurrentRefreshGap);
+            Log.i("test_draw_bitmap:", "刷新Gap:" + mCurrentRefreshGap);
             if (mCurrentRefreshGap == REFRESH_WITH_SIXTY_SECOND) {
                 Log.i("test_draw_bitmap:", "分钟刷新");
                 updateWidget(entry.getKey());
@@ -271,12 +286,55 @@ public class WidgetUpdateService extends Service {
                 Log.i("test_draw_bitmap:", "接收到分钟刷新广播");
                 isAllowRefreshAllWidget = false;
                 widgetIdWithOneSec = getWidgetIdsRefreshWithOneSec();
-                updateWidgetRefreshWithSixtySec();
+               updateWidgetRefreshWithSixtySec();
+            } else if (ACTION_WIDGET_ICON_CLICK.equals(action)) {
+                String clickType = intent.getStringExtra("clickType");
+                String jumpContent = intent.getStringExtra("jumpContent");
+                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(30);
+                switch (clickType) {
+                    case WidgetClickType.CLICK_URL: {
+                        try {
+                            Intent intentUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(jumpContent));
+                            intentUrl.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intentUrl);
+                        }catch (ActivityNotFoundException e){
+                            ToastShowUtils.showCommonToast(AppContext.get(),"请检查你的地址是否正确", Toasty.LENGTH_SHORT);
+                        }
+                        break;
+                    }
+                    case WidgetClickType.CLICK_APPLICATION: {
+                        try {
+                            Intent packageIntent = IntentUtils.getAppLaunchIntent(AppContext.get(), jumpContent);
+                            if (packageIntent != null) {
+                                packageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                PendingIntent pendingIntent = PendingIntent.getActivity(AppContext.get(), 0, packageIntent, 0);
+                                pendingIntent.send();
+                            }else {
+                                ToastShowUtils.showCommonToast(AppContext.get(),"应用未安装", Toasty.LENGTH_SHORT);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    case WidgetClickType.CLICK_QQ_CONTACT: {
+                        try {
+                            String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + jumpContent;
+                            final Intent intentQQ = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(QQ_APP_ID);
+                            intentQQ.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intentQQ);
+                        }catch (ActivityNotFoundException e){
+
+                        }
+                        break;
+                    }
+
+
+                }
+
             }
         }
     }
-
-
-
 
 }

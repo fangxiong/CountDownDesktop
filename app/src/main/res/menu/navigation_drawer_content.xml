@@ -39,7 +39,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_permission"
-            android:icon="@drawable/navigation_open_permission_icon"
-            android:title="@string/setting_open_permission" />
+            android:icon="@drawable/navigation_setting"
+            android:title="@string/setting" />
     </group>
 </menu>

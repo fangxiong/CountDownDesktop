@@ -365,6 +365,11 @@ public class WidgetClickSettingFragment extends Fragment implements View.OnClick
                             ToastShowUtils.showCommonToast(getActivity(),"输入格式错误", Toasty.LENGTH_SHORT);
                             return true;
                         }
+                        if(!TextUtils.isEmpty(inputStr)){
+                            if(!inputStr.startsWith("http://")){
+                                inputStr = "http://"+inputStr;
+                            }
+                        }
                         mTvClickTypeContent.setText(inputStr);
                         if (editClickCallback != null) {
                             editClickCallback.onActionContent(inputStr,"");

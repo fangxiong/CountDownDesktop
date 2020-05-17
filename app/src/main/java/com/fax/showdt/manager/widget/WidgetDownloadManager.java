@@ -30,7 +30,8 @@ import io.reactivex.disposables.Disposable;
 public class WidgetDownloadManager {
 
     private static volatile WidgetDownloadManager mInstance;
-    private File mParentFile,mSaveFile;
+    private File mParentFile, mSaveFile;
+
     private WidgetDownloadManager() {
     }
 
@@ -46,32 +47,20 @@ public class WidgetDownloadManager {
     }
 
 
-    public void startDownloadWidget(final WidgetConfig config, final DownloadWidgetCallback callback){
-        final CustomWidgetConfig customWidgetConfig = GsonUtils.parseJsonWithGson(config.getConfig(),CustomWidgetConfig.class);
-        if(TextUtils.isEmpty(customWidgetConfig.getZipImgUrl())){
+    public void startDownloadWidget(final WidgetConfig config, final DownloadWidgetCallback callback) {
+        final CustomWidgetConfig customWidgetConfig = GsonUtils.parseJsonWithGson(config.getConfig(), CustomWidgetConfig.class);
+        if (TextUtils.isEmpty(customWidgetConfig.getZipImgUrl())) {
             CustomWidgetScreenAdaptHelper helper = new CustomWidgetScreenAdaptHelper(AppContext.get());
-            helper.adaptConfig(customWidgetConfig);
+            config.setConfig(helper.adaptConfig(customWidgetConfig).toJSONString());
             callback.downloadSuc();
             return;
         }
-        BmobFile bmobfile = new BmobFile("xxx.zip", "",customWidgetConfig.getZipImgUrl() );
+        BmobFile bmobfile = new BmobFile("xxx.zip", "", customWidgetConfig.getZipImgUrl());
         File mWidgetDirFile = new File(com.fax.showdt.utils.Environment.getHomeDir(), ".widget_file");
         FileExUtils.checkDir(mWidgetDirFile);
         mParentFile = new File(mWidgetDirFile, config.getObjectId());
-        if(FileExUtils.exists(mParentFile)){
-            List<DrawablePlugBean> drawablePlugBeans = customWidgetConfig.getDrawablePlugList();
-            for(DrawablePlugBean drawablePlugBean : drawablePlugBeans){
-                if(DrawableSticker.SDCARD == drawablePlugBean.getmPicType()) {
-                    drawablePlugBean.setDrawablePath(mParentFile.getAbsolutePath() + File.separator + drawablePlugBean.getName());
-                }
-            }
-            customWidgetConfig.setBgPath((mParentFile.getAbsolutePath() + File.separator + customWidgetConfig.getBgPath()));
-            Log.i("WidgetDownloadManager:",customWidgetConfig.toJSONString());
-            CustomWidgetScreenAdaptHelper helper = new CustomWidgetScreenAdaptHelper(AppContext.get());
-            helper.adaptConfig(customWidgetConfig);
-            config.setConfig(customWidgetConfig.toJSONString());
-            callback.downloadSuc();
-            return;
+        if (FileExUtils.exists(mParentFile)) {
+            FileExUtils.deleteSingleFile(mParentFile.getAbsolutePath());
         }
         FileExUtils.checkDir(mParentFile);
         mSaveFile = new File(mParentFile, "widget_assets.zip");
@@ -80,38 +69,37 @@ public class WidgetDownloadManager {
             @Override
             public void onStart() {
                 callback.downloadStart();
-                Log.i("WidgetDownloadManager","开始下载...");
+                Log.i("WidgetDownloadManager", "开始下载...");
             }
 
             @Override
             public void done(String savePath, BmobException e) {
                 if (e == null) {
-                    Log.i("WidgetDownloadManager","下载成功,保存路径:" + savePath);
+                    Log.i("WidgetDownloadManager", "下载成功,保存路径:" + savePath);
                     try {
                         boolean result = unZipFile(savePath, mParentFile.getAbsolutePath());
-                        if(result){
+                        if (result) {
                             FileExUtils.deleteSingleFile(savePath);
                             List<DrawablePlugBean> drawablePlugBeans = customWidgetConfig.getDrawablePlugList();
-                            for(DrawablePlugBean drawablePlugBean : drawablePlugBeans){
-                                if(DrawableSticker.SDCARD == drawablePlugBean.getmPicType()) {
+                            for (DrawablePlugBean drawablePlugBean : drawablePlugBeans) {
+                                if (DrawableSticker.SDCARD == drawablePlugBean.getmPicType()) {
                                     drawablePlugBean.setDrawablePath(mParentFile.getAbsolutePath() + File.separator + drawablePlugBean.getName());
                                 }
                             }
                             customWidgetConfig.setBgPath((mParentFile.getAbsolutePath() + File.separator + customWidgetConfig.getBgPath()));
-                            Log.i("WidgetDownloadManager:",customWidgetConfig.toJSONString());
+                            Log.i("WidgetDownloadManager:", customWidgetConfig.toJSONString());
                             CustomWidgetScreenAdaptHelper helper = new CustomWidgetScreenAdaptHelper(AppContext.get());
-                            helper.adaptConfig(customWidgetConfig);
-                            config.setConfig(customWidgetConfig.toJSONString());
+                            config.setConfig(helper.adaptConfig(customWidgetConfig).toJSONString());
                             callback.downloadSuc();
-                        }else {
+                        } else {
                             callback.downloadFail("解压失败");
                         }
-                    }catch (ZipException error){
+                    } catch (ZipException error) {
                         error.printStackTrace();
                     }
                 } else {
                     callback.downloadFail("下载失败");
-                    Log.i("WidgetDownloadManager","下载失败：" + e.getErrorCode() + "," + e.getMessage());
+                    Log.i("WidgetDownloadManager", "下载失败：" + e.getErrorCode() + "," + e.getMessage());
                 }
             }
 
@@ -124,7 +112,7 @@ public class WidgetDownloadManager {
         });
     }
 
-    private boolean unZipFile(String zipfile,String dest) throws ZipException {
+    private boolean unZipFile(String zipfile, String dest) throws ZipException {
         ZipFile zfile = new ZipFile(zipfile);
         zfile.setFileNameCharset("UTF-8");
         if (!zfile.isValidZipFile()) {
@@ -135,19 +123,22 @@ public class WidgetDownloadManager {
             file.mkdirs();
         }
         ProgressMonitor monitor = zfile.getProgressMonitor();
-        try{
+        try {
             zfile.extractAll(dest);
-        }catch (Exception e){
+        } catch (Exception e) {
             monitor.cancelAllTasks();
             return false;
         }
         return true;
     }
 
-    public interface DownloadWidgetCallback{
+    public interface DownloadWidgetCallback {
         void downloadStart();
+
         void downloadSuc();
+
         void downloadProgress(int progress);
+
         void downloadFail(String errorMsg);
     }
 }

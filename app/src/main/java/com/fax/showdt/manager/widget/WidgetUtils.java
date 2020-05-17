@@ -30,6 +30,8 @@ import static com.fax.showdt.utils.CommonUtils.QQ_APP_ID;
  */
 public class WidgetUtils {
 
+    public static String ACTION_WIDGET_ICON_CLICK = "widget_icon_click";
+
     /**
      * 根据widget的json配置来为其生成可点击的区域
      *
@@ -85,30 +87,25 @@ public class WidgetUtils {
     }
 
     public static PendingIntent getClickToApplication(String path) {
-        Intent packageIntent = IntentUtils.getAppLaunchIntent(AppContext.get(), path);
-        if (packageIntent != null) {
-            packageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            Log.i("test_click:","target:"+path);
-            return PendingIntent.getActivity(AppContext.get(), 7, packageIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
-        return null;
+        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+        intent.putExtra("clickType",WidgetClickType.CLICK_APPLICATION);
+        intent.putExtra("jumpContent",path);
+            return PendingIntent.getBroadcast(AppContext.get(), 7, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static PendingIntent getGoToWebUrl(String path) {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(path);
-        intent.setData(content_url);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        Log.i("test_click:","target:"+path);
-        return PendingIntent.getActivity(AppContext.get(), 6, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+        intent.putExtra("clickType",WidgetClickType.CLICK_URL);
+        intent.putExtra("jumpContent",path);
+        return PendingIntent.getBroadcast(AppContext.get(), 6, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 
     public static PendingIntent goQQContactPage(String qqnum){
-        String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qqnum;
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(QQ_APP_ID);
-        return PendingIntent.getActivity(AppContext.get(), 8, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+        intent.putExtra("clickType",WidgetClickType.CLICK_QQ_CONTACT);
+        intent.putExtra("jumpContent",qqnum);
+        return PendingIntent.getBroadcast(AppContext.get(), 8, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 

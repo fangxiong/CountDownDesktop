@@ -301,6 +301,7 @@ public class UCrop {
         public static final String EXTRA_ASPECT_RATIO_OPTIONS = EXTRA_PREFIX + ".AspectRatioOptions";
 
         public static final String EXTRA_UCROP_ROOT_VIEW_BACKGROUND_COLOR = EXTRA_PREFIX + ".UcropRootViewBackgroundColor";
+        public static final String EXTRA_IS_JUMP_OVER = EXTRA_PREFIX + ".jump_over";
 
 
         private final Bundle mOptionBundle;
@@ -566,6 +567,9 @@ public class UCrop {
             mOptionBundle.putInt(EXTRA_MAX_SIZE_Y, height);
         }
 
+        public void setJumpOver(boolean result){
+            mOptionBundle.putBoolean(EXTRA_IS_JUMP_OVER,result);
+        }
     }
 
 }

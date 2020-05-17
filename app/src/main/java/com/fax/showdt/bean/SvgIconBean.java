@@ -15,6 +15,8 @@ public class SvgIconBean {
 
     private Properties properties;
 
+    private String path;
+
 
     public void setProperties(Properties properties) {
         this.properties = properties;
@@ -30,6 +32,14 @@ public class SvgIconBean {
 
     public IconBean getIcon() {
         return icon;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public class IconBean{

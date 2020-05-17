@@ -1,140 +1,481 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_5">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_color"
-            android:layout_width="@dimen/margin_30"
-            android:layout_height="@dimen/margin_30"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_10"
-            android:src="@drawable/widget_progress_color_icon" />
-
-        <TextView
-            android:id="@+id/tv_color_title"
-            android:layout_toEndOf="@id/iv_color"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_30"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_5"
-            android:gravity="center"
-            android:text="@string/widget_text_color"
-            android:textColor="@color/c_A0A0A0"
-            android:textSize="@dimen/textSize_15" />
-
-        <FrameLayout
-            android:id="@+id/fl_color"
-            android:layout_toEndOf="@id/tv_color_title"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_marginEnd="@dimen/margin_70"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_25"
-            android:background="@color/c_F7F6F6">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5">
+
+            <ImageView
+                android:id="@+id/iv_color"
+                android:layout_width="@dimen/margin_30"
+                android:layout_height="@dimen/margin_30"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_10"
+                android:src="@drawable/widget_progress_color_icon" />
 
             <TextView
-                android:id="@+id/tv_color"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="@dimen/margin_2"
+                android:id="@+id/tv_color_title"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_5"
+                android:layout_toEndOf="@id/iv_color"
                 android:gravity="center"
-                android:onClick="onClick"
+                android:text="@string/widget_text_color"
                 android:textColor="@color/c_A0A0A0"
-                android:textSize="@dimen/textSize_16" />
-        </FrameLayout>
-        
-        <ImageView
-            android:id="@+id/iv_alignment"
-            android:layout_width="@dimen/margin_30"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:src="@drawable/widget_text_left_alignment"/>
-    </RelativeLayout>
+                android:textSize="@dimen/textSize_15" />
 
-    <LinearLayout
-        android:id="@+id/ll_letter_spacing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_5"
-        android:layout_marginBottom="@dimen/margin_5"
-        android:orientation="horizontal">
+            <FrameLayout
+                android:id="@+id/fl_color"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/margin_30"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_15"
+                android:layout_toStartOf="@id/iv_alignment"
+                android:layout_toEndOf="@id/tv_color_title"
+                android:background="@color/c_F7F6F6">
 
-        <ImageView
-            android:layout_width="@dimen/margin_30"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_10"
-            android:src="@drawable/widget_text_letter_spacing" />
+                <TextView
+                    android:id="@+id/tv_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="@dimen/margin_2"
+                    android:gravity="center"
+                    android:onClick="onClick"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/textSize_16" />
+            </FrameLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_5"
-            android:gravity="center"
-            android:text="@string/widget_text_letter_spacing"
-            android:textColor="@color/c_A0A0A0"
-            android:textSize="@dimen/textSize_15" />
+            <ImageView
+                android:id="@+id/iv_alignment"
+                android:layout_width="@dimen/margin_30"
+                android:layout_height="@dimen/margin_30"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:src="@drawable/widget_text_left_alignment" />
+        </RelativeLayout>
 
-        <SeekBar
-            android:id="@+id/letter_seekbar"
+        <LinearLayout
+            android:id="@+id/ll_letter_spacing"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:gravity="center"
-            android:max="10"
-            android:onClick="onClick" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5"
+            android:layout_marginBottom="@dimen/margin_5"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/margin_30"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_10"
+                android:src="@drawable/widget_text_letter_spacing" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_5"
+                android:gravity="center"
+                android:text="@string/widget_text_letter_spacing"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_15" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                    android:id="@+id/letter_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_12"
+                    android:layout_toStartOf="@id/tv_letter"
+                    android:paddingTop="@dimen/margin_2"
+                    app:bsb_hide_bubble="true"
+                    app:bsb_max="10"
+                    app:bsb_min="0"
+                    app:bsb_progress="17"
+                    app:bsb_second_track_color="@color/c_A0A0A0"
+                    app:bsb_track_color="@color/c_E0DFDF"
+                    app:bsb_track_size="1.6dp" />
+
+                <TextView
+                    android:id="@+id/tv_letter"
+                    android:layout_width="@dimen/margin_25"
+                    android:layout_height="@dimen/margin_25"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_15"
+                    android:background="@drawable/widget_edit_progress_text_bg"
+                    android:gravity="center"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/margin_12" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_line_spacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5"
+            android:layout_marginBottom="@dimen/margin_5"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/margin_30"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_10"
+                android:src="@drawable/widget_text_line_spacing" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_5"
+                android:gravity="center"
+                android:text="@string/widget_text_line_spacing"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_15" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                    android:id="@+id/row_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_12"
+                    android:layout_toStartOf="@id/tv_row"
+                    android:paddingTop="@dimen/margin_2"
+                    app:bsb_hide_bubble="true"
+                    app:bsb_max="20"
+                    app:bsb_min="0"
+                    app:bsb_progress="17"
+                    app:bsb_second_track_color="@color/c_A0A0A0"
+                    app:bsb_track_color="@color/c_E0DFDF"
+                    app:bsb_track_size="1.6dp" />
+
+                <TextView
+                    android:id="@+id/tv_row"
+                    android:layout_width="@dimen/margin_25"
+                    android:layout_height="@dimen/margin_25"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_12"
+                    android:layout_marginEnd="@dimen/margin_15"
+                    android:background="@drawable/widget_edit_progress_text_bg"
+                    android:gravity="center"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/margin_12" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_5"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_shadow_icon"
+                android:layout_width="@dimen/margin_30"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_10"
+                android:src="@drawable/widget_shadow_icon" />
+
+            <TextView
+                android:id="@+id/tv_stroke_text"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin_30"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/margin_5"
+                android:layout_toEndOf="@id/iv_shadow_icon"
+                android:gravity="center"
+                android:text="@string/widget_text_shadow"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/textSize_15" />
+
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/switch_btn"
+                android:layout_width="@dimen/margin_40"
+                android:layout_height="@dimen/margin_25"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin_15"
+                app:kswBackColor="@color/c_EFEFF6"
+                app:kswFadeBack="true"
+                app:kswThumbColor="@color/c_A0A0A0" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_5"
+                android:layout_marginBottom="@dimen/margin_5"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/margin_30"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_10"
+                    android:src="@drawable/widget_progress_color_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:gravity="center"
+                    android:text="@string/widget_text_shadow_color"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/textSize_15" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_15"
+                    android:layout_marginEnd="@dimen/margin_15"
+                    android:background="@color/c_F7F6F6"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_shadowColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_2"
+                        android:onClick="onClick" />
+                </FrameLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_shadow_radius"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_5"
+                android:layout_marginBottom="@dimen/margin_5"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/margin_30"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_10"
+                    android:src="@drawable/widget_shadow_radius" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:gravity="center"
+                    android:text="@string/widget_text_shadow_radius"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/textSize_15" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                        android:id="@+id/radius_seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_toStartOf="@id/tv_radius"
+                        android:paddingTop="@dimen/margin_2"
+                        app:bsb_hide_bubble="true"
+                        app:bsb_max="100"
+                        app:bsb_min="1"
+                        app:bsb_progress="17"
+                        app:bsb_second_track_color="@color/c_A0A0A0"
+                        app:bsb_track_color="@color/c_E0DFDF"
+                        app:bsb_track_size="1.6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_radius"
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_marginEnd="@dimen/margin_15"
+                        android:background="@drawable/widget_edit_progress_text_bg"
+                        android:gravity="center"
+                        android:textColor="@color/c_A0A0A0"
+                        android:textSize="@dimen/margin_12" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_5"
+                android:layout_marginBottom="@dimen/margin_5"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/margin_30"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_10"
+                    android:src="@drawable/widget_text_shadow_x" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:gravity="center"
+                    android:text="@string/widget_text_shadow_x"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/textSize_15" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                        android:id="@+id/offestX_seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_toStartOf="@id/tv_offestX"
+                        android:paddingTop="@dimen/margin_2"
+                        app:bsb_hide_bubble="true"
+                        app:bsb_max="100"
+                        app:bsb_min="0"
+                        app:bsb_progress="17"
+                        app:bsb_second_track_color="@color/c_A0A0A0"
+                        app:bsb_track_color="@color/c_E0DFDF"
+                        app:bsb_track_size="1.6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_offestX"
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_marginEnd="@dimen/margin_15"
+                        android:background="@drawable/widget_edit_progress_text_bg"
+                        android:gravity="center"
+                        android:textColor="@color/c_A0A0A0"
+                        android:textSize="@dimen/margin_12" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_5"
+                android:layout_marginBottom="@dimen/margin_5"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/margin_30"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_10"
+                    android:src="@drawable/widget_text_shadow_y" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/margin_30"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_5"
+                    android:gravity="center"
+                    android:text="@string/widget_text_shadow_y"
+                    android:textColor="@color/c_A0A0A0"
+                    android:textSize="@dimen/textSize_15" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                        android:id="@+id/offestY_seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_toStartOf="@id/tv_offestY"
+                        android:paddingTop="@dimen/margin_2"
+                        app:bsb_hide_bubble="true"
+                        app:bsb_max="100"
+                        app:bsb_min="0"
+                        app:bsb_progress="17"
+                        app:bsb_second_track_color="@color/c_A0A0A0"
+                        app:bsb_track_color="@color/c_E0DFDF"
+                        app:bsb_track_size="1.6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_offestY"
+                        android:layout_width="@dimen/margin_25"
+                        android:layout_height="@dimen/margin_25"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:layout_marginEnd="@dimen/margin_15"
+                        android:background="@drawable/widget_edit_progress_text_bg"
+                        android:gravity="center"
+                        android:textColor="@color/c_A0A0A0"
+                        android:textSize="@dimen/margin_12" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_line_spacing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_5"
-        android:layout_marginBottom="@dimen/margin_5"
-        android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="@dimen/margin_30"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_10"
-            android:src="@drawable/widget_text_line_spacing" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/margin_5"
-            android:gravity="center"
-            android:text="@string/widget_text_line_spacing"
-            android:textColor="@color/c_A0A0A0"
-            android:textSize="@dimen/textSize_15" />
-
-        <SeekBar
-            android:id="@+id/line_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:gravity="center"
-            android:max="20"
-            android:onClick="onClick" />
-
-    </LinearLayout>
-
-</LinearLayout>
-
+</ScrollView>

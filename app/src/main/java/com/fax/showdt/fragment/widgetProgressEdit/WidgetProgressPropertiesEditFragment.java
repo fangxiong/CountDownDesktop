@@ -18,6 +18,7 @@ import com.fax.showdt.manager.widget.WidgetProgressMode;
 import com.fax.showdt.manager.widget.WidgetProgressStyle;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.ViewUtils;
+import com.fax.showdt.view.bubbleseekbar.BubbleSeekBar;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.showdt.view.sticker.ProgressSticker;
@@ -29,9 +30,9 @@ import androidx.fragment.app.Fragment;
 
 public class WidgetProgressPropertiesEditFragment extends Fragment implements View.OnClickListener {
 
-    private TextView mTvProgress, mTvStyle, mTvMode, mTvForeColor, mTvBgColor;
+    private TextView mTvProgress, mTvStyle, mTvMode, mTvForeColor, mTvBgColor,mTvHeightProgress;
     private CustomDialog progressdialog, progressStyleDialog, progressModeDialog;
-    private SeekBar seekBar;
+    private BubbleSeekBar seekBar;
     private ProgressSticker progressSticker;
     private boolean isInitSuccessed = false;
 
@@ -45,6 +46,7 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
         mTvForeColor = view.findViewById(R.id.tv_foreColor);
         mTvBgColor = view.findViewById(R.id.tv_bgColor);
         seekBar = view.findViewById(R.id.seekbar);
+        mTvHeightProgress = view.findViewById(R.id.tv_progress_height);
         mTvProgress.setOnClickListener(this);
         mTvStyle.setOnClickListener(this);
         mTvMode.setOnClickListener(this);
@@ -139,9 +141,9 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
     }
 
     private void initSeekBar() {
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 if (progressSticker != null) {
                     if(progressSticker.getProgressType() .equals(WidgetProgressStyle.HORIZONTAL)) {
                         progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), progressSticker.getProgressHeight());
@@ -150,18 +152,19 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
                         progressSticker.resize(ViewUtils.dpToPx(150, AppContext.get()), ViewUtils.dpToPx(150, AppContext.get()));
                         progressSticker.setProgressHeight(ViewUtils.dpToPx(progress, getActivity()));
                     }
+                    mTvHeightProgress.setText(String.valueOf(progress));
                     Log.i("test_seek:","dp:"+progress+"");
                     Log.i("test_seek:","px"+ViewUtils.dpToPx(progress, getActivity())+"");
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
@@ -297,6 +300,7 @@ public class WidgetProgressPropertiesEditFragment extends Fragment implements Vi
             mTvForeColor.setBackgroundColor(Color.parseColor(progressSticker.getForeColor()));
             mTvBgColor.setBackgroundColor(Color.parseColor(progressSticker.getBgColor()));
             seekBar.setProgress(ViewUtils.pxToDp(progressSticker.getProgressHeight(), getActivity()));
+            mTvHeightProgress.setText(String.valueOf(ViewUtils.pxToDp(progressSticker.getProgressHeight(), getActivity())));
             Log.i("test_seek2:","dp:"+ViewUtils.pxToDp(progressSticker.getProgressHeight(), getActivity())+"");
             Log.i("test_seek2:","px"+progressSticker.getProgressHeight()+"");
         }

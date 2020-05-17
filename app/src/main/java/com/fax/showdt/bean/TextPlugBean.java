@@ -1,6 +1,7 @@
 package com.fax.showdt.bean;
 
 import android.text.Layout;
+import android.text.TextUtils;
 
 public class TextPlugBean extends BasePlugBean {
 
@@ -11,7 +12,11 @@ public class TextPlugBean extends BasePlugBean {
     private int alignment;
     private float letterSpacing;
     private float lineSpacing;
-
+    private boolean isShadow ;
+    private float shadowRadius;
+    private float shadowX;
+    private float shadowY;
+    private String shadowColor;
 
     public String getText() {
         return text;
@@ -83,6 +88,50 @@ public class TextPlugBean extends BasePlugBean {
 
     public void setLineSpacing(float lineSpacing) {
         this.lineSpacing = lineSpacing;
+    }
+
+    public void setAlignment(int alignment) {
+        this.alignment = alignment;
+    }
+
+    public boolean isShadow() {
+        return isShadow;
+    }
+
+    public void setShadow(boolean shadow) {
+        isShadow = shadow;
+    }
+
+    public float getShadowRadius() {
+        return shadowRadius;
+    }
+
+    public void setShadowRadius(float shadowRadius) {
+        this.shadowRadius = shadowRadius;
+    }
+
+    public float getShadowX() {
+        return shadowX;
+    }
+
+    public void setShadowX(float shadowX) {
+        this.shadowX = shadowX;
+    }
+
+    public float getShadowY() {
+        return shadowY;
+    }
+
+    public void setShadowY(float shadowY) {
+        this.shadowY = shadowY;
+    }
+
+    public String getShadowColor() {
+        return TextUtils.isEmpty(shadowColor) ? "#FFFFFF" : shadowColor;
+    }
+
+    public void setShadowColor(String shadowColor) {
+        this.shadowColor = shadowColor;
     }
 }
 

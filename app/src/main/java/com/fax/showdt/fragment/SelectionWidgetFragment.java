@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fax.showdt.R;
@@ -39,6 +40,7 @@ public class SelectionWidgetFragment extends Fragment {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+    private LinearLayout mLlError;
     private List<Fragment> mFragmentList = new ArrayList<>();
     private List<String> mTabList = new ArrayList<>();
     public SelectionWidgetFragment(){}
@@ -89,6 +91,7 @@ public class SelectionWidgetFragment extends Fragment {
                         mTabLayout.setupWithViewPager(mViewPager);
                     }
                 }else {
+                    mLlError.setVisibility(View.VISIBLE);
                     Log.i("test_req_error:",e.getMessage());
                     e.printStackTrace();
                     ToastShowUtils.showCommonToast(getActivity(),e.getMessage(), Toasty.LENGTH_SHORT);
@@ -100,6 +103,13 @@ public class SelectionWidgetFragment extends Fragment {
     private void initView(View view){
         mTabLayout = view.findViewById(R.id.tablayout);
         mViewPager = view.findViewById(R.id.vg);
+        mLlError = view.findViewById(R.id.ll_error);
+        mLlError.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                queryWidgetClassificationData();
+            }
+        });
     }
 
 }

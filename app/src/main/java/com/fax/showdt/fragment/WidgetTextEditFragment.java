@@ -230,7 +230,7 @@ public class WidgetTextEditFragment extends Fragment implements View.OnClickList
 
     private void showTimePickerDialog(final String originalText,final String date) {
         long time = CustomPlugUtil.getTimerTargetTime(date);
-        TimePickerDialog timePickerDialog = new TimePickerDialog(ViewUtils.dpToPx(156,getActivity()),
+        TimePickerDialog timePickerDialog = new TimePickerDialog(ViewUtils.dpToPx(206,getActivity()),
                 time, new TimePickerDialog.IClickConsumeCallback() {
             @Override
             public void clickConsume(long time) {

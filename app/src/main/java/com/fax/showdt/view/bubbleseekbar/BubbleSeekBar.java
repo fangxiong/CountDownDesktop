@@ -29,16 +29,20 @@ import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
 import com.fax.showdt.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
-
+import static com.fax.showdt.view.bubbleseekbar.BubbleSeekBar.TextPosition.BELOW_SECTION_MARK;
+import static com.fax.showdt.view.bubbleseekbar.BubbleSeekBar.TextPosition.BOTTOM_SIDES;
+import static com.fax.showdt.view.bubbleseekbar.BubbleSeekBar.TextPosition.SIDES;
 import static com.fax.showdt.view.bubbleseekbar.BubbleUtils.dp2px;
 import static com.fax.showdt.view.bubbleseekbar.BubbleUtils.sp2px;
 
@@ -52,13 +56,11 @@ import static com.fax.showdt.view.bubbleseekbar.BubbleUtils.sp2px;
 public class BubbleSeekBar extends View {
 
     static final int NONE = -1;
-    static final int SIDES = 0;
-    static final int BOTTOM_SIDES = 1;
-    static final int BELOW_SECTION_MARK = 2;
+
     @IntDef({NONE, SIDES, BOTTOM_SIDES, BELOW_SECTION_MARK})
     @Retention(RetentionPolicy.SOURCE)
     public @interface TextPosition {
-//        int SIDES = 0, BOTTOM_SIDES = 1, BELOW_SECTION_MARK = 2;
+        int SIDES = 0, BOTTOM_SIDES = 1, BELOW_SECTION_MARK = 2;
     }
 
     private float mMin; // min

@@ -20,11 +20,14 @@ public class DrawablePlugBean extends BasePlugBean {
     private String strokeColor ="#FFFFFF";
     private String drawableColor ="#FFFFFF";
     private float shapeHeightRatio;
+    private float shapeWidthRatio;
     private float cornerRatio;
     private float strokeRatio;
     private boolean isGradient;
     private List<Integer> gradientColors = new ArrayList<>();
     private int gradientOrientation;
+    private int strokeWidth;
+    private boolean stroke;
 
     public String getDrawablePath() {
         return drawablePath;
@@ -90,6 +93,14 @@ public class DrawablePlugBean extends BasePlugBean {
         this.shapeHeightRatio = shapeHeightRatio;
     }
 
+    public float getShapeWidthRatio() {
+        return shapeWidthRatio == 0 ? 1 : shapeWidthRatio;
+    }
+
+    public void setShapeWidthRatio(float shapeWidthRatio) {
+        this.shapeWidthRatio = shapeWidthRatio;
+    }
+
     public float getCornerRatio() {
         return cornerRatio;
     }
@@ -128,5 +139,21 @@ public class DrawablePlugBean extends BasePlugBean {
 
     public void setGradientOrientation(int gradientOrientation) {
         this.gradientOrientation = gradientOrientation;
+    }
+
+    public int getStrokeWidth() {
+        return strokeWidth;
+    }
+
+    public void setStrokeWidth(int strokeWidth) {
+        this.strokeWidth = strokeWidth;
+    }
+
+    public boolean isStroke() {
+        return stroke;
+    }
+
+    public void setStroke(boolean stroke) {
+        this.stroke = stroke;
     }
 }

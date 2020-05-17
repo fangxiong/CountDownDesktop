@@ -119,10 +119,9 @@ public class WidgetSelectedActivity extends BaseActivity implements View.OnClick
         if (resId == R.id.iv_back) {
             finish();
         } else if (resId == R.id.iv_make) {
-            startActivity(new Intent(WidgetSelectedActivity.this, DiyWidgetMakeActivity.class));
-
-        } else if (resId == R.id.tv_make) {
-            startActivity(new Intent(WidgetSelectedActivity.this, DiyWidgetMakeActivity.class));
+            startActivity(new Intent(WidgetSelectedActivity.this, MainActivity.class));
+        }else if(resId == R.id.ll_make_tip_content){
+            startActivity(new Intent(WidgetSelectedActivity.this, MainActivity.class));
         }
     }
 

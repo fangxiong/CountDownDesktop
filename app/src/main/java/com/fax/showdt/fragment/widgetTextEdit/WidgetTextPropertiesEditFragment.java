@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -20,9 +22,11 @@ import com.fax.showdt.R;
 import com.fax.showdt.manager.widget.WidgetProgressStyle;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.ViewUtils;
+import com.fax.showdt.view.bubbleseekbar.BubbleSeekBar;
 import com.fax.showdt.view.colorPicker.ColorPickerDialog;
 import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
 import com.fax.showdt.view.sticker.TextSticker;
+import com.kyleduo.switchbutton.SwitchButton;
 
 /**
  * Author: fax
@@ -31,10 +35,12 @@ import com.fax.showdt.view.sticker.TextSticker;
  * Description:
  */
 public class WidgetTextPropertiesEditFragment extends Fragment implements View.OnClickListener {
-    private TextView mTvColor;
+    private TextView mTvColor,mTvLetter,mTvRow,mTvShadowRadius,mTvShadowX,mTvShadowY,mTvShadowColor;
     private TextSticker mTextSticker;
     private ImageView mIvAlignment;
-    private SeekBar mLetterSeekBar, mLineSeekBar;
+    private BubbleSeekBar mLetterSeekBar, mLineSeekBar,mRadiusSeekBar,mOffestXSeekBar,mOffestYSeekBar;
+    private LinearLayout llShadow;
+    private SwitchButton switchButton;
     private boolean isInitSucceed = false;
 
     public WidgetTextPropertiesEditFragment() {
@@ -45,13 +51,26 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.widget_text_properties_edit_fragment, container, false);
         mTvColor = view.findViewById(R.id.tv_color);
+        mTvLetter = view.findViewById(R.id.tv_letter);
+        mTvRow = view.findViewById(R.id.tv_row);
         mIvAlignment = view.findViewById(R.id.iv_alignment);
         mLetterSeekBar = view.findViewById(R.id.letter_seekbar);
-        mLineSeekBar = view.findViewById(R.id.line_seekbar);
+        mLineSeekBar = view.findViewById(R.id.row_seekbar);
+        llShadow = view.findViewById(R.id.ll_shadow);
+        mTvShadowRadius = view.findViewById(R.id.tv_radius);
+        mTvShadowX = view.findViewById(R.id.tv_offestX);
+        mTvShadowY = view.findViewById(R.id.tv_offestY);
+        mTvShadowColor = view.findViewById(R.id.tv_shadowColor);
+        mRadiusSeekBar = view.findViewById(R.id.radius_seekbar);
+        mOffestXSeekBar = view.findViewById(R.id.offestX_seekbar);
+        mOffestYSeekBar = view.findViewById(R.id.offestY_seekbar);
+        switchButton = view.findViewById(R.id.switch_btn);
         mTvColor.setOnClickListener(this);
         mIvAlignment.setOnClickListener(this);
+        mTvShadowColor.setOnClickListener(this);
         isInitSucceed = true;
         initSeekBarView();
+        initSwitchButton();
         return view;
     }
 
@@ -61,49 +80,126 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
             return;
         }
         if (v == mTvColor) {
-            showColorPickDialog(mTextSticker.getTextColor());
-        } else if (v == mIvAlignment) {
+            showColorPickDialog(mTextSticker.getTextColor(),0);
+        } else if(v == mTvShadowColor){
+            showColorPickDialog(mTextSticker.getShadowColor(),1);
+
+        }
+        else if (v == mIvAlignment) {
             clickAlignmentBtn(mTextSticker.getAlignment());
         }
 
     }
 
-    private void initSeekBarView() {
-        mLetterSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    private void initSwitchButton(){
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                llShadow.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if(mTextSticker != null){
+                    mTextSticker.setShadow(isChecked);
+                }
+            }
+        });
+    }
+
+    private void initSeekBarView() {
+
+        mLetterSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 float result = (progress - 2) * 1.0f / 10;
                 if(mTextSticker != null){
                     mTextSticker.setLetterSpacing(result);
                 }
+                mTvLetter.setText(String.valueOf(progress));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
-        mLineSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        mLineSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
                 float result = (progress+5) * 1.0f / 10;
                 if(mTextSticker != null){
                     mTextSticker.setLineSpacingMultiplier(result);
                 }
+                mTvRow.setText(String.valueOf(progress));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
+        mRadiusSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                if(mTextSticker != null){
+                    mTextSticker.setShadowRadius(progress);
+                }
+                mTvShadowRadius.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
+        mOffestXSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                if(mTextSticker != null){
+                    mTextSticker.setShadowX(progress);
+                }
+                mTvShadowX.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
+        mOffestYSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                if(mTextSticker != null){
+                    mTextSticker.setShadowY(progress);
+                }
+                mTvShadowY.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+
+            }
+
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
             }
         });
@@ -114,11 +210,11 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
         initActionUI();
     }
 
-    private void showColorPickDialog(String color) {
-        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
+    private void showColorPickDialog(String color,final int dialogId) {
+        final ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
                 .setDialogType(ColorPickerDialog.TYPE_PRESETS)
                 .setAllowPresets(true)
-                .setDialogId(0)
+                .setDialogId(dialogId)
                 .setColor(Color.parseColor(color))
                 .setShowAlphaSlider(true)
                 .setShowAlphaSlider(true)
@@ -129,8 +225,13 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
                 String hexCode = "";
                 hexCode = CommonUtils.toHexEncoding(color);
                 if (mTextSticker != null) {
-                    mTextSticker.setTextColor(hexCode);
-                    mTvColor.setBackgroundColor(color);
+                    if(dialogId == 0) {
+                        mTextSticker.setTextColor(hexCode);
+                        mTvColor.setBackgroundColor(color);
+                    }else {
+                        mTextSticker.setShadowColor(hexCode);
+                        mTvShadowColor.setBackgroundColor(color);
+                    }
                 }
             }
 
@@ -145,8 +246,15 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
     public void initActionUI() {
         if (mTextSticker != null && isInitSucceed) {
             mTvColor.setBackgroundColor(Color.parseColor(mTextSticker.getTextColor()));
+            mTvShadowColor.setBackgroundColor(Color.parseColor(mTextSticker.getShadowColor()));
             initAlignmentUI(mTextSticker.getAlignment());
             initSeekBar();
+            mTvLetter.setText(String.valueOf((int)(mTextSticker.getLetterSpacing()*10+2)));
+            mTvRow.setText(String.valueOf((int)(mTextSticker.getLineSpacingMultiplier()*10-5)));
+            mTvShadowRadius.setText(String.valueOf((int)(mTextSticker.getShadowRadius())));
+            mTvShadowX.setText(String.valueOf((int)(mTextSticker.getShadowX())));
+            mTvShadowY.setText(String.valueOf((int)(mTextSticker.getShadowY())));
+            switchButton.setChecked(mTextSticker.isShadow());
         }
     }
 
@@ -197,6 +305,9 @@ public class WidgetTextPropertiesEditFragment extends Fragment implements View.O
         if(mTextSticker != null){
             mLetterSeekBar.setProgress((int)(mTextSticker.getLetterSpacing()*10+2));
             mLineSeekBar.setProgress((int)(mTextSticker.getLineSpacingMultiplier()*10-5));
+            mRadiusSeekBar.setProgress((int)(mTextSticker.getShadowRadius()));
+            mOffestXSeekBar.setProgress((int)(mTextSticker.getShadowX()));
+            mOffestYSeekBar.setProgress((int)(mTextSticker.getShadowY()));
         }
     }
 

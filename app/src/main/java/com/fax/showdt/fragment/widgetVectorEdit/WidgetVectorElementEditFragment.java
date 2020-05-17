@@ -31,7 +31,7 @@ public class WidgetVectorElementEditFragment extends Fragment {
 
     private CommonAdapter<String> mListAdapter;
     private RecyclerView mStickerListRv;
-    private String[] titles = new String[]{"entypo", "emoji", "media", "weather"};
+    private String[] titles = new String[]{"entypo", "fontawesome", "material", "meteo"};
     private String[] jsonPathArray = new String[]{"entypo.json", "fontawesome.json", "material.json", "meteo.json"};
     private int mCurrentSelectedPos = 0;
     private WidgetEditVectorElementSelectedCallback mElementSelectedCallback;
@@ -110,12 +110,8 @@ public class WidgetVectorElementEditFragment extends Fragment {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         for (int i = 0; i < mFragments.size(); i++) {
             long key = mFragments.keyAt(i);
-            Log.i("test_show:","pos: "+pos);
-            Log.i("test_show:","key: "+key);
-            Log.i("test_show:","mFragment size: "+mFragments.size());
             Fragment fragment = mFragments.get(mFragments.keyAt(i));
             if (pos == key) {
-                Log.i("test_show:","show: "+key);
                 transaction.show(fragment);
             } else {
                 transaction.hide(fragment);

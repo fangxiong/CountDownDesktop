@@ -12,13 +12,14 @@ public interface ConstantString {
     String allow_privacy = "allow_privacy";
     String had_know_use_widget = "had_know_use_widget";
 
+    String not_support_click_widget_switch = "not_support_click_widget_switch";
     String BUGLY_APP_ID = "a532c59eaa";
     String BMOB_APP_ID = "23e7b17ff6f23357f71da90537270ef1";
     String TENCENT_APP_ID = "101845175";
     String TENCENT_APP_KEY = "aed9b0303e3ed1e27bae87c33761161d";
 
-    int WIDGET_SUPPORT_VERSION = 1;//支持widget的版本
-
+    int WIDGET_SUPPORT_VERSION = 2;//支持widget的版本
+    int CROP_IMG_MIN_SIZE = 100;
 
 
     boolean isCanContribute = false;

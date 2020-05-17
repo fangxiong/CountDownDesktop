@@ -99,6 +99,7 @@ import com.fax.showdt.utils.GlideUtils;
 import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.utils.RomUtils;
 import com.fax.showdt.utils.ScreenUtils;
+import com.fax.showdt.utils.TimeUtils;
 import com.fax.showdt.utils.ToastShowUtils;
 import com.fax.showdt.utils.ViewUtils;
 import com.fax.showdt.view.sticker.BitmapStickerIcon;
@@ -135,6 +136,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+
+import static android.view.View.LAYER_TYPE_SOFTWARE;
 
 /**
  * Author: fax
@@ -213,7 +216,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         intent.putExtra("switch_flag", false);
         intent.setAction(NLService.NOTIFY_REFRESH_AUDIO_INFO);
         sendBroadcast(intent);
-        if(mUpdateLrcReceiver != null) {
+        if (mUpdateLrcReceiver != null) {
             unregisterReceiver(mUpdateLrcReceiver);
         }
         LocationManager.getInstance().stopLocation();
@@ -421,6 +424,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
     private void initStickers() {
         if (customWidgetConfig != null) {
+            Log.e("test_widget_config:", customWidgetConfig.toJSONString());
             final CustomWidgetConfigConvertHelper mHelper = new CustomWidgetConfigConvertHelper();
 //            mHelper.initAllStickerPlugs(mStickerView, customWidgetConfig, mStickerList);
             new Handler().post(new Runnable() {
@@ -506,7 +510,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             DrawableSticker drawableSticker = new DrawableSticker(null, System.currentTimeMillis());
             drawableSticker.setmPicType(DrawableSticker.SHAPE);
             mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
-            switchToOneFragment(EDIT_PROGRESS);
+            switchToOneFragment(EDIT_SHAPE);
             mShapeEditFragment.setDrawableSticker(drawableSticker);
         } else if (resId == R.id.iv_back) {
             if (mStickerList.isEmpty()) {
@@ -566,6 +570,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
     }
 
     private void initStickerView() {
+//        mStickerView.setLayerType(LAYER_TYPE_SOFTWARE, null);
         FrameLayout.MarginLayoutParams params = (FrameLayout.MarginLayoutParams) mStickerView.getLayoutParams();
         params.width = WidgetSizeConfig.getWidgetWidth();
         params.height = WidgetSizeConfig.getWidget4X4Height();
@@ -671,29 +676,92 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             }
 
             @Override
-            public void onStickerLongClick(@NonNull Sticker sticker, float x, float y) {
+            public void onStickerLongClick(@NonNull Sticker sticker1, float x, float y) {
                 EverywherePopup everywherePopup = EverywherePopup.create(DiyWidgetMakeActivity.this).apply();
                 everywherePopup.showEverywhere(mStickerView, (int) x, (int) y);
                 everywherePopup.setOnClickCallback(new EverywherePopup.OnClickCallback() {
                     @Override
                     public void copy() {
+                        Sticker sticker = null;
                         if (mHandlingSticker instanceof TextSticker) {
-                            mStickerView.addSticker(((TextSticker) mHandlingSticker).copy(), true);
+                            sticker = ((TextSticker) mHandlingSticker).copy();
                         } else if (mHandlingSticker instanceof DrawableSticker) {
-                            mStickerView.addSticker(((DrawableSticker) mHandlingSticker).copy(), true);
+                            sticker = ((DrawableSticker) mHandlingSticker).copy();
                         } else if (mHandlingSticker instanceof ProgressSticker) {
-                            mStickerView.addSticker(((ProgressSticker) mHandlingSticker).copy(), true);
+                            sticker = ((ProgressSticker) mHandlingSticker).copy();
+                        }
+                        if (sticker != null) {
+                            mStickerView.addSticker(sticker, true);
+                            if (sticker instanceof TextSticker) {
+                                mTextEditFragment.setWidgetEditTextSticker((TextSticker) sticker);
+                                switchToOneFragment(EDIT_TEXT);
+                            } else if (sticker instanceof DrawableSticker) {
+                                if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SVG) {
+                                    switchToOneFragment(EDIT_VECTOR);
+                                    mVectorEditFragment.setWidgetEditShapeSticker((DrawableSticker) sticker);
+                                } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SDCARD) {
+                                    switchToOneFragment(EDIT_STICKER);
+                                    mStickerEditFragment.setDrawableSticker((DrawableSticker) sticker);
+                                } else if (((DrawableSticker) sticker).getmPicType() == DrawableSticker.SHAPE) {
+                                    switchToOneFragment(EDIT_SHAPE);
+                                    mShapeEditFragment.setDrawableSticker((DrawableSticker) sticker);
+                                }
+                            } else if (sticker instanceof ProgressSticker) {
+                                mProgressEditFragment.setProgressSticker((ProgressSticker) sticker);
+                                switchToOneFragment(EDIT_PROGRESS);
+                            }
                         }
                     }
 
                     @Override
                     public void top() {
-                        mStickerView.sendToLayerTop(mHandlingSticker);
+                        Sticker curSticker = null;
+                        long curKey = 0;
+                        long maxId = System.currentTimeMillis();
+                        for (int i = 0; i < mStickerList.size(); i++) {
+                            long key = mStickerList.keyAt(i);
+                            Sticker sticker1 = mStickerList.get(key);
+                            if (mHandlingSticker.getId() == sticker1.getId()) {
+                                curKey = key;
+                                curSticker = sticker1;
+                            }
+                            if (key > maxId) {
+                                maxId = key;
+                            }
+                        }
+                        if (curSticker != null) {
+                            mStickerList.remove(curKey);
+                            curSticker.setId(maxId + 1);
+                            mStickerList.put(curSticker.getId(), curSticker);
+                            mStickerView.sendToLayerTop(mHandlingSticker);
+                        }
                     }
 
                     @Override
                     public void bottom() {
-                        mStickerView.sendToLayerBottom(mHandlingSticker);
+                        Sticker curSticker = null;
+                        long curKey = 0;
+                        long minId = System.currentTimeMillis();
+                        for (int i = 0; i < mStickerList.size(); i++) {
+                            long key = mStickerList.keyAt(i);
+                            Log.e("test_make:", "key" + key);
+                            Log.e("test_make:", "minId" + minId);
+                            Sticker sticker1 = mStickerList.get(key);
+                            if (mHandlingSticker.getId() == sticker1.getId()) {
+                                curKey = key;
+                                curSticker = sticker1;
+                            }
+                            if (key < minId) {
+                                minId = key;
+                            }
+                        }
+                        if (curSticker != null) {
+                            mStickerList.remove(curKey);
+                            curSticker.setId(minId - 1);
+                            mStickerList.put(curSticker.getId(), curSticker);
+                            mStickerView.sendToLayerBottom(mHandlingSticker);
+                            Log.e("test_make:", "curKey" + curKey + "  minId:" + minId);
+                        }
                     }
                 });
             }
@@ -1150,7 +1218,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         mStickerView.setShowGrid(false);
         mStickerView.requestLayout();
         mStickerView.clearCurrentSticker();
-        final Bitmap stickerBitmap = BitmapUtils.getScreenShotsBitmap(mStickerView);
+        final Bitmap stickerBitmap = BitmapUtils.viewToBitmap(mStickerView);
         final String coverFileName = "widget_cover" + System.currentTimeMillis() + ".png";
         final String bgFileName = "widget_bg" + System.currentTimeMillis() + ".png";
         final String coverDir = Environment.getHomeDir() + File.separator + Constant.WIDGET_DATA_DIR + File.separator + "widget_screenshot";
@@ -1249,6 +1317,7 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
             DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
             drawableSticker.setmPicType(DrawableSticker.SDCARD);
             drawableSticker.setDrawablePath(path);
+            drawableSticker.addMaskBitmap(DiyWidgetMakeActivity.this, drawableSticker.getClipType());
             mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
             if (mStickerEditFragment != null) {
                 mStickerEditFragment.setDrawableSticker(drawableSticker);

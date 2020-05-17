@@ -303,6 +303,7 @@ public class FileExUtils {
 
     public static boolean deleteSingleFile(String filePath$Name) {
         File file = new File(filePath$Name);
+
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
@@ -319,7 +320,7 @@ public class FileExUtils {
 
 
 
-    public static long getFileSize(File f) throws Exception {
+    public static long getFileSize(File f){
         FileChannel fc= null;
         long size = 0;
         try {

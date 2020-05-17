@@ -23,6 +23,7 @@ import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
 import com.fax.showdt.adapter.ViewHolder;
 import com.fax.showdt.bean.CustomWidgetConfig;
+import com.fax.showdt.bean.DrawablePlugBean;
 import com.fax.showdt.dialog.ios.interfaces.OnMenuItemClickListener;
 import com.fax.showdt.dialog.ios.util.DialogSettings;
 import com.fax.showdt.dialog.ios.util.ShareUtils;
@@ -178,7 +179,17 @@ public class MyWidgetFragment extends Fragment {
                                 public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                                     CustomWidgetConfigDao.getInstance(getActivity()).delete(Collections.singletonList(config));
                                     FileExUtils.deleteSingleFile(config.getCoverUrl());
+                                    Log.e("test_delete_result:", "删除结果coverUrl：" + config.getCoverUrl());
+
                                     FileExUtils.deleteSingleFile(config.getBgPath());
+                                    Log.e("test_delete_result:", "删除结果bgPath："  + config.getBgPath());
+//                                    List<DrawablePlugBean> list = config.getDrawablePlugList();
+//                                    for(DrawablePlugBean bean:list){
+//                                        if(!TextUtils.isEmpty(bean.getDrawablePath())) {
+//                                            boolean result = FileExUtils.deleteSingleFile(bean.getDrawablePath());
+//                                            Log.e("test_delete_result:", "删除结果：" + result + "  " + bean.getDrawablePath());
+//                                        }
+//                                    }
                                     e.onNext(true);
                                 }
                             }).subscribeOn(Schedulers.io())
@@ -198,6 +209,8 @@ public class MyWidgetFragment extends Fragment {
 
                                         @Override
                                         public void onError(Throwable e) {
+                                            Log.e("test_delete_result:","删除失败"+e.getMessage());
+                                            e.printStackTrace();
                                             ToastShowUtils.showCommonToast(getActivity(), "删除失败", Toasty.LENGTH_SHORT);
                                         }
 

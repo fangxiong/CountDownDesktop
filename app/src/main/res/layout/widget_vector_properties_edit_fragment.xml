@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:layout_marginBottom="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_progress_color_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_vector_color"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_15"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:background="@color/c_F7F6F6"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_strokeColor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_2"
+                android:onClick="onClick" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_orientation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/iv_stroke_icon"
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_vector_stroke_icon" />
+
+        <TextView
+            android:id="@+id/tv_stroke_text"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:layout_toEndOf="@id/iv_stroke_icon"
+            android:gravity="center"
+            android:text="@string/widget_vector_stroke"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/switch_btn"
+            android:layout_width="@dimen/margin_40"
+            android:layout_height="@dimen/margin_25"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_15"
+            app:kswBackColor="@color/c_EFEFF6"
+            app:kswFadeBack="true"
+            app:kswThumbColor="@color/c_A0A0A0" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_stroke_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:layout_marginBottom="@dimen/margin_5"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_vector_width_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
+            android:text="@string/widget_vector_stroke_width"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                android:id="@+id/seekbar_stroke_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_toStartOf="@id/tv_progress"
+                android:paddingTop="@dimen/margin_2"
+                app:bsb_hide_bubble="true"
+                app:bsb_max="360"
+                app:bsb_min="1"
+                app:bsb_progress="17"
+                app:bsb_second_track_color="@color/c_A0A0A0"
+                app:bsb_track_color="@color/c_E0DFDF"
+                app:bsb_track_size="1.6dp" />
+
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="@dimen/margin_25"
+                android:layout_height="@dimen/margin_25"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:background="@drawable/widget_edit_progress_text_bg"
+                android:gravity="center"
+                android:textColor="@color/c_A0A0A0"
+                android:textSize="@dimen/margin_12" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

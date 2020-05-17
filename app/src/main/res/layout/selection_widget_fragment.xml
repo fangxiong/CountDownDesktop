@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/c_101010">
 
     <com.google.android.material.tabs.TabLayout
@@ -11,8 +11,9 @@
         android:layout_height="@dimen/margin_40"
         app:tabIndicatorHeight="0dp"
         app:tabMode="scrollable"
-        app:tabTextColor="@color/c_969696"
-        app:tabSelectedTextColor="@color/white"/>
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/c_969696" />
+
     <LinearLayout
         android:id="@+id/ll_error"
         android:layout_width="wrap_content"
@@ -20,20 +21,13 @@
         android:layout_centerInParent="true"
         android:orientation="vertical"
         android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="请求失败"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textSize_16" />
 
         <TextView
             android:id="@+id/tv_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_10"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_10"
             android:background="@drawable/no_local_widget_tip_bg"
             android:text="点击重试"
             android:textColor="@color/white"

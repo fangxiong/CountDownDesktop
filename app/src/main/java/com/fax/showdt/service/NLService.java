@@ -25,31 +25,30 @@ import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Build.VERSION;
-import android.os.Bundle;
+import android.os.Vibrator;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.fax.showdt.AppContext;
-import com.fax.showdt.manager.musicPlug.AppNewsInfo;
 import com.fax.showdt.manager.musicPlug.KLWPSongUpdateManager;
 import com.fax.showdt.manager.musicPlug.PackageHelper;
 import com.fax.showdt.manager.widget.WidgetMusicActionType;
 import com.fax.showdt.utils.CommonUtils;
 import com.fax.showdt.utils.IntentUtils;
-import com.fax.showdt.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
 
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -60,15 +59,16 @@ public class NLService extends NotificationListenerService implements OnPlayback
     private static NLService sInstance;
     private Callback mMediaCallback;
     private MediaController mMediaController;
+    private String curMediaPkgName;
     private MediaSessionManager mMediaSessionManager;
     private StatusBarNotification[] mNotificationsCache = null;
     private boolean mNotificationsCacheDirty = true;
     private static HashMap<String, Notification> mNotificationsCounter = new HashMap();
+    private boolean mMediaSwitch = false;
+    private boolean mIsSleep = false;
     private RemoteController mRemoteController;
     private KLWPSongUpdateManager mKLWPSongUpdateManager;
-    private final String QQ_PKG = "com.tencent.mobileqq";
     private NotificationListenerReceiver mRefreshAudioReceiver;
-
     private SessionListener mSessionListener;
 
 
@@ -127,7 +127,9 @@ public class NLService extends NotificationListenerService implements OnPlayback
                     Log.i(TAG, "album artist:" + mediaMetadata.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST));
                     Log.i(TAG, "writer:" + mediaMetadata.getString(MediaMetadata.METADATA_KEY_WRITER));
                     Log.i(TAG, "author:" + mediaMetadata.getString(MediaMetadata.METADATA_KEY_AUTHOR));
-                    mKLWPSongUpdateManager.refreshMusicInfoWith21();
+                    if (!mIsSleep) {
+                        mKLWPSongUpdateManager.refreshMusicInfoWith21();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -139,7 +141,9 @@ public class NLService extends NotificationListenerService implements OnPlayback
                 Log.i(TAG, "播放状态：" + playbackState.getState());
                 Log.i(TAG, "动作：" + playbackState.getActions());
                 Log.i(TAG, "进度：" + playbackState.getPosition());
-                mKLWPSongUpdateManager.refreshMusicInfoWith21();
+                if (!mIsSleep) {
+                    mKLWPSongUpdateManager.refreshMusicInfoWith21();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -153,27 +157,30 @@ public class NLService extends NotificationListenerService implements OnPlayback
         }
 
         public void onActiveSessionsChanged(List<MediaController> list) {
-            Log.i(NLService.TAG, "refreshMusicInfoWith21");
             if (list != null && list.size() != 0) {
                 for (MediaController mediaController : list) {
-                    if (mediaController != null && !TextUtils.isEmpty(PackageHelper.getBroadReceiverPackage(NLService.this, mediaController.getPackageName()))) {
-                        if (!(NLService.this.mMediaController == null || NLService.this.mMediaCallback == null)) {
-                            try {
+                    Log.i(NLService.TAG, "音频焦点包名：：" + mediaController.getPackageName());
+                    Log.i(NLService.TAG, "当前音频焦点包名：：" + curMediaPkgName);
+                    if ((mMediaSwitch && mediaController.getPackageName().equals(curMediaPkgName)) || (!mMediaSwitch && !TextUtils.isEmpty(PackageHelper.getBroadReceiverPackage(NLService.this, mediaController.getPackageName())))) {
+                        try {
+
+                            if (!(NLService.this.mMediaController == null || NLService.this.mMediaCallback == null)) {
                                 NLService.this.mMediaController.unregisterCallback(NLService.this.mMediaCallback);
-                            } catch (Exception e) {
+
                             }
-                        }
-                        Log.i(NLService.TAG, "当前音频焦点：" + mediaController.getPackageName());
-                        NLService.this.mMediaController = mediaController;
-                        NLService.this.mMediaCallback = new Callback(NLService.this.mMediaController);
-                        NLService.this.mMediaController.registerCallback(NLService.this.mMediaCallback);
-                        NLService.this.mMediaCallback.onMetadataChanged(NLService.this.mMediaController.getMetadata());
-                        PlaybackState playbackState = NLService.this.mMediaController.getPlaybackState();
-                        if (playbackState != null) {
-                            NLService.this.mMediaCallback.onPlaybackStateChanged(playbackState);
+                            Log.i(NLService.TAG, "当前音频焦点：" + mediaController.getPackageName());
+                            NLService.this.mMediaController = mediaController;
+                            NLService.this.mMediaCallback = new Callback(NLService.this.mMediaController);
+                            NLService.this.mMediaController.registerCallback(NLService.this.mMediaCallback);
+                            NLService.this.mMediaCallback.onMetadataChanged(NLService.this.mMediaController.getMetadata());
+                            PlaybackState playbackState = NLService.this.mMediaController.getPlaybackState();
+                            if (playbackState != null) {
+                                NLService.this.mMediaCallback.onPlaybackStateChanged(playbackState);
+                                return;
+                            }
                             return;
+                        } catch (Exception e) {
                         }
-                        return;
                     }
                 }
             }
@@ -186,14 +193,6 @@ public class NLService extends NotificationListenerService implements OnPlayback
     public static MediaController getMediaController() {
         if (sInstance != null) {
             return sInstance.mMediaController;
-        }
-        return null;
-    }
-
-    @Nullable
-    public static RemoteController getRemoteController() {
-        if (sInstance != null) {
-            return sInstance.mRemoteController;
         }
         return null;
     }
@@ -262,11 +261,6 @@ public class NLService extends NotificationListenerService implements OnPlayback
     }
 
     public void onClientMetadataUpdate(MetadataEditor metadataEditor) {
-        String string = metadataEditor.getString(2, "");
-        String string2 = metadataEditor.getString(7, "");
-        String string3 = metadataEditor.getString(1, "");
-        Long valueOf = Long.valueOf(metadataEditor.getLong(9, -1));
-        Bitmap bitmap = metadataEditor.getBitmap(100, null);
         try {
 
         } catch (Throwable e) {
@@ -305,36 +299,20 @@ public class NLService extends NotificationListenerService implements OnPlayback
     public void onNotificationPosted(StatusBarNotification statusBarNotification) {
         String packageName = statusBarNotification.getPackageName();
         Log.d(TAG, "NotificationPosted:" + packageName);
-        synchronized (TAG) {
-            this.mNotificationsCounter.put(packageName, statusBarNotification.getNotification());
-        }
-        try {
-            if (QQ_PKG.equals(packageName)) {
-                Notification notification = mNotificationsCounter.get(QQ_PKG);
-                Log.i("test_qq_news：", "notification:" + notification.toString());
-                Bundle bundle = notification.extras;
-                if (bundle != null) {
-                    String title = bundle.getString(Notification.EXTRA_TITLE, "");
-                    String content = bundle.getString(Notification.EXTRA_TEXT, "");
-                    Bitmap icon = bundle.getParcelable(Notification.EXTRA_LARGE_ICON);
-                    long timeStamp = TimeUtils.currentTimeMillis();
-                    AppNewsInfo newsInfo = new AppNewsInfo();
-                    newsInfo.setSenderName(title);
-                    newsInfo.setSenderNews(content);
-                    newsInfo.setSenderIcon(icon);
-                    newsInfo.setSendTime(timeStamp);
 
-                    Log.i("test_qq_news：", "标题:" + title + "内容:" + content);
-                    if (icon != null) {
-                        Log.i("test_qq_news：", "icon的大小:" + icon.getAllocationByteCount() / 1024);
+        synchronized (TAG) {
+            List<MediaController> mediaControllers = this.mMediaSessionManager.getActiveSessions(new ComponentName(this, NLService.class));
+            for (MediaController mediaController : mediaControllers) {
+                if (mediaController.getPackageName().equals(packageName)) {
+                    mMediaSwitch = true;
+                    if (mSessionListener != null) {
+                        curMediaPkgName = packageName;
+                        mSessionListener.onActiveSessionsChanged(mediaControllers);
                     }
                 }
-
             }
-        } catch (Throwable e) {
-            Log.i(TAG, "onNotificationPosted", e);
+            this.mNotificationsCounter.put(packageName, statusBarNotification.getNotification());
         }
-
     }
 
     public void onNotificationRemoved(StatusBarNotification statusBarNotification) {
@@ -350,6 +328,7 @@ public class NLService extends NotificationListenerService implements OnPlayback
                 }
                 this.mNotificationsCounter.put(packageName, statusBarNotification.getNotification());
             }
+
         }
 
     }
@@ -357,27 +336,27 @@ public class NLService extends NotificationListenerService implements OnPlayback
     @Override
     public void onListenerConnected() {
         super.onListenerConnected();
-        Log.i(TAG, "NotificationListenerService连接成功");
-//        ShowToast.Long("NotificationListenerService连接成功");
-
     }
 
     @Override
     public void onListenerDisconnected() {
         super.onListenerDisconnected();
-        Log.i(TAG, "NotificationListenerService连接断开");
-//        ShowToast.Long("NotificationListenerService连接断开");
-
     }
 
     private synchronized void start() {
         if (VERSION.SDK_INT < 21) {
             registerRemoteController();
         } else {
-            addSessionListener();
+            try {
+                addSessionListener();
+            } catch (SecurityException e) {
+
+            }
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(NOTIFY_REFRESH_AUDIO_INFO);
             intentFilter.addAction(NOTIFY_CONTROL_MUSIC);
+            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
             mRefreshAudioReceiver = new NotificationListenerReceiver();
             this.registerReceiver(mRefreshAudioReceiver, intentFilter);
         }
@@ -386,19 +365,16 @@ public class NLService extends NotificationListenerService implements OnPlayback
 
     @TargetApi(21)
     private void addSessionListener() {
-//        if (NotificationHelper.a(this)) {
         ComponentName componentName = new ComponentName(this, NLService.class);
         this.mMediaSessionManager = (MediaSessionManager) getSystemService(MEDIA_SESSION_SERVICE);
         this.mSessionListener = new SessionListener();
         this.mMediaSessionManager.addOnActiveSessionsChangedListener(this.mSessionListener, componentName);
         List<MediaController> mediaControllers = this.mMediaSessionManager.getActiveSessions(componentName);
         mSessionListener.onActiveSessionsChanged(mediaControllers);
-//       }
     }
 
     private void registerRemoteController() {
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-//        if (this.mRemoteController == null && NotificationHelper.a(this)) {
         if (this.mRemoteController == null) {
             RemoteController remoteController = new RemoteController(this, this);
             Point point = new Point();
@@ -439,19 +415,31 @@ public class NLService extends NotificationListenerService implements OnPlayback
                     List<MediaController> mediaControllers = mMediaSessionManager.getActiveSessions(componentName);
                     mSessionListener.onActiveSessionsChanged(mediaControllers);
                 }
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                mIsSleep = true;
+            } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                mIsSleep = false;
             } else if (NOTIFY_CONTROL_MUSIC.equals(action)) {
+                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(30);
                 String musicControl = intent.getStringExtra("music_control");
-                Log.i("test_music_control:",musicControl);
+                Log.i("test_music_control:", musicControl);
                 MediaController mediaController = getMediaController();
+
                 if (mediaController != null) {
                     switch (musicControl) {
                         case WidgetMusicActionType.PLAY_OR_PAUSE: {
                             PlaybackState playbackState = mediaController.getPlaybackState();
+                            Log.i("test_music_control:", "playbackState:" + playbackState);
+                            Log.i("test_music_control:", "mediaController pkg:" + mediaController.getPackageName());
+
                             if (playbackState != null) {
                                 if (playbackState.getState() == PlaybackState.STATE_PLAYING) {
                                     mediaController.getTransportControls().pause();
+                                    Log.i("test_music_control:", "playbackState:" + "暂停");
                                 } else {
                                     mediaController.getTransportControls().play();
+                                    Log.i("test_music_control:", "playbackState:" + "播放");
                                 }
                             }
                             break;

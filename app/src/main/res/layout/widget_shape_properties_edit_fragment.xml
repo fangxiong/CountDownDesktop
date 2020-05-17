@@ -173,8 +173,9 @@
                     android:layout_height="@dimen/margin_25"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_5"
-                    app:kswBackColor="@color/c_F7F6F6"
-                    app:kswThumbColor="@color/c_FCF43C" />
+                    app:kswBackColor="@color/c_EFEFF6"
+                    app:kswThumbColor="@color/c_A0A0A0"
+                    app:kswFadeBack="true"/>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
@@ -281,19 +282,102 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_5"
             android:gravity="center"
+            android:text="@string/widget_shape_width"
+            android:textColor="@color/c_A0A0A0"
+            android:textSize="@dimen/textSize_15" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                android:id="@+id/shape_width_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/tv_progress_width"
+                android:paddingTop="@dimen/margin_2"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                app:bsb_hide_bubble="true"
+                app:bsb_max="360"
+                app:bsb_min="1"
+                app:bsb_progress="17"
+                app:bsb_second_track_color="@color/c_A0A0A0"
+                app:bsb_track_color="@color/c_E0DFDF"
+                app:bsb_track_size="1.6dp" />
+
+            <TextView
+                android:id="@+id/tv_progress_width"
+                android:layout_width="@dimen/margin_25"
+                android:layout_height="@dimen/margin_25"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_marginStart="@dimen/margin_12"
+                android:background="@drawable/widget_edit_progress_text_bg"
+                android:textSize="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:textColor="@color/c_A0A0A0"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_5"
+        android:layout_marginBottom="@dimen/margin_5"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/margin_30"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_10"
+            android:src="@drawable/widget_progress_height_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/margin_30"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_5"
+            android:gravity="center"
             android:text="@string/widget_shape_height"
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_15" />
 
-        <SeekBar
-            android:id="@+id/shape_height_seekbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:gravity="center"
-            android:max="100"
-            android:onClick="onClick" />
+            android:layout_height="wrap_content">
+            <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                android:id="@+id/shape_height_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/tv_progress_height"
+                android:paddingTop="@dimen/margin_2"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                app:bsb_hide_bubble="true"
+                app:bsb_max="100"
+                app:bsb_min="1"
+                app:bsb_progress="17"
+                app:bsb_second_track_color="@color/c_A0A0A0"
+                app:bsb_track_color="@color/c_E0DFDF"
+                app:bsb_track_size="1.6dp" />
+
+            <TextView
+                android:id="@+id/tv_progress_height"
+                android:layout_width="@dimen/margin_25"
+                android:layout_height="@dimen/margin_25"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_marginStart="@dimen/margin_12"
+                android:background="@drawable/widget_edit_progress_text_bg"
+                android:textSize="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:textColor="@color/c_A0A0A0"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -321,15 +405,39 @@
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_15" />
 
-        <SeekBar
-            android:id="@+id/shape_line_seekbar"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:gravity="center"
-            android:max="50"
-            android:onClick="onClick" />
+            android:layout_height="wrap_content">
+            <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
+                android:id="@+id/shape_line_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/tv_progress_line"
+                android:paddingTop="@dimen/margin_2"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                app:bsb_hide_bubble="true"
+                app:bsb_max="50"
+                app:bsb_min="0"
+                app:bsb_progress="17"
+                app:bsb_second_track_color="@color/c_A0A0A0"
+                app:bsb_track_color="@color/c_E0DFDF"
+                app:bsb_track_size="1.6dp" />
+
+            <TextView
+                android:id="@+id/tv_progress_line"
+                android:layout_width="@dimen/margin_25"
+                android:layout_height="@dimen/margin_25"
+                android:layout_marginEnd="@dimen/margin_15"
+                android:layout_marginStart="@dimen/margin_12"
+                android:background="@drawable/widget_edit_progress_text_bg"
+                android:textSize="@dimen/margin_12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:textColor="@color/c_A0A0A0"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -357,16 +465,39 @@
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_15" />
 
-        <SeekBar
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <com.fax.showdt.view.bubbleseekbar.BubbleSeekBar
             android:id="@+id/shape_corner_seekbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_30"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/margin_15"
-            android:gravity="center"
-            android:max="50"
-            android:onClick="onClick" />
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/tv_progress_corner"
+            android:paddingTop="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_12"
+            android:layout_centerVertical="true"
+            app:bsb_hide_bubble="true"
+            app:bsb_max="50"
+            app:bsb_min="0"
+            app:bsb_progress="17"
+            app:bsb_second_track_color="@color/c_A0A0A0"
+            app:bsb_track_color="@color/c_E0DFDF"
+            app:bsb_track_size="1.6dp" />
 
+        <TextView
+            android:id="@+id/tv_progress_corner"
+            android:layout_width="@dimen/margin_25"
+            android:layout_height="@dimen/margin_25"
+            android:layout_marginEnd="@dimen/margin_15"
+            android:layout_marginStart="@dimen/margin_12"
+            android:background="@drawable/widget_edit_progress_text_bg"
+            android:textSize="@dimen/margin_12"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:textColor="@color/c_A0A0A0"/>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_50"
             android:gravity="center"
-            android:background="@drawable/view_click_bg_selector"
+            android:background="@drawable/common_view_click_bg_selector"
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_17" />
 
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/margin_50"
             android:gravity="center"
-            android:background="@drawable/view_click_bg_selector"
+            android:background="@drawable/common_view_click_bg_selector"
             android:textColor="@color/c_A0A0A0"
             android:textSize="@dimen/textSize_17" />
 

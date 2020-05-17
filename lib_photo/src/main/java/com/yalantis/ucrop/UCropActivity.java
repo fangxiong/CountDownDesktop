@@ -111,6 +111,7 @@ public class UCropActivity extends AppCompatActivity {
     private List<ViewGroup> mCropAspectRatioViews = new ArrayList<>();
     private TextView mTextViewRotateAngle, mTextViewScalePercent;
     private View mBlockingView;
+    private TextView mTvJumpOver;
 
     private Transition mControlsTransition;
 
@@ -281,7 +282,7 @@ public class UCropActivity extends AppCompatActivity {
         }
     }
 
-    private void setupViews(@NonNull Intent intent) {
+    private void setupViews(@NonNull final Intent intent) {
         mStatusBarColor = intent.getIntExtra(UCrop.Options.EXTRA_STATUS_BAR_COLOR, ContextCompat.getColor(this, R.color.ucrop_color_statusbar));
         mToolbarColor = intent.getIntExtra(UCrop.Options.EXTRA_TOOL_BAR_COLOR, ContextCompat.getColor(this, R.color.ucrop_color_toolbar));
         mActiveWidgetColor = intent.getIntExtra(UCrop.Options.EXTRA_UCROP_COLOR_WIDGET_ACTIVE, ContextCompat.getColor(this, R.color.ucrop_color_widget_background));
@@ -309,7 +310,6 @@ public class UCropActivity extends AppCompatActivity {
 
             mControlsTransition = new AutoTransition();
             mControlsTransition.setDuration(CONTROLS_ANIMATION_DURATION);
-
             mWrapperStateAspectRatio = findViewById(R.id.state_aspect_ratio);
             mWrapperStateAspectRatio.setOnClickListener(mStateClickListener);
             mWrapperStateRotate = findViewById(R.id.state_rotate);
@@ -326,6 +326,18 @@ public class UCropActivity extends AppCompatActivity {
             setupScaleWidget();
             setupStatesWrapper();
         }
+        mTvJumpOver = findViewById(R.id.tv_jump_over);
+//        boolean isShow = intent.getBooleanExtra(UCrop.Options.EXTRA_IS_JUMP_OVER,false);
+//        mTvJumpOver.setVisibility(isShow ? View.VISIBLE : View.GONE);
+//        mTvJumpOver.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Uri inputUri = intent.getParcelableExtra(UCrop.EXTRA_INPUT_URI);
+//                Log.e("test_crop:",inputUri.getPath());
+//                setResultUri(inputUri,0,0,0,0,0);
+//                finish();
+//            }
+//        });
     }
 
     /**

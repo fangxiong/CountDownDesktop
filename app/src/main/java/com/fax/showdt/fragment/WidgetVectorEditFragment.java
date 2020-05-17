@@ -1,10 +1,6 @@
 package com.fax.showdt.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,39 +8,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.fax.showdt.R;
-import com.fax.showdt.bean.SvgIconBean;
-import com.fax.showdt.bean.WidgetShapeBean;
-import com.fax.showdt.callback.WidgetEditClickCallback;
-import com.fax.showdt.callback.WidgetEditVectorCallback;
-import com.fax.showdt.callback.WidgetEditVectorElementSelectedCallback;
-import com.fax.showdt.fragment.widgetVectorEdit.WidgetVectorElementEditFragment;
-import com.fax.showdt.utils.CommonUtils;
-import com.fax.showdt.view.colorPicker.ColorPickerDialog;
-import com.fax.showdt.view.colorPicker.ColorPickerDialogListener;
-import com.fax.showdt.view.sticker.DrawableSticker;
-import com.fax.showdt.view.svg.SVG;
-import com.fax.showdt.view.svg.SVGBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fax.showdt.R;
+import com.fax.showdt.bean.SvgIconBean;
+import com.fax.showdt.callback.WidgetEditClickCallback;
+import com.fax.showdt.callback.WidgetEditVectorCallback;
+import com.fax.showdt.callback.WidgetEditVectorElementSelectedCallback;
+import com.fax.showdt.fragment.widgetVectorEdit.WidgetVectorElementEditFragment;
+import com.fax.showdt.fragment.widgetVectorEdit.WidgetVectorPropertiesEditFragment;
+import com.fax.showdt.view.sticker.DrawableSticker;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class WidgetVectorEditFragment extends Fragment implements View.OnClickListener {
     private ImageView mIvLocal, mTouch, mIvColor, mConsume;
     private WidgetVectorElementEditFragment mStickerElementEditFragment;
+    private WidgetVectorPropertiesEditFragment mWidgetVectorPropertiesEditFragment;
     private WidgetClickSettingFragment mTouchEditFragment;
     private WidgetEditVectorCallback mWidgetEditShapeCallback;
     private DrawableSticker mDrawableSticker;
     private List<View> mViews = new ArrayList<>();
 
     enum EditShapeType {
-        ELEMENT, TOUCH
+        ELEMENT, PROPERTIES, TOUCH
     }
 
     public WidgetVectorEditFragment() {
@@ -65,6 +56,7 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
         mIvLocal.setSelected(true);
         mViews.add(mIvLocal);
         mViews.add(mTouch);
+        mViews.add(mIvColor);
         refreshSelectedViewStatus(mIvLocal);
         initFragment();
         return view;
@@ -90,9 +82,8 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
                 mWidgetEditShapeCallback.closePanel();
             }
         } else if (resId == R.id.iv_color) {
-            if (mDrawableSticker != null) {
-                showColorPickDialog(mDrawableSticker.getDrawableColor());
-            }
+            switchToOneFragment(EditShapeType.PROPERTIES);
+            refreshSelectedViewStatus(mIvColor);
         } else if (resId == R.id.iv_local) {
             switchToOneFragment(EditShapeType.ELEMENT);
             refreshSelectedViewStatus(mIvLocal);
@@ -105,51 +96,22 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
     public void setWidgetEditShapeSticker(DrawableSticker drawableSticker) {
         mDrawableSticker = drawableSticker;
         if (mTouchEditFragment != null) {
-            mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(),mDrawableSticker.getJumpContent(),mDrawableSticker.getAppName());
+            mTouchEditFragment.initActionUI(drawableSticker.getJumpAppPath(), mDrawableSticker.getJumpContent(), mDrawableSticker.getAppName());
+        }
+        if (mWidgetVectorPropertiesEditFragment != null) {
+            mWidgetVectorPropertiesEditFragment.setDrawableSticker(drawableSticker);
         }
     }
 
-    private void showColorPickDialog(String color) {
-        ColorPickerDialog dialog = ColorPickerDialog.newBuilder()
-                .setDialogType(ColorPickerDialog.TYPE_PRESETS)
-                .setAllowPresets(true)
-                .setDialogId(0)
-                .setColor(Color.parseColor(color))
-                .setShowAlphaSlider(true)
-                .setShowAlphaSlider(true)
-                .create();
-        dialog.setColorPickerDialogListener(new ColorPickerDialogListener() {
-            @Override
-            public void onColorSelected(int dialogId, int color) {
-                String hexCode = "";
-                hexCode = CommonUtils.toHexEncoding(color);
-                if (mDrawableSticker != null) {
-                    mDrawableSticker.setDrawableColor(hexCode);
-                    try {
-                        SVG svg = new SVGBuilder().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN))
-                                .readFromAsset(getActivity().getAssets(), mDrawableSticker.getDrawablePath()).build();
-                        PictureDrawable drawable = svg.getDrawable();
-                        mDrawableSticker.setDrawable(drawable);
-                    } catch (IOException e) {
-
-                    }
-                }
-            }
-
-            @Override
-            public void onDialogDismissed(int dialogId) {
-
-            }
-        });
-        dialog.show(getChildFragmentManager(), "color_dialog");
-    }
 
     private void initFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         mStickerElementEditFragment = new WidgetVectorElementEditFragment();
         mTouchEditFragment = new WidgetClickSettingFragment();
+        mWidgetVectorPropertiesEditFragment = new WidgetVectorPropertiesEditFragment();
         transaction.add(R.id.fl_shape_edit_body, mTouchEditFragment);
         transaction.add(R.id.fl_shape_edit_body, mStickerElementEditFragment);
+        transaction.add(R.id.fl_shape_edit_body, mWidgetVectorPropertiesEditFragment);
         transaction.commitAllowingStateLoss();
         mStickerElementEditFragment.setWidgetShapeElementSelectedCallback(new WidgetEditVectorElementSelectedCallback() {
             @Override
@@ -166,7 +128,7 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
             }
 
             @Override
-            public void onActionContent(String actionContent,String appName) {
+            public void onActionContent(String actionContent, String appName) {
                 if (mDrawableSticker != null) {
                     mDrawableSticker.setJumpContent(actionContent);
                     mDrawableSticker.setAppName(appName);
@@ -190,15 +152,27 @@ public class WidgetVectorEditFragment extends Fragment implements View.OnClickLi
             case ELEMENT: {
                 transaction.hide(mTouchEditFragment);
                 transaction.show(mStickerElementEditFragment);
+                transaction.hide(mWidgetVectorPropertiesEditFragment);
                 transaction.commitAllowingStateLoss();
                 break;
             }
             case TOUCH: {
                 transaction.hide(mStickerElementEditFragment);
                 transaction.show(mTouchEditFragment);
+                transaction.hide(mWidgetVectorPropertiesEditFragment);
                 transaction.commitAllowingStateLoss();
-                if(mDrawableSticker != null){
-                    mTouchEditFragment.initActionUI(mDrawableSticker.getJumpAppPath(),mDrawableSticker.getJumpContent(),mDrawableSticker.getAppName());
+                if (mDrawableSticker != null) {
+                    mTouchEditFragment.initActionUI(mDrawableSticker.getJumpAppPath(), mDrawableSticker.getJumpContent(), mDrawableSticker.getAppName());
+                }
+                break;
+            }
+            case PROPERTIES: {
+                transaction.hide(mStickerElementEditFragment);
+                transaction.show(mWidgetVectorPropertiesEditFragment);
+                transaction.hide(mTouchEditFragment);
+                transaction.commitAllowingStateLoss();
+                if (mDrawableSticker != null) {
+                    mWidgetVectorPropertiesEditFragment.setDrawableSticker(mDrawableSticker);
                 }
                 break;
             }

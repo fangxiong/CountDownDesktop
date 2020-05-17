@@ -1,6 +1,7 @@
 package com.fax.showdt.fragment.widgetVectorEdit;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,6 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.caverock.androidsvg1.SVG;
 import com.fax.showdt.R;
 import com.fax.showdt.adapter.CommonAdapter;
 import com.fax.showdt.adapter.MultiItemTypeAdapter;
@@ -17,16 +26,10 @@ import com.fax.showdt.callback.ShapeElementCallback;
 import com.fax.showdt.utils.FileExUtils;
 import com.fax.showdt.utils.GsonUtils;
 import com.fax.showdt.view.androipathview.PathImageView;
-import com.fax.showdt.view.androipathview.PathView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -39,7 +42,6 @@ public class VectorElementFragment extends Fragment {
     private CommonAdapter<SvgIconBean> mStickerAdapter;
     private List<SvgIconBean> mCurrentStickerBean = new ArrayList<>();
     private RecyclerView mStickerContentRv;
-    private List<Path> mPaths = new ArrayList<>();
     private Disposable disposable;
     private String jsonPath;
     private ShapeElementCallback elementCallback;
@@ -79,12 +81,10 @@ public class VectorElementFragment extends Fragment {
         Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
             public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
-                mPaths.clear();
                 for (SvgIconBean stickerBean : mDatas) {
                         String pathStr = stickerBean.getIcon().getPaths().get(0);
-                        Log.i("test_time_path:",stickerBean.getIcon().getPaths().size() > 1 ? stickerBean.getProperties().getName() : "");
-                        Path path = com.caverock.androidsvg1.SVG.parsePath(pathStr);
-                        mPaths.add(path);
+                        Log.i("test_time_path:",stickerBean.getIcon().getPaths().size() > 0 ? stickerBean.getProperties().getName() : "");
+                        stickerBean.setPath(pathStr);
                 }
                 emitter.onNext(true);
             }
@@ -99,7 +99,7 @@ public class VectorElementFragment extends Fragment {
                     @Override
                     public void onNext(Boolean aBoolean) {
                         Log.e("test_icon_adapter:","刷新adapter2");
-                        Log.e("test_icon_size1:",String.valueOf(mPaths.size()));
+
 
                         if (mStickerAdapter != null) {
                             mCurrentStickerBean.clear();
@@ -125,13 +125,15 @@ public class VectorElementFragment extends Fragment {
     }
 
     private void initTextPlugSelectUI() {
-//        Log.i("test_init:", "initTextPlugSelectUI" + "draw size:" + mDrawables.size());
         mStickerAdapter = new CommonAdapter<SvgIconBean>(getActivity(), R.layout.widget_sticker_content_item, mCurrentStickerBean) {
             @Override
             protected void convert(ViewHolder holder, final SvgIconBean stickerBean, int position) {
                 try {
                     final PathImageView mIv = holder.getView(R.id.iv_element);
-                    mIv.setPath(mPaths.get(position));
+                    String pathStr = stickerBean.getPath();
+                    Path path = SVG.parsePath(pathStr);
+                    mIv.setPath(path);
+                    mIv.setColor(Color.parseColor("#A0A0A0"));
                 }catch (IndexOutOfBoundsException e){
 
                 }

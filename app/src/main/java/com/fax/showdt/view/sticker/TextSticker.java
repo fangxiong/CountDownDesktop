@@ -64,9 +64,9 @@ public class TextSticker extends Sticker {
     private boolean isShimmerText;
     private String shimmerColor;
     private boolean isShadow = false;
-    private float shadowRadius = 0;
-    private float shadowX = 0;
-    private float shadowY = 0;
+    private float shadowRadius = 5f;
+    private float shadowX = 5f;
+    private float shadowY = 0f;
     private String shadowColor = "#000000";
 
     /**
@@ -133,7 +133,11 @@ public class TextSticker extends Sticker {
         }
         textPaint.setLetterSpacing(letterSpacing);
 
-//        textPaint.setShadowLayer(20,6,6,Color.parseColor("#FF4321"));
+        if(isShadow) {
+            textPaint.setShadowLayer(shadowRadius, shadowX, shadowY, Color.parseColor(shadowColor));
+        }else {
+            textPaint.setShadowLayer(0,0,0, Color.TRANSPARENT);
+        }
         resultText = CustomPlugUtil.getPlugTextFromSigns(text);
 
         StaticLayout staticLayout = new StaticLayout(resultText, textPaint, AppContext.get().getResources().getDisplayMetrics().widthPixels * 4, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
@@ -482,6 +486,11 @@ public class TextSticker extends Sticker {
         setAlignment(bean.getAlignment());
         setLetterSpacing(bean.getLetterSpacing());
         setLineSpacingMultiplier(bean.getLineSpacing());
+        setShadow(bean.isShadow());
+        setShadowColor(bean.getShadowColor());
+        setShadowX(bean.getShadowX());
+        setShadowY(bean.getShadowY());
+        setShadowRadius(bean.getShadowRadius());
         Log.i("test_text_draw:","letter:"+letterSpacing);
         Log.i("test_text_draw:","line:"+lineSpacingMultiplier);
     }
@@ -535,6 +544,46 @@ public class TextSticker extends Sticker {
 
     public void setShimmerColor(String shimmerColor) {
         this.shimmerColor = shimmerColor;
+    }
+
+    public boolean isShadow() {
+        return isShadow;
+    }
+
+    public void setShadow(boolean shadow) {
+        isShadow = shadow;
+    }
+
+    public float getShadowRadius() {
+        return shadowRadius;
+    }
+
+    public void setShadowRadius(float shadowRadius) {
+        this.shadowRadius = shadowRadius;
+    }
+
+    public float getShadowX() {
+        return shadowX;
+    }
+
+    public void setShadowX(float shadowX) {
+        this.shadowX = shadowX;
+    }
+
+    public float getShadowY() {
+        return shadowY;
+    }
+
+    public void setShadowY(float shadowY) {
+        this.shadowY = shadowY;
+    }
+
+    public String getShadowColor() {
+        return shadowColor;
+    }
+
+    public void setShadowColor(String shadowColor) {
+        this.shadowColor = shadowColor;
     }
 
     private void initShimmer(Paint paint, String content) {
