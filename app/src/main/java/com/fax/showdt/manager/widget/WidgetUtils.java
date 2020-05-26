@@ -18,6 +18,7 @@ import com.fax.showdt.service.NLService;
 import com.fax.showdt.utils.IntentUtils;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.fax.showdt.utils.CommonUtils.QQ_APP_ID;
 
@@ -44,19 +45,19 @@ public class WidgetUtils {
         List<DrawablePlugBean> mDrawablePlugList = config.getDrawablePlugList();
         List<TextPlugBean> mTextPlugList = config.getTextPlugList();
         for (DrawablePlugBean bean : mDrawablePlugList) {
-            initStickerClickAction(bean,width,height,remoteViews);
+            initStickerClickAction(bean, width, height, remoteViews);
         }
         for (TextPlugBean bean : mTextPlugList) {
-            initStickerClickAction(bean,width,height,remoteViews);
+            initStickerClickAction(bean, width, height, remoteViews);
         }
     }
 
-    private static void initStickerClickAction(BasePlugBean bean,int width,int height,RemoteViews remoteViews){
+    private static void initStickerClickAction(BasePlugBean bean, int width, int height, RemoteViews remoteViews) {
         if (!TextUtils.isEmpty(bean.getJumpAppPath())) {
-            int paddingLeft = (int)bean.getLeft();
-            int paddingTop = (int)bean.getTop();
-            int paddingEnd = width - (int)bean.getRight();
-            int paddingBottom = height - (int)bean.getBottom();
+            int paddingLeft = (int) bean.getLeft();
+            int paddingTop = (int) bean.getTop();
+            int paddingEnd = width - (int) bean.getRight();
+            int paddingBottom = height - (int) bean.getBottom();
             RemoteViews remoteViews2 = new RemoteViews(AppContext.get().getPackageName(), R.layout.widget_touch_area);
             remoteViews2.setViewPadding(R.id.touch_padding, paddingLeft, paddingTop, paddingEnd, paddingBottom);
             PendingIntent pendingIntent = null;
@@ -73,7 +74,7 @@ public class WidgetUtils {
                     pendingIntent = getGoToWebUrl(bean.getJumpContent());
                     break;
                 }
-                case WidgetClickType.CLICK_QQ_CONTACT:{
+                case WidgetClickType.CLICK_QQ_CONTACT: {
                     pendingIntent = goQQContactPage(bean.getJumpContent());
                     break;
                 }
@@ -87,56 +88,71 @@ public class WidgetUtils {
     }
 
     public static PendingIntent getClickToApplication(String path) {
-        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
-        intent.putExtra("clickType",WidgetClickType.CLICK_APPLICATION);
-        intent.putExtra("jumpContent",path);
-            return PendingIntent.getBroadcast(AppContext.get(), 7, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (!TextUtils.isEmpty(path)) {
+            Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+            intent.putExtra("clickType", WidgetClickType.CLICK_APPLICATION);
+            intent.putExtra("jumpContent", path);
+            return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            return null;
+        }
     }
 
     public static PendingIntent getGoToWebUrl(String path) {
-        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
-        intent.putExtra("clickType",WidgetClickType.CLICK_URL);
-        intent.putExtra("jumpContent",path);
-        return PendingIntent.getBroadcast(AppContext.get(), 6, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (!TextUtils.isEmpty(path)) {
+            Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+            intent.putExtra("clickType", WidgetClickType.CLICK_URL);
+            intent.putExtra("jumpContent", path);
+            return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }else {
+            return null;
+        }
 
     }
 
-    public static PendingIntent goQQContactPage(String qqnum){
-        Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
-        intent.putExtra("clickType",WidgetClickType.CLICK_QQ_CONTACT);
-        intent.putExtra("jumpContent",qqnum);
-        return PendingIntent.getBroadcast(AppContext.get(), 8, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    public static PendingIntent goQQContactPage(String qqnum) {
+        if (!TextUtils.isEmpty(qqnum)) {
+            Intent intent = new Intent(ACTION_WIDGET_ICON_CLICK);
+            intent.putExtra("clickType", WidgetClickType.CLICK_QQ_CONTACT);
+            intent.putExtra("jumpContent", qqnum);
+            return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }else {
+            return null;
+        }
 
     }
 
     public static PendingIntent getClickToMusicController(String path) {
+        if(TextUtils.isEmpty(path)){
+            return null;
+        }
         Intent intent = new Intent(NLService.NOTIFY_CONTROL_MUSIC);
-        Log.i("test_click:","target:"+path);
-        if(!TextUtils.isEmpty(path)) {
+        Log.i("test_click:", "target:" + path);
+        if (!TextUtils.isEmpty(path)) {
             switch (path) {
                 case WidgetMusicActionType.PLAY_OR_PAUSE: {
                     intent.putExtra("music_control", WidgetMusicActionType.PLAY_OR_PAUSE);
-                    return PendingIntent.getBroadcast(AppContext.get(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 case WidgetMusicActionType.NEXT: {
                     intent.putExtra("music_control", WidgetMusicActionType.NEXT);
-                    return PendingIntent.getBroadcast(AppContext.get(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 case WidgetMusicActionType.PREVIOUS: {
                     intent.putExtra("music_control", WidgetMusicActionType.PREVIOUS);
-                    return PendingIntent.getBroadcast(AppContext.get(), 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 case WidgetMusicActionType.VOICE_ADD: {
                     intent.putExtra("music_control", WidgetMusicActionType.VOICE_ADD);
-                    return PendingIntent.getBroadcast(AppContext.get(), 3, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 case WidgetMusicActionType.VOICE_MULTI: {
                     intent.putExtra("music_control", WidgetMusicActionType.VOICE_MULTI);
-                    return PendingIntent.getBroadcast(AppContext.get(), 4, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 case WidgetMusicActionType.OPEN_APP: {
                     intent.putExtra("music_control", WidgetMusicActionType.OPEN_APP);
-                    return PendingIntent.getBroadcast(AppContext.get(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    return PendingIntent.getBroadcast(AppContext.get(), (int) (Math.random() * 1000), intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
             }
         }

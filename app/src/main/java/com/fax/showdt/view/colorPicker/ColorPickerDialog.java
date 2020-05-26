@@ -29,8 +29,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -239,6 +241,10 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerView
         dialog.getWindow()
                 .clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            DisplayMetrics dm = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            dialog.getWindow().setLayout((int) (dm.widthPixels * 0.95), ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
 
         // Do not dismiss the dialog when clicking the neutral button.
         Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
@@ -535,7 +541,7 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerView
 
     void createLatestColorShades() {
         int layoutResId;
-        final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.margin_8);
+        final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.margin_4);
 
         if (colorShape == ColorShape.SQUARE) {
             layoutResId = R.layout.cpv_color_item_square;
@@ -593,7 +599,7 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerView
             return;
         }
 
-        final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.margin_8);
+        final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.margin_4);
 
         for (final int colorShade : colorShades) {
             int layoutResId;

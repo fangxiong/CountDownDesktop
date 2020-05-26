@@ -143,6 +143,7 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
                 flColor3.setVisibility(View.VISIBLE);
                 colors.add(Color.parseColor("#FFFFFF"));
                 drawableSticker.setGradientColors(colors);
+                mTvGradientColor2.setBackgroundResource(R.color.white);
                 ivOperateColor.setImageResource(R.drawable.widget_shape_color_delete_btn);
             }
 
@@ -352,6 +353,7 @@ public class WidgetShapePropertiesEditFragment extends Fragment implements View.
             mTvGradientColor1.setBackgroundColor(colors.get(1));
             if (colors.size() == 3) {
                 mTvGradientColor2.setBackgroundColor(colors.get(2));
+                flColor3.setVisibility(View.VISIBLE);
                 ivOperateColor.setImageResource(R.drawable.widget_shape_color_delete_btn);
             }else {
                 flColor3.setVisibility(View.GONE);

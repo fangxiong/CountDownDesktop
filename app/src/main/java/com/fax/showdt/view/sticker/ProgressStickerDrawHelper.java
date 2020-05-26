@@ -61,10 +61,10 @@ public class ProgressStickerDrawHelper {
     public static void drawHorizontalProgressBarWithSolid(Canvas canvas, ProgressBarDrawConfig config) {
         paint.setStrokeWidth(config.getHeight());
         paint.setStyle(Paint.Style.STROKE);
-//        paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setDither(true);
         paint.setColor(Color.parseColor(config.getProgressBgColor()));
         canvas.drawLine(config.getWidth() * config.getPercent(), config.getHeight() / 2, config.getWidth(), config.getHeight() / 2, paint);
+//        canvas.drawRoundRect(config.getWidth() * config.getPercent(), config.getHeight() / 2, config.getWidth(), config.getHeight() / 2,20,20,paint);
         paint.setColor(Color.parseColor(config.getProgressForeColor()));
         canvas.drawLine(0, config.getHeight() / 2, config.getWidth() * config.getPercent(), config.getHeight() / 2, paint);
     }

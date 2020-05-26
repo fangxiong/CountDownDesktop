@@ -36,7 +36,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_15"
             android:layout_marginEnd="@dimen/margin_15"
-            android:background="@color/c_F7F6F6"
+            android:background="@color/c_B5B6B6"
             android:gravity="center">
 
             <TextView

@@ -46,7 +46,7 @@
                 android:layout_marginStart="@dimen/margin_15"
                 android:layout_marginEnd="@dimen/margin_5"
                 android:layout_toStartOf="@id/ll_switch"
-                android:background="@color/c_F7F6F6"
+                android:background="@color/c_B5B6B6"
                 android:gravity="center">
 
                 <TextView
@@ -72,7 +72,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/margin_5"
                     android:layout_marginEnd="@dimen/margin_5"
-                    android:background="@color/c_F7F6F6"
+                    android:background="@color/c_B5B6B6"
                     android:gravity="center">
 
                     <TextView
@@ -92,7 +92,7 @@
                     android:layout_marginStart="@dimen/margin_5"
                     android:layout_marginEnd="@dimen/margin_5"
                     android:layout_weight="1"
-                    android:background="@color/c_F7F6F6"
+                    android:background="@color/c_B5B6B6"
                     android:gravity="center">
 
                     <TextView
@@ -113,7 +113,7 @@
                     android:layout_marginStart="@dimen/margin_5"
                     android:layout_marginEnd="@dimen/margin_5"
                     android:layout_weight="1"
-                    android:background="@color/c_F7F6F6"
+                    android:background="@color/c_B5B6B6"
                     android:gravity="center">
                     <TextView
                         android:id="@+id/tv_gradientColor2"
@@ -212,10 +212,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_15"
             android:layout_marginEnd="@dimen/margin_15"
-            android:background="@color/c_F7F6F6"
+            android:background="@color/c_B5B6B6"
             android:gravity="center"
             android:onClick="onClick"
-            android:textColor="@color/c_A0A0A0"
+            android:textColor="@color/white"
             android:textSize="@dimen/textSize_16" />
     </LinearLayout>
 
@@ -250,7 +250,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_15"
             android:layout_marginEnd="@dimen/margin_15"
-            android:background="@color/c_F7F6F6"
+            android:background="@color/c_B5B6B6"
             android:gravity="center">
 
             <TextView

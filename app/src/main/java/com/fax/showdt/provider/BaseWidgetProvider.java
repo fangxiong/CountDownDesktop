@@ -57,6 +57,7 @@ public class BaseWidgetProvider extends AppWidgetProvider {
             ConfigManager.getMainConfig().putBool(ConstantString.countdown_widget_is_open, false);
 
         }
+        WidgetManager.getInstance().changeWidgetInfo();
     }
 
     @Override

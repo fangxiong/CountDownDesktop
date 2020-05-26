@@ -770,8 +770,12 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
 
 
     private Bitmap getSystemBitmap() {
-        Drawable drawable = WallpaperManager.getInstance(this).getDrawable();
-        return BitmapUtils.drawableToBitmap(drawable);
+        try {
+            Drawable drawable = WallpaperManager.getInstance(this).getDrawable();
+            return BitmapUtils.drawableToBitmap(drawable);
+        }catch (SecurityException e){
+            return null;
+        }
     }
 
     private Bitmap clipWidgetSizeBitmap(Bitmap bitmap) {
@@ -812,23 +816,6 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
                 mEditBitmap = BitmapUtils.decodeFile(customWidgetConfig.getBgPath());
             }
         }
-//        if(isFromSelection){
-//            Glide.with(this)
-//                    .load(customWidgetConfig.getBgPath())
-//                    .into(new CustomTarget<Drawable>() {
-//                        @Override
-//                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                            mStickerViewBg.setImageDrawable(resource);
-//                            mEditBitmap = BitmapUtils.drawableToBitmap(resource);
-//                            initBlurView();
-//                        }
-//
-//                        @Override
-//                        public void onLoadCleared(@Nullable Drawable placeholder) {
-//
-//                        }
-//                    });
-//        }
         mStickerViewBg.setImageBitmap(mEditBitmap);
 
     }
