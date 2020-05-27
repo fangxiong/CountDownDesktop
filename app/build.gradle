@@ -43,12 +43,20 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+
+        targetCompatibility JavaVersion.VERSION_1_8
+
+    }
 
     lintOptions {
         disable 'GoogleAppIndexingWarning'
     }
     useLibrary 'org.apache.http.legacy'
 }
+
 
 //MobSDK {
 //    appKey "2ddbd8f705068"
@@ -143,5 +151,10 @@ dependencies {
     // 友盟统计SDK
     implementation 'com.umeng.umsdk:analytics:8.1.3'
     implementation 'top.zibin:Luban:1.1.8'
+    //butterknife
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    //tinypinyin
+    implementation 'com.github.promeg:tinypinyin:2.0.1'
 
 }

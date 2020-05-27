@@ -1,12 +1,15 @@
 package com.fax.showdt.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
 import com.fax.showdt.bean.AppInfo;
+import com.fax.showdt.bean.AppInfoData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,31 +22,25 @@ import java.util.List;
  */
 public class AppIconUtils {
 
-    public static List<AppInfo> getInstallApps(Context mContext) {
-        ArrayList<AppInfo> list = new ArrayList<AppInfo>();
+    public static List<AppInfoData> getInstallApps(Context mContext) {
+        ArrayList<AppInfoData> list = new ArrayList<AppInfoData>();
         try {
-            PackageManager pm = mContext.getPackageManager();
-            List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
+            Intent intent = new Intent();
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setAction(Intent.ACTION_MAIN);
 
-            for (PackageInfo packageInfo : installedPackages) {
-                AppInfo info = new AppInfo();
-                String packageName = packageInfo.packageName;
-                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-                String name = applicationInfo.loadLabel(pm).toString();
-                Drawable icon = applicationInfo.loadIcon(pm);
+            PackageManager pm = mContext.getPackageManager();
+            List<ResolveInfo> resolveInfoList = pm.queryIntentActivities(intent, 0);
+
+            for (ResolveInfo resolveInfo : resolveInfoList) {
+                AppInfoData info = new AppInfoData();
+                String packageName = resolveInfo.activityInfo.packageName;
+                String name = resolveInfo.loadLabel(pm).toString();
+                Drawable icon = resolveInfo.loadIcon(pm);
                 info.name = name;
                 info.packageName = packageName;
                 info.icon = icon;
-
-                int flags = applicationInfo.flags;
-
-                if ((flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo
-                        .FLAG_SYSTEM) {
-                    info.isUser = false;
-                } else {
-                    info.isUser = true;
-                    list.add(info);
-                }
+                list.add(info);
 
             }
             return list;
@@ -54,11 +51,12 @@ public class AppIconUtils {
 
     /**
      * 根据包名获取应用名称
+     *
      * @param context
      * @param pkgName
      * @return
      */
-    public static  String getAppName(Context context,String pkgName) {
+    public static String getAppName(Context context, String pkgName) {
         try {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(

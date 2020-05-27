@@ -1,6 +1,10 @@
 package com.fax.showdt;
 
+import java.io.File;
+
 public interface ConstantString {
+
+    String DEFAULT_STICKER_APP_ICON_DRAWABLE_PATH = "appIcon";
 
     String countdown_widget_is_open = "countdown_widget_is_open";
     String req_version_update = "http://q2cjxj02l.bkt.clouddn.com/showdt_version_update.json.txt";

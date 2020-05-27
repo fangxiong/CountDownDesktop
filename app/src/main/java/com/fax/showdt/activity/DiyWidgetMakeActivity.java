@@ -19,6 +19,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -85,6 +86,7 @@ import com.fax.showdt.manager.weather.WeatherManager;
 import com.fax.showdt.manager.widget.CustomWidgetConfigConvertHelper;
 import com.fax.showdt.manager.widget.CustomWidgetConfigDao;
 import com.fax.showdt.manager.widget.CustomWidgetScreenAdaptHelper;
+import com.fax.showdt.manager.widget.WidgetClickType;
 import com.fax.showdt.manager.widget.WidgetDownloadManager;
 import com.fax.showdt.manager.widget.WidgetSizeConfig;
 import com.fax.showdt.service.NLService;
@@ -856,12 +858,19 @@ public class DiyWidgetMakeActivity extends TakePhotoBaseActivity implements View
         });
         mStickerEditFragment.setWidgetEditStickerCallback(new WidgetEditStickerCallback() {
             @Override
-            public void onAddSticker(String path) {
-                Drawable drawable = new BitmapDrawable(getResources(), CommonUtils.getAssetPic(DiyWidgetMakeActivity.this, path));
+            public void onAddSticker(String path,String pkgName,String appName) {
+                Log.e("test_drawable_path:",path);
+                Drawable drawable = new BitmapDrawable(getResources(), path);
                 DrawableSticker drawableSticker = new DrawableSticker(drawable, System.currentTimeMillis());
-                drawableSticker.setmPicType(DrawableSticker.ASSET);
+                drawableSticker.setmPicType(DrawableSticker.SDCARD);
                 drawableSticker.setDrawablePath(path);
+                drawableSticker.addMaskBitmap(DiyWidgetMakeActivity.this, drawableSticker.getClipType());
+                drawableSticker.setClipType(WidgetClickType.CLICK_APPLICATION);
+                drawableSticker.setJumpAppPath(WidgetClickType.CLICK_APPLICATION);
+                drawableSticker.setJumpContent(pkgName);
+                drawableSticker.setAppName(appName);
                 mStickerView.addSticker(drawableSticker, Sticker.Position.CENTER, false);
+
             }
 
             @Override

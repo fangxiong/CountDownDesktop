@@ -15,6 +15,7 @@ import com.fax.showdt.R;
 import com.fax.showdt.dialog.ios.interfaces.OnDialogButtonClickListener;
 import com.fax.showdt.dialog.ios.util.BaseDialog;
 import com.fax.showdt.dialog.ios.v3.MessageDialog;
+import com.fax.showdt.service.WidgetUpdateService;
 import com.fax.showdt.utils.Constant;
 import com.kyleduo.switchbutton.SwitchButton;
 
@@ -37,6 +38,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 ConfigManager.getMainConfig().putBool(ConstantString.not_support_click_widget_switch,isChecked);
+                Intent intent = new Intent();
+                intent.setAction(WidgetUpdateService.WIDGET_CONFIG_CHANGED);
+                sendBroadcast(intent);
             }
         });
         mSwitchButton.setChecked(ConfigManager.getMainConfig().getBool(ConstantString.not_support_click_widget_switch,false));

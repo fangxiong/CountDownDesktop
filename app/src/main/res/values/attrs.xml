@@ -163,4 +163,14 @@
         <attr name="fillColor" format="color|reference"/>
         <attr name="naturalColors" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="CharIndexView">
+        <!-- 	banner背影色  	 -->
+        <!-- 索引字大小 -->
+        <attr name="indexTextSize" format="dimension"/>
+        <!-- 字颜色 -->
+        <attr name="charTextColor" format="color"/>
+        <!-- 索引字颜色 -->
+        <attr name="indexTextColor" format="color"/>
+    </declare-styleable>
 </resources>

@@ -10,7 +10,9 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,6 +23,8 @@ import com.fax.showdt.AppContext;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -170,4 +174,39 @@ public class CommonUtils {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * drawable转file
+     *
+     * @param drawable
+     * @param filePath
+     * @param format
+     */
+    public static void drawableToFile(Drawable drawable, String filePath, Bitmap.CompressFormat format) {
+        if (drawable == null)
+            return;
+
+        try {
+            File file = new File(filePath);
+
+            if (file.exists())
+                file.delete();
+
+            if (!file.exists())
+                file.createNewFile();
+
+            FileOutputStream out = null;
+            out = new FileOutputStream(file);
+            final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(bmp);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            bmp.compress(format, 100, out);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

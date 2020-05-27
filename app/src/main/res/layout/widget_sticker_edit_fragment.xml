@@ -29,9 +29,21 @@
             android:scaleType="fitCenter"
             android:background="@drawable/widget_text_edit_tab_selected_bg"
             android:src="@drawable/widget_touch_btn"/>
+
+        <ImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_toEndOf="@id/iv_touch"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_width="@dimen/margin_35"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/widget_text_edit_tab_selected_bg"
+            android:src="@drawable/widget_sticker_logos_icon"/>
+
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_toEndOf="@id/iv_touch"
+            android:layout_toEndOf="@id/iv_app_icon"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_width="@dimen/margin_35"
             android:layout_height="wrap_content"

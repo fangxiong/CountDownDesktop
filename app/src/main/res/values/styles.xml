@@ -214,5 +214,8 @@
         <item name="android:windowExitAnimation">@anim/bottom_out</item>
     </style>
 
-
+    <style name="PopupAnimation" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
 </resources>

@@ -7,6 +7,8 @@
     <string name="not_installed_qq">您还未安装QQ</string>
     <string name="authorize_fail_msg">授权失败,错误信息:</string>
     <string name="get_qq_userinfo_fail">获取用户QQ信息错误</string>
+    <string name="custom_bind_app">关联应用:%1$s</string>
+
 
     <string name="tab_recommend">推荐</string>
     <string name="tab_mine">我的</string>
